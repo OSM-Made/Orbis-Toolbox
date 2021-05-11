@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<system_settings version="1.0" plugin="settings_root_plugin">
+
+  <!-- ★Orbis Toolbox -->
+  <setting_list id="id_orbis_toolbox" title="★Orbis Toolbox" initial_focus_to="id_game_package_installer">
+
+    <!-- Power Options -->
+    <setting_list id="power_options" title="Power Options" icon="https://i.imgur.com/YDlQHyu.png" initial_focus_to="id_reboot">
+
+      <!-- Reload ShellUI -->
+      <button id="id_reload_shellui" title="Reload ShellUI" icon="https://i.imgur.com/NGoI5Xx.png" second_title="Soft reloads the Live Area."/>
+
+      <!-- Reboot -->
+      <button id="id_reboot" title="Reboot" icon="https://i.imgur.com/ngWVYNP.png" second_title="Fully reboots the System."/>
+
+      <!-- Shutdown -->
+      <button id="id_shutdown" title="Shutdown" icon="https://i.imgur.com/phk6bN4.png" second_title="Turns off the System."/>
+
+      <!-- Suspend -->
+      <button id="id_suspend" title="Suspend" icon="https://i.imgur.com/YDlQHyu.png" second_title="Suspends the system to the &quot;Rest Mode&quot; state."/>
+
+    </setting_list>
+    
+    <!-- Package Installer -->
+    <link id="id_game_package_installer" title="Package Installer" icon="https://i.imgur.com/NeY8pk7.png" file="PkgInstaller/data/pkginstaller.xml" />
+
+    <!-- Daemon Manager -->
+    <setting_list id="id_daemons" title="Daemon Manager" icon="https://i.imgur.com/25BGBvg.png" restorable="false">
+      <message id="id_message" title="msg_wait" busyindicator="true"/>
+
+      <!-- Help message -->
+      <label id="daemon_info" title="Daemons are background applications that can be run on your system. Here you can see the status of your Daemons and Manage them.&#xa;Daemons are loaded from &quot;/system/vsh/app/&quot;." style="left" border="true"/>
+      
+      <!-- Creates blank space -->
+      <spacer id="daemon_spacer" height="30"/>
+
+      <!-- Here is where the plugins will be shown. -->
+      <!-- Deamon Icon | Name from .sfo | Status ? Running : Stopped or when clicked Stopping/Starting -->
+      <!-- Idealy the icons and a description could be loaded from the /system/vsh/app/ folder -->
+      <!-- Dir/Icon.png and Dir/Desc.txt. Current Issue is UI doesnt have file perm for /system/ -->
+      
+    </setting_list>
+
+    <!-- ShellUI Plugin Manager -->
+    <setting_list id="id_plugins" title="ShellUI Plugin Manager" icon="https://i.imgur.com/ymJJZjb.png" restorable="false">
+      <message id="id_plugins_loading" title="msg_wait" busyindicator="true"/>
+
+      <!-- Help message -->
+      <label id="plugin_info" title="ShellUI Plugins are plugins that dont need their own process or are needing to modify the UI.&#xa;ShellUI Plugins are loaded from &quot;/user/temp/ShellUI Plugins/&quot;." style="left" border="true"/>
+
+      <!-- Creates blank space -->
+      <spacer id="plugin_spacer" height="30"/>
+
+      <!-- Here is where the plugins will be shown. -->
+      <!-- Lib Icon | Name | Status ? Loaded : Not Loaded -->
+      <!-- Will parse from /user/temp/ShellUI Plugins/*.sprx -->
+      <!-- These could have a custom icon just have the icon in the same path with same name. -->
+      
+    </setting_list>
+
+    <!-- Payload Loader -->
+    <setting_list id="id_payloads" title="Payload Loader" icon="https://i.imgur.com/ry5WZ67.png" restorable="false">
+      <message id="id_message" title="msg_wait" busyindicator="true"/>
+    </setting_list>
+
+    <!-- System Settings -->
+    <setting_list id="system_settings" title="System Settings" icon="https://i.imgur.com/hqJAWXq.png" initial_focus_to="id_licenseactivation">
+
+      <!-- License Activation -->
+      <setting_list id="id_licenseactivation" title="License Activation" second_title="Enable and disable codecs for consuming media.">
+
+        <!-- MPEG-2 -->
+        <toggle_switch id="id_licenseactivation_mpeg2" title="MPEG-2" key="/SYSTEM/ACTIVATION/mpeg2"/>
+
+        <!-- VC-1 -->
+        <toggle_switch id="id_licenseactivation_vc1" title="VC-1" key="/SYSTEM/ACTIVATION/vc1"/>
+
+        <!-- HEVC -->
+        <toggle_switch id="id_licenseactivation_hevc" title="HEVC" key="/SYSTEM/ACTIVATION/hevc"/>
+
+        <!-- HEVC software decoder -->
+        <toggle_switch id="id_licenseactivation_hevc_soft" title="HEVC software decoder" key="/SYSTEM/ACTIVATION/hevc_soft"/>
+
+      </setting_list>
+
+      <!-- External HDD -->
+      <link id="id_external_hdd" title="External HDD" file="external_hdd.xml" />
+
+      <!-- NP Debug -->
+      <toggle_switch id="id_np_debug" title="NP Debug" second_title="Shows NP debugging popups." key="/NP/debug"/>
+
+      <!-- Show TitleID Labels -->
+      <toggle_switch id="id_system_disp_titleid" title="Show TitleID Labels" value="0"/>
+
+      <!-- Show Devkit Panel -->
+      <toggle_switch id="id_system_disp_devkit_panel" title="Show Devkit Panel" value="0"/>
+
+      <!-- Show"★Orbis Toolbox" shortcu -->
+      <toggle_switch id="id_system_disp_debug_settings_panel" title="Show &quot;★Orbis Toolbox&quot; shortcut" value="0"/>
+
+      <!-- Show ";★APP_HOME" -->
+      <toggle_switch id="id_system_disp_app_home_panel" title="Show &quot;★APP_HOME&quot;" value="0"/>
+
+    </setting_list>
+    
+    <!-- Orbis Toolbox Settings -->
+    <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="https://i.imgur.com/Ye49LWV.png">
+      <message id="id_message" title="msg_wait" busyindicator="true"/>
+    </setting_list>
+
+     <button id="id_Test" title="Test Button" value="0"/> 
+
+    <!-- Enable Debug Settings -->
+    <!-- <toggle_switch id="id_enable_debug_settings" title="Enable ★Debug Settings" value="0"/> -->
+
+    <!-- <button id="id_Test" title="Test Button" value="0"/>
+        <list id="id_Test_Bool" title="Test Bool">
+            <list_item id="id_Test_Bool_off" title="Off" value="0"/>
+            <list_item id="id_Test_Bool_on" title="On" value="1"/>
+        </list>
+        <list id="id_Test_List" title="Test List" value="Something" >
+            <list_item id="id_Test_List_1" title="Something" value="Something"/>
+            <list_item id="id_Test_List_2" title="Something else" value="Something else"/>
+            <list_item id="id_Test_List_3" title="another thing" value="another thing"/>
+        </list>
+
+        <toggle_switch id="id_Test_Switch" title="Test Switch"/>
+
+        
+		<spacer id="-1-" height="20"/>
+		<label id="name" title="Title" raw_title="false" border="true"/>
+		<spacer id="-2-" height="20"/>
+        <label id="info1" title="label" style="left"/>
+        <toggle_switch id="id_Test_Switch_1" title="Test Switch 2"/>
+
+        <text_field id="id_Test_Text_Field" title="Test Text Field"
+                keyboard_type="default" max_length="511" value_max_width="750"/>
+
+        <text_field id="id_Test_Text_Field_Status" title="Test Text Field Status"
+                keyboard_type="default" max_length="511" value_max_width="750" style="status_display"/>
+        
+        <label id="label_status" title="Status Display" style="status_display"/>
+
+        <navi id="_navi">
+			<navi_button id="cancel" title="cancel" layout="negative"/>
+			<navi_button id="confirm" title="confirm" layout="positive"/>
+		</navi>-->
+
+  </setting_list>
+
+</system_settings>

@@ -63,13 +63,45 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Custom_Content.cpp" />
+    <ClCompile Include="DebugTitleIdLabel.cpp" />
+    <ClCompile Include="Detour.cpp" />
+    <ClCompile Include="DevkitPanel.cpp" />
+    <ClCompile Include="Label.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Mono.cpp" />
     <ClCompile Include="Orbis_Toolbox.cpp" />
+    <ClCompile Include="Panel.cpp" />
+    <ClCompile Include="Patcher.cpp" />
+    <ClCompile Include="Settings_Menu.cpp" />
+    <ClCompile Include="UI_Utilities.cpp" />
+    <ClCompile Include="Utilities.cpp" />
+    <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Debug_Features.h" />
+    <ClInclude Include="Detour.h" />
+    <ClInclude Include="Label.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Mono.h" />
+    <ClInclude Include="Panel.h" />
+    <ClInclude Include="Patcher.h" />
+    <ClInclude Include="Settings_Menu.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="Utilities.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="Widget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build.bat" />
+    <None Include="Embed.s" />
+    <None Include="Increment.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="external_hdd.xml" />
+    <Xml Include="orbis_toolbox.xml" />
+    <Xml Include="settings_root.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

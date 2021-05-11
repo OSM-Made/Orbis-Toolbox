@@ -25,18 +25,131 @@
     <Filter Include="Header Files\UI\Elements">
       <UniqueIdentifier>{1aa11fd0-d68e-4ce6-9fa5-59186b8731fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Debug Features">
+      <UniqueIdentifier>{68203726-db97-4725-a8c6-54f63e09737c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menu">
+      <UniqueIdentifier>{78337306-cc53-400a-b0b4-c4a77ee99f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debug Features">
+      <UniqueIdentifier>{d2e2dc0a-9c64-4f86-84de-4d21d89bf2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilites">
+      <UniqueIdentifier>{5d91de35-6a6e-42df-8e6f-6dc9b30f31f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{4bee9374-872a-40dc-9a05-08a3eda8765e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\Elements">
+      <UniqueIdentifier>{cca5b923-678d-4f6c-95d1-9f6611c115af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XML">
+      <UniqueIdentifier>{3852b1fe-ad73-4e53-bc1d-d67375602f65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="build.bat" />
+    <None Include="Embed.s">
+      <Filter>Source Files\XML</Filter>
+    </None>
+    <None Include="Increment.bat">
+      <Filter>Source Files\Utilites</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Orbis_Toolbox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom_Content.cpp">
+      <Filter>Source Files\Debug Features</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTitleIdLabel.cpp">
+      <Filter>Source Files\Debug Features</Filter>
+    </ClCompile>
+    <ClCompile Include="Detour.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
+    <ClCompile Include="DevkitPanel.cpp">
+      <Filter>Source Files\Debug Features</Filter>
+    </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>Source Files\UI\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Mono.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Source Files\UI\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Patcher.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings_Menu.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Utilities.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget.cpp">
+      <Filter>Source Files\UI\Elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Debug_Features.h">
+      <Filter>Header Files\Debug Features</Filter>
+    </ClInclude>
+    <ClInclude Include="Detour.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Label.h">
+      <Filter>Header Files\UI\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Mono.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel.h">
+      <Filter>Header Files\UI\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Patcher.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings_Menu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget.h">
+      <Filter>Header Files\UI\Elements</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="external_hdd.xml">
+      <Filter>Source Files\XML</Filter>
+    </Xml>
+    <Xml Include="orbis_toolbox.xml">
+      <Filter>Source Files\XML</Filter>
+    </Xml>
+    <Xml Include="settings_root.xml">
+      <Filter>Source Files\XML</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

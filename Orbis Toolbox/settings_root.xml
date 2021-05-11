@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<system_settings version="1.0" plugin="settings_root_plugin">
+
+  <setting_list id="settings_root" title="msg_settings" initial_focus_to="orbis_toolbox">
+    <link id="orbis_toolbox" title="★Orbis Toolbox" icon="https://i.imgur.com/Ye49LWV.png" file="orbis_toolbox.xml" />
+    <link id="users_guide" title="msg_ug_helpful_info" icon="tex_users_guide" file="UsersGuide/data/users_guide.xml"/>
+    <link id="statements" title="msg_health_safety_data_handling" icon="tex_health_safety" file="SettingsRoot/data/settings_root.xml" target_id="statements"/>
+    <link id="accessibility" title="msg_accessibility" icon="tex_accessibility" file="Accessibility/data/accessibility.xml" />
+    <link id="psn" title="msg_account_management" icon="tex_account_management" file="Psn/data/psn.xml" />
+    <link id="parental_control" title="msg_parental_controls_family_management" icon="tex_parental_controls" file="ParentalControl/data/parental_control.xml" />
+    <link id="login" title="msg_login_settings" icon="tex_login" file="Login/data/login.xml" description="msg_login_settings_desc" />
+    <link id="network" title="msg_network" icon="tex_network" file="Network/data/network.xml" />
+    <link id="notification_settings" title="msg_notifications" icon="tex_notifications" file="NotificationSettings/data/notification_settings.xml" />
+    <link id="peripherals" title="msg_devices" icon="tex_accessories" file="Peripherals/data/peripherals.xml" />
+    <link id="storage_data" title="msg_system_storage_management" icon="tex_system_storage" file="StorageData/data/storage_data.xml" />
+    <link id="theme" title="msg_themes" icon="tex_theme" file="Theme/data/theme.xml" />
+    <link id="savedata" title="msg_saveddata_management" icon="tex_saved_data" file="SaveData/data/savedata.xml" />
+    <link id="sound_screen" title="msg_sound_screen" icon="tex_sound_screen" file="SoundScreen/data/soundscreen.xml" />
+    <button id="update" title="msg_system_software_update" icon="tex_software_update"/>
+    <button id="share_broadcast" title="msg_share_broadcast_settings" icon="tex_share_broadcast"/>
+    <link id="companion_app" title="msg_companion_app_settings" icon="tex_companion_app" file="CompanionApp/data/companion_app.xml" />
+    <link id="remote_play" title="msg_remote_play_connection_settings" icon="tex_remote_play" file="RemotePlay/data/remote_play.xml" />
+    <link id="video_settings" title="msg_video_settings" icon="tex_video_settings" file="VideoSettings/data/video_settings.xml" />
+    <link id="date_time" title="msg_date_time" icon="tex_datetime" file="DateTime/data/datetime.xml" />
+    <link id="language" title="msg_language" icon="tex_language" file="Language/data/language.xml" />
+    <link id="power_management" title="msg_power_saving_settings" icon="tex_power_save" file="PowerManagement/data/power_management.xml" />
+    <link id="console_settings" title="msg_system" icon="tex_system" file="ConsoleSettings/data/console_settings.xml" />
+    <link id="format" title="msg_format_restore" icon="tex_initialization" file="Format/data/format.xml" remoteplay="prohibited"/>
+    <link id="debug_settings" title="★Debug Settings" file="DebugSettings/data/debug_settings.xml" />
+  </setting_list>
+
+  <setting_list id="statements" title="msg_health_safety_data_handling">
+    <button id="data_handling" title="msg_data_handling"/>
+    <button id="health_safety" title="msg_health_safety"/>
+  </setting_list>
+
+  <setting_list id="data_gathering_settings" title="msg_modify_settings">
+  </setting_list>
+
+</system_settings>

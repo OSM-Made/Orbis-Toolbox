@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<system_settings version="1.0" plugin="debug_settings_plugin">
+  <!-- External HDD -->
+  <setting_list id="id_external_hdd" title="External HDD">
+
+    <!-- Unmount -->
+    <button id="id_external_hdd_unmount" title="Unmount" second_title="Will unmount any usb connected to the System."/>
+
+    <!-- Format -->
+    <button id="id_external_hdd_format" title="Format"/>
+
+  </setting_list>
+
+  <!-- Format 実行中画面 -->
+  <setting_list id="format_execution" title="Format" valign="middle" list_size="1340,740">
+    <user_custom id="user_custom_format_exection"/>
+    <footer id="_footer">
+    </footer>
+  </setting_list>
+
+  <!-- Format Version (detail) -->
+  <setting_list id="format_version_detail" title=" Format Version">
+    <text_field id="text_field_format_version" title="Format Version"
+            keyboard_type="basic_latin" min_length="1" max_length="8"/>
+  </setting_list>
+
+</system_settings>
