@@ -90,6 +90,14 @@
       <!-- NP Debug -->
       <toggle_switch id="id_np_debug" title="NP Debug" second_title="Shows NP debugging popups." key="/NP/debug"/>
 
+    </setting_list>
+    
+    <!-- Orbis Toolbox Settings -->
+    <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="https://i.imgur.com/Ye49LWV.png">
+      
+      <!-- Load Config on Startup -->
+      <toggle_switch id="id_load_cfg_on_start" title="Load Config on Startup" value="0"/>
+      
       <!-- Show TitleID Labels -->
       <toggle_switch id="id_system_disp_titleid" title="Show TitleID Labels" value="0"/>
 
@@ -101,12 +109,7 @@
 
       <!-- Show ";★APP_HOME" -->
       <toggle_switch id="id_system_disp_app_home_panel" title="Show &quot;★APP_HOME&quot;" value="0"/>
-
-    </setting_list>
-    
-    <!-- Orbis Toolbox Settings -->
-    <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="https://i.imgur.com/Ye49LWV.png">
-      <message id="id_message" title="msg_wait" busyindicator="true"/>
+      
     </setting_list>
 
      <button id="id_Test" title="Test Button" value="0"/> 

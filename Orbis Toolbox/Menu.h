@@ -1,64 +1,78 @@
 #pragma once
 #include "Common.h"
 
+#include "Power_Options.h"
+
+enum Data_Type
+{
+	Type_None,
+	Type_Boolean,
+	Type_Integer,
+	Type_Float,
+	Type_String,
+};
+
 class MenuOption
 {
 public:
-	const char* Id;
-	enum
-	{
-		Type_Boolean,
-		Type_Integer,
-		Type_Float,
-		Type_String,
-	}Type;
+	Data_Type Type;
 	union
 	{
-		bool Boolean;
-		int Integer;
-		float Float;
-		MonoString* String;
-	}Value;
-	void(*OnCheckVisible)(MonoObject* Instance, MonoObject* element, MonoObject* e);
-	void(*OnPreCreate)(MonoObject* Instance, MonoObject* element, MonoObject* e);
-	void(*OnPageActivating)(MonoObject* Instance, MonoObject* page, MonoObject* e);
-	void(*OnPress)(MonoObject* Instance, MonoObject* element, MonoObject* e);
+		bool* Boolean;
+		int* Integer;
+		float* Float;
+		char* String;
+	}Data;
+	bool Visible;
+	void(*OnPreCreate)();
+	void(*OnPageActivating)();
+	void(*OnPress)();
 
-	MenuOption();
-	~MenuOption();
+	MenuOption() { } 
+	~MenuOption() { } 
 
 private:
 
 };
-
-MenuOption::MenuOption()
-{
-}
-
-MenuOption::~MenuOption()
-{
-}
 
 class Menu
 {
 public:
-	Menu();
-	~Menu();
+	template<typename Value>
+	static MenuOption Add_Option(const char* Option_Id, Value* Data, Data_Type Type, void(*OnPress)() = nullptr, void(*OnPreCreate)() = nullptr, void(*OnPageActivating)() = nullptr)
+	{
+		MenuOption Temp;
+		Temp.Data = Data;
+		Temp.Type = Type;
+		Temp.Visible = true;
+		Temp.OnPreCreate = OnPreCreate;
+		Temp.OnPageActivating = OnPageActivating;
+		Temp.OnPress = OnPress;
+
+		Options->insert(std::pair<const char*, MenuOption>(Option_Id, Temp));
+
+		return Temp;
+	}
+
+	static MenuOption Add_Option(const char* Option_Id, void(*OnPress)() = nullptr, void(*OnPreCreate)() = nullptr, void(*OnPageActivating)() = nullptr)
+	{
+		MenuOption Temp;
+		Temp.Type = Type_None;
+		Temp.Visible = true;
+		Temp.OnPreCreate = OnPreCreate;
+		Temp.OnPageActivating = OnPageActivating;
+		Temp.OnPress = OnPress;
+
+		Options->insert(std::pair<const char*, MenuOption>(Option_Id, Temp));
+		
+		return Temp;
+	}
+
+	static std::map<const char*, MenuOption>* Options;
+
+	static void Init();
+	static void Term();
 
 private:
 
 };
-
-MenuOption* Add_Menu_Option(const char* Option_Id)
-{
-	MenuOption* Temp = new MenuOption();
-
-}
-
-Menu::Menu()
-{
-}
-
-Menu::~Menu()
-{
-}

@@ -19,6 +19,7 @@
 #include "Detour.h"
 #include "Patcher.h"
 #include "UI.h"
+#include "Menu.h"
 
 #include "Widget.h"
 #include "Label.h"

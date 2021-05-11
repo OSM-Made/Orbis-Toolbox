@@ -22,6 +22,7 @@ Detour* Settings_Menu::Detour_OnPress = nullptr;
 //Patches
 Patcher* Settings_Menu::Patch_IsDevkit;
 Patcher* Settings_Menu::Patch_AllowDebugMenu;
+Patcher* Settings_Menu::Patch_MainThreadCheck;
 
 Widget* Settings_Menu::rootWidget;
 
@@ -67,8 +68,19 @@ void Settings_Menu::OnCheckVisible_Hook(MonoObject* Instance, MonoObject* elemen
 	if (Instance && element)
 	{
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Id"));
-		if (!strcmp(Id, "id_message"))
-			Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", false);
+
+		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		{
+			if (!strcmp(Id, it->first))
+			{
+				Log("%s -> OnCheckVisible()", it->first);
+
+				//Show or hide Menu Options on the fly.
+				Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", it->second.Visible);
+
+				break;
+			}
+		}
 	}
 	Detour_OnCheckVisible->Stub<void>(Instance, element, e);
 }
@@ -87,27 +99,32 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 	{
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
-		//klog("OnPreCreate: %s\n", Id);
 
-		if (!strcmp(Id, "id_enable_debug_settings"))
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("1"));
-		else if (!strcmp(Id, "id_system_disp_devkit_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::DevkitPanel::ShowPanel ? Mono::New_String("1") : Mono::New_String("0"));
-		else if (!strcmp(Id, "id_system_disp_titleid"))
-			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::DebugTitleIdLabel::ShowLabels ? Mono::New_String("1") : Mono::New_String("0"));
-		else if (!strcmp(Id, "id_system_disp_debug_settings_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::Custom_Content::Show_Debug_Settings ? Mono::New_String("1") : Mono::New_String("0"));
-		else if (!strcmp(Id, "id_system_disp_app_home_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::Custom_Content::Show_App_Home ? Mono::New_String("1") : Mono::New_String("0"));
-		else if (!strcmp(Id, "id_orbislib"))
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Stopped"));
-		else if(!strcmp(Id, "id_orbisftp"))
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Running"));
-		else if (!strcmp(Id, "id_trainer"))
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Loaded"));
-		else if (!strcmp(Id, "id_fpscounter") || !strcmp(Id, "id_menu"))
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Not Loaded"));
-		
+		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		{
+			if (!strcmp(Id, it->first))
+			{
+				Log("%s -> OnPreCreate()", it->first);
+
+				MenuOption Cur = it->second;
+
+				//Update the shown value of the option.
+				if (Cur.Type == Type_Boolean)
+					Mono::Set_Property(SettingElement, element, "Value", *Cur.Data.Boolean ? Mono::New_String("1") : Mono::New_String("0"));
+				/*else if (Cur.Type == Type_Integer)
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Integer).c_str()));
+				else if (Cur.Type == Type_Float)
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Float).c_str()));*/
+				else if (Cur.Type == Type_String)
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(Cur.Data.String));
+
+				//Call the OnPreCreate call back.
+				if (Cur.OnPreCreate != nullptr)
+					Cur.OnPreCreate();
+
+				break;
+			}
+		}	
 	}
 	Detour_OnPreCreate->Stub<void>(Instance, element, e);
 }
@@ -126,6 +143,17 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 	{
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingPage", page, "Id"));
+
+		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		{
+			if (!strcmp(Id, it->first) && it->second.OnPageActivating != nullptr)
+			{
+				Log("%s -> OnPageActivating()", it->first);
+
+				it->second.OnPageActivating();
+				break;
+			}
+		}
 
 		klog("OnPageActivating: %s\n", Id);
 
@@ -159,58 +187,57 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
 		char* Value = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Value"));
 
-		if (!strcmp(Id, "id_Test"))
+		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
-			if (!rootWidget->Has_Child("BuildPanel"))
+			Log("%s -> OnPress()", it->first);
+
+			if (!strcmp(Id, it->first))
 			{
-				//Create new Label for the build string.
-				Label* BuildLabel = new Label("BuildLabel", 20.0f, 36.0f, ORBIS_TOOLBOX_BUILDSTRING, 20, Label::fsItalic, 
-					Label::fwBold, Label::VerticalAlignment::vCenter, Label::HorizontalAlignment::hCenter, 1.0f, 1.0f, 1.0f, 1.0f);
+				Log("%s -> OnPress()", it->first);
 
-				//Create new panel for the build Panel.
-				Panel* BuildPanel = new Panel("BuildPanel", 1920.0f - (BuildLabel->Get_Text_Width() + 30.0f), 20.0f, 440.0f, 100.0f,
-					0.92f, 0.2f, 0.16f, 0.8f, Panel::RenderingOrder::Last, UI::Utilities::Adjust_Content(Panel::Vertical, 4, 4, 4, 4));
+				MenuOption Cur = it->second;
 
-				//Append the Text to the Build Panel.
-				BuildPanel->Append_Child("BuildLabel", BuildLabel);
+				//Update the local value of the option.
+				if (Cur.Type == Type_Boolean)
+					*Cur.Data.Boolean = (atoi(Value) >= 1);
+				else if (Cur.Type == Type_Integer)
+					*Cur.Data.Integer = atoi(Value);
+				else if (Cur.Type == Type_Float)
+					*Cur.Data.Float = atof(Value);
+				//TODO: Add String
 
-				//Append the Label to the root widget.
-				rootWidget->Append_Child("BuildPanel", BuildPanel);
+				//Call the OnPress call back.
+				if (Cur.OnPress != nullptr)
+					Cur.OnPress();
+
+				break;
 			}
-			else
-				rootWidget->Remove_Child("BuildPanel");
-
-			Notify("Test Button Pressed!");
-		}
-		else if (!strcmp(Id, "id_Test_2"))
-			Notify("Test Button 2 Pressed!");
-		else if (!strcmp(Id, "id_system_disp_devkit_panel"))
-		{
-			if (atoi(Value) > 0)
-				Debug_Feature::DevkitPanel::Show();
-			else
-				Debug_Feature::DevkitPanel::Hide();
-		}
-		else if (!strcmp(Id, "id_system_disp_titleid"))
-		{
-			if (atoi(Value) > 0)
-				Debug_Feature::DebugTitleIdLabel::Show();
-			else
-				Debug_Feature::DebugTitleIdLabel::Hide();
-		}
-		else if (!strcmp(Id, "id_system_disp_debug_settings_panel"))
-		{
-			Debug_Feature::Custom_Content::Show_Debug_Settings = (atoi(Value) > 0);
-			UI::Utilities::ReloadItemList();
-		}
-		else if (!strcmp(Id, "id_system_disp_app_home_panel"))
-		{
-			Debug_Feature::Custom_Content::Show_App_Home = (atoi(Value) > 0);
-			UI::Utilities::ReloadItemList();
 		}
 	}
 
 	Detour_OnPress->Stub<void>(Instance, element, e);
+}
+
+void Settings_Menu::Init_Debug_Label()
+{
+	if (!rootWidget->Has_Child("BuildPanel"))
+	{
+		//Create new Label for the build string.
+		Label* BuildLabel = new Label("BuildLabel", 20.0f, 36.0f, ORBIS_TOOLBOX_BUILDSTRING, 20, Label::fsItalic,
+			Label::fwBold, Label::VerticalAlignment::vCenter, Label::HorizontalAlignment::hCenter, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		//Create new panel for the build Panel.
+		Panel* BuildPanel = new Panel("BuildPanel", 1920.0f - (BuildLabel->Get_Text_Width() + 30.0f), 20.0f, 440.0f, 100.0f,
+			0.92f, 0.2f, 0.16f, 0.8f, Panel::RenderingOrder::Last, UI::Utilities::Adjust_Content(Panel::Vertical, 4, 4, 4, 4));
+
+		//Append the Text to the Build Panel.
+		BuildPanel->Append_Child("BuildLabel", BuildLabel);
+
+		//Append the Label to the root widget.
+		rootWidget->Append_Child("BuildPanel", BuildPanel);
+	}
+	else
+		rootWidget->Remove_Child("BuildPanel");
 }
 
 void Settings_Menu::Log(const char* fmt, ...)
@@ -234,6 +261,9 @@ void Settings_Menu::Init()
 	Debug_Feature::DebugTitleIdLabel::Init();
 	Debug_Feature::Custom_Content::Init();
 
+	Log("Init Menu");
+	Menu::Init();
+
 	//Detours
 	Log("Init Detours");
 	Detour_GetManifestResourceStream = new Detour();
@@ -252,14 +282,19 @@ void Settings_Menu::Init()
 	//Debug Settings Patch
 	Patch_IsDevkit = new Patcher();
 	Patch_AllowDebugMenu = new Patcher();
+	Patch_MainThreadCheck = new Patcher(); //CheckRunningOnMainThread
 
 	Log("Install Patches");
 	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
 	Patch_AllowDebugMenu->Install_Method_Patch(Mono::platform_dll, "Sce.Vsh.ShellUI.Settings.Sbl", "SblWrapper", "SblRcMgrIsAllowDebugMenuForSettings", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
+	Patch_MainThreadCheck->Install_Method_Patch(Mono::PlayStation_Core, "Sce.PlayStation.Core.Runtime", "Diagnostics", "CheckRunningOnMainThread", 0, 0, "\xC3", 1);
 
 	Log("Getting Root Widget");
 	rootWidget = new Widget();
 	rootWidget->Instance = UI::Utilities::Get_root_Widget();
+
+	Log("Init Debug Label.");
+	//Init_Debug_Label();
 
 	Log("Init Complete");
 }
@@ -273,6 +308,7 @@ void Settings_Menu::Term()
 	//Remove Denug Settings Patch
 	delete Patch_IsDevkit;
 	delete Patch_AllowDebugMenu;
+	delete Patch_MainThreadCheck;
 
 	//Clean up detours
 	delete Detour_GetManifestResourceStream;
@@ -281,5 +317,9 @@ void Settings_Menu::Term()
 	delete Detour_OnPageActivating;
 	delete Detour_OnPress;
 
+	//Clean up custom drawn elements.
 	rootWidget->Remove_Child("BuildPanel");
+
+	//Clean up menu
+	Menu::Init();
 }

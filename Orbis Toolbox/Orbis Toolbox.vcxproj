@@ -43,7 +43,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>call build.bat $(IntDir) "$(TargetName)" "$(SolutionDir)"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>call Increment.bat "Version.h" "ORBIS_TOOLBOX_BUILDVERSION" 
+call build.bat $(IntDir) "$(TargetName)" "$(SolutionDir)"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>del /s /q /f $(IntDir)\*.o
 del /s /q /f $(IntDir)\*.elf
 del /s /q /f $(IntDir)\*.oelf
@@ -69,6 +70,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClCompile Include="DevkitPanel.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Power_Options.cpp" />
     <ClCompile Include="Mono.cpp" />
     <ClCompile Include="Orbis_Toolbox.cpp" />
     <ClCompile Include="Panel.cpp" />
@@ -84,6 +86,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClInclude Include="Detour.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Power_Options.h" />
     <ClInclude Include="Mono.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="Patcher.h" />

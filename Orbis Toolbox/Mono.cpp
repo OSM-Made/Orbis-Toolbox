@@ -2,6 +2,7 @@
 #include "Mono.h"
 
 MonoDomain* Mono::Root_Domain;
+MonoImage* Mono::PlayStation_Core;
 MonoImage* Mono::App_exe;
 MonoImage* Mono::platform_dll;
 MonoImage* Mono::Highlevel_UI2;
@@ -26,6 +27,7 @@ bool Mono::Init()
 	MonoLog("Get Images");
 
 	App_exe = Get_Image("/app0/psm/Application/app.exe");
+	PlayStation_Core = Get_Image("/%s/common/lib/Sce.PlayStation.Core.dll", sceKernelGetFsSandboxRandomWord());
 	platform_dll = Get_Image("/app0/psm/Application/platform.dll");
 	Highlevel_UI2 = Get_Image("/%s/common/lib/Sce.PlayStation.HighLevel.UI2.dll", sceKernelGetFsSandboxRandomWord());
 	KernelSysWrapper = Get_Image("/%s/common/lib/Sce.Vsh.KernelSysWrapper.dll", sceKernelGetFsSandboxRandomWord());

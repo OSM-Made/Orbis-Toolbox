@@ -46,6 +46,12 @@
     <Filter Include="Source Files\XML">
       <UniqueIdentifier>{3852b1fe-ad73-4e53-bc1d-d67375602f65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Menu\Sub Menus">
+      <UniqueIdentifier>{7f2735e6-1583-43ce-9998-e7216d23365d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menu\Sub Menus">
+      <UniqueIdentifier>{552f02a8-0753-4459-8e06-dd0c40336741}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="build.bat" />
@@ -99,6 +105,9 @@
     <ClCompile Include="Widget.cpp">
       <Filter>Source Files\UI\Elements</Filter>
     </ClCompile>
+    <ClCompile Include="Power_Options.cpp">
+      <Filter>Source Files\Menu\Sub Menus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -139,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="Widget.h">
       <Filter>Header Files\UI\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Power_Options.h">
+      <Filter>Header Files\Menu\Sub Menus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

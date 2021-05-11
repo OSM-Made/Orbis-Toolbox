@@ -7,6 +7,7 @@ private:
 
 public:
 	static MonoImage* App_exe;
+	static MonoImage* PlayStation_Core;
 	static MonoImage* platform_dll;
 	static MonoImage* Highlevel_UI2;
 	static MonoImage* KernelSysWrapper;

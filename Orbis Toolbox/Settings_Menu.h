@@ -21,10 +21,12 @@ private:
 	//Patches
 	static Patcher* Patch_IsDevkit;
 	static Patcher* Patch_AllowDebugMenu;
+	static Patcher* Patch_MainThreadCheck;
 
 	static Widget* rootWidget;
 
 public:
+	static void Init_Debug_Label();
 	static void Log(const char* fmt, ...);
 	static void Init();
 	static void Term();
