@@ -1,12 +1,12 @@
 #include "Common.h"
-#include "UI.h"
+#include "Debug_Features.h"
 
-void(*UI::DevkitPanel::createDevKitPanel)(MonoObject* Instance) = nullptr;
-Detour* UI::DevkitPanel::Detour_AreaManager_Constructor = nullptr;
+void(*Debug_Feature::DevkitPanel::createDevKitPanel)(MonoObject* Instance) = nullptr;
+Detour* Debug_Feature::DevkitPanel::Detour_AreaManager_Constructor = nullptr;
 
-bool UI::DevkitPanel::ShowPanel = false;
+bool Debug_Feature::DevkitPanel::ShowPanel = false;
 
-uint64_t UI::DevkitPanel::AreaManager_Constructor_Hook(MonoObject* Instance)
+uint64_t Debug_Feature::DevkitPanel::AreaManager_Constructor_Hook(MonoObject* Instance)
 {
 	uint64_t res = Detour_AreaManager_Constructor->Stub<uint64_t>(Instance);
 
@@ -16,7 +16,7 @@ uint64_t UI::DevkitPanel::AreaManager_Constructor_Hook(MonoObject* Instance)
 	return res;
 }
 
-void UI::DevkitPanel::Show()
+void Debug_Feature::DevkitPanel::Show()
 {
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
 	MonoObject* AreaManager_Instance = Mono::Get_Instance(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "Instance");
@@ -48,7 +48,7 @@ void UI::DevkitPanel::Show()
 	ShowPanel = true;
 }
 
-void UI::DevkitPanel::Hide()
+void Debug_Feature::DevkitPanel::Hide()
 {
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
 	MonoObject* AreaManager_Instance = Mono::Get_Instance(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "Instance");
@@ -73,7 +73,7 @@ void UI::DevkitPanel::Hide()
 	ShowPanel = false;
 }
 
-bool UI::DevkitPanel::GetState()
+bool Debug_Feature::DevkitPanel::GetState()
 {
 	MonoClass* FrameTask = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "FrameTask");
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
@@ -87,7 +87,7 @@ bool UI::DevkitPanel::GetState()
 		return false;
 }
 
-void UI::DevkitPanel::Init()
+void Debug_Feature::DevkitPanel::Init()
 {
 	//Get Method to make devkit panel
 	uint64_t createDevKitPanel_addr = Mono::Get_Address_of_Method(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "createDevKitPanel", 0);
@@ -98,7 +98,7 @@ void UI::DevkitPanel::Init()
 	Detour_AreaManager_Constructor->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", ".ctor", 0, (void*)AreaManager_Constructor_Hook, 15);
 }
 
-void UI::DevkitPanel::Term()
+void Debug_Feature::DevkitPanel::Term()
 {
 	delete Detour_AreaManager_Constructor;
 }

@@ -61,14 +61,5 @@ typedef unsigned char vm_prot_t;	/* protection codes */
 #define VM_PROT_RW		(VM_PROT_READ|VM_PROT_WRITE)
 #define	VM_PROT_DEFAULT		VM_PROT_ALL
 
-//unsigned long Syscall(unsigned int n, ...);
 void klog(const char* fmt, ...);
 void Notify(const char* MessageFMT, ...);
-
-//Mono
-MonoObject* New_MemoryStream(void* Buffer, int Buffer_Size);
-void ResetMenuItem(const char* Menu);
-void AddMenuItem(MonoObject* ElementData);
-MonoObject* NewElementData(const char* Id, const char* Title, const char* Title2, const char* Icon);
-
-MonoObject* NewUIColor(float R, float G, float B, float A);

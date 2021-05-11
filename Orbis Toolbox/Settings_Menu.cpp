@@ -1,8 +1,8 @@
 ﻿#include "Common.h"
-#include "Widget.h"
 #include "Settings_Menu.h"
 
 #include "UI.h"
+#include "Debug_Features.h"
 
 //Embedded xmls
 extern uint8_t settings_root[];
@@ -38,11 +38,11 @@ uint64_t Settings_Menu::GetManifestResourceStream_Hook(uint64_t inst, MonoString
 	klog("****\nFileName: %s\n****\n", str);
 
 	if (!strcmp(str, "Sce.Vsh.ShellUI.src.Sce.Vsh.ShellUI.Settings.Plugins.SettingsRoot.data.settings_root.xml"))
-		return (uint64_t)New_MemoryStream(settings_root, settings_root_Size);
+		return (uint64_t)UI::Utilities::MemoryStream(settings_root, settings_root_Size);
 	else if (!strcmp(str, "Sce.Vsh.ShellUI.src.Sce.Vsh.ShellUI.Settings.Plugins.orbis_toolbox.xml"))
-		return (uint64_t)New_MemoryStream(orbis_toolbox, orbis_toolbox_Size);
+		return (uint64_t)UI::Utilities::MemoryStream(orbis_toolbox, orbis_toolbox_Size);
 	else if (!strcmp(str, "Sce.Vsh.ShellUI.src.Sce.Vsh.ShellUI.Settings.Plugins.external_hdd.xml"))
-		return (uint64_t)New_MemoryStream(external_hdd, external_hdd_Size);
+		return (uint64_t)UI::Utilities::MemoryStream(external_hdd, external_hdd_Size);
 	else
 		return Detour_GetManifestResourceStream->Stub<uint64_t>(inst, FileName);
 }
@@ -92,13 +92,13 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 		if (!strcmp(Id, "id_enable_debug_settings"))
 			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("1"));
 		else if (!strcmp(Id, "id_system_disp_devkit_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", UI::DevkitPanel::ShowPanel ? Mono::New_String("1") : Mono::New_String("0"));
+			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::DevkitPanel::ShowPanel ? Mono::New_String("1") : Mono::New_String("0"));
 		else if (!strcmp(Id, "id_system_disp_titleid"))
-			Mono::Set_Property(SettingElement, element, "Value", UI::DebugTitleIdLabel::ShowLabels ? Mono::New_String("1") : Mono::New_String("0"));
+			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::DebugTitleIdLabel::ShowLabels ? Mono::New_String("1") : Mono::New_String("0"));
 		else if (!strcmp(Id, "id_system_disp_debug_settings_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", UI::Custom_Content::Show_Debug_Settings ? Mono::New_String("1") : Mono::New_String("0"));
+			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::Custom_Content::Show_Debug_Settings ? Mono::New_String("1") : Mono::New_String("0"));
 		else if (!strcmp(Id, "id_system_disp_app_home_panel"))
-			Mono::Set_Property(SettingElement, element, "Value", UI::Custom_Content::Show_App_Home ? Mono::New_String("1") : Mono::New_String("0"));
+			Mono::Set_Property(SettingElement, element, "Value", Debug_Feature::Custom_Content::Show_App_Home ? Mono::New_String("1") : Mono::New_String("0"));
 		else if (!strcmp(Id, "id_orbislib"))
 			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Stopped"));
 		else if(!strcmp(Id, "id_orbisftp"))
@@ -134,12 +134,12 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 			//Load payloads from Hdd
 			//Or maybe from webapi?
 			//Disable loading.
-			AddMenuItem(NewElementData("id_Custom_Loader", "★Custom Payload", "Click here to start listening for payload on port 9020.", ""));
-			AddMenuItem(NewElementData("id_GoldHEN_Loader", "GoldHEN", "New homebrew enabler developed by SiSTRo.", ""));
-			AddMenuItem(NewElementData("id_HEN_Loader", "HEN", "Enables launching of homebrew apps.", ""));
-			AddMenuItem(NewElementData("id_Updates_Loader", "Disable Updates", "Disables the consoles ability to download updates.", ""));
-			AddMenuItem(NewElementData("id_Kernel_Loader", "Kernel Dumper", "Dumps your consoles Kernel from memory to a USB.", ""));
-			ResetMenuItem("id_message");
+			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Custom_Loader", "★Custom Payload", "Click here to start listening for payload on port 9020.", ""));
+			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_GoldHEN_Loader", "GoldHEN", "New homebrew enabler developed by SiSTRo.", ""));
+			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_HEN_Loader", "HEN", "Enables launching of homebrew apps.", ""));
+			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Updates_Loader", "Disable Updates", "Disables the consoles ability to download updates.", ""));
+			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Kernel_Loader", "Kernel Dumper", "Dumps your consoles Kernel from memory to a USB.", ""));
+			UI::Utilities::ResetMenuItem("id_message");
 		}
 	}
 	Detour_OnPageActivating->Stub<void>(Instance, page, e);
@@ -150,10 +150,6 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 		This Hook allows us to catch when a element is selected
 		or its value is changed.
 */
-#include "Version.h"
-
-#include "Label.h"
-#include "Panel.h"
 
 void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, MonoObject* e)
 {
@@ -191,25 +187,25 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 		else if (!strcmp(Id, "id_system_disp_devkit_panel"))
 		{
 			if (atoi(Value) > 0)
-				UI::DevkitPanel::Show();
+				Debug_Feature::DevkitPanel::Show();
 			else
-				UI::DevkitPanel::Hide();
+				Debug_Feature::DevkitPanel::Hide();
 		}
 		else if (!strcmp(Id, "id_system_disp_titleid"))
 		{
 			if (atoi(Value) > 0)
-				UI::DebugTitleIdLabel::Show();
+				Debug_Feature::DebugTitleIdLabel::Show();
 			else
-				UI::DebugTitleIdLabel::Hide();
+				Debug_Feature::DebugTitleIdLabel::Hide();
 		}
 		else if (!strcmp(Id, "id_system_disp_debug_settings_panel"))
 		{
-			UI::Custom_Content::Show_Debug_Settings = (atoi(Value) > 0);
+			Debug_Feature::Custom_Content::Show_Debug_Settings = (atoi(Value) > 0);
 			UI::Utilities::ReloadItemList();
 		}
 		else if (!strcmp(Id, "id_system_disp_app_home_panel"))
 		{
-			UI::Custom_Content::Show_App_Home = (atoi(Value) > 0);
+			Debug_Feature::Custom_Content::Show_App_Home = (atoi(Value) > 0);
 			UI::Utilities::ReloadItemList();
 		}
 	}
@@ -234,9 +230,9 @@ void Settings_Menu::Init()
 {
 	Log("Init");
 
-	UI::DevkitPanel::Init();
-	UI::DebugTitleIdLabel::Init();
-	UI::Custom_Content::Init();
+	Debug_Feature::DevkitPanel::Init();
+	Debug_Feature::DebugTitleIdLabel::Init();
+	Debug_Feature::Custom_Content::Init();
 
 	//Detours
 	Log("Init Detours");
@@ -270,9 +266,9 @@ void Settings_Menu::Init()
 
 void Settings_Menu::Term()
 {
-	UI::DevkitPanel::Term();
-	UI::DebugTitleIdLabel::Term();
-	UI::Custom_Content::Term();
+	Debug_Feature::DevkitPanel::Term();
+	Debug_Feature::DebugTitleIdLabel::Term();
+	Debug_Feature::Custom_Content::Term();
 
 	//Remove Denug Settings Patch
 	delete Patch_IsDevkit;

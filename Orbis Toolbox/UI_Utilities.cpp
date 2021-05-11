@@ -20,7 +20,7 @@ void UI::Utilities::ReloadItemList()
 		Mono::Invoke<void>(Mono::App_exe, ContentsList, m_contentsList_0, "ReloadItemSource");
 }
 
-MonoObject* UI::Utilities::NewAppBrowseItem(const char* TitleId, const char* TitleName)
+MonoObject* UI::Utilities::AppBrowseItem(const char* TitleId, const char* TitleName)
 {
 	MonoObject* Instance = Mono::New_Object(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItem");
 	mono_runtime_object_init(Instance);
@@ -82,4 +82,74 @@ MonoObject* UI::Utilities::IUFont(int size, int style, int weight)
 	Mono::Invoke<void>(Mono::App_exe, UIFont, (MonoObject*)mono_object_unbox(UIFont_Instance), ".ctor", size, style, weight);
 
 	return (MonoObject*)mono_object_unbox(UIFont_Instance);
+}
+
+MonoObject* UI::Utilities::MemoryStream(void* Buffer, int Buffer_Size)
+{
+	MonoArray* Array = Mono::New_Array(mono_get_byte_class(), Buffer_Size);
+	char* Array_addr = mono_array_addr_with_size(Array, sizeof(char), 0);
+	memcpy(Array_addr, Buffer, Buffer_Size);
+
+	MonoClass* MemoryStream = Mono::Get_Class(Mono::mscorlib, "System.IO", "MemoryStream");
+	MonoObject* MemoryStream_Instance = Mono::New_Object(MemoryStream);
+	Mono::Invoke<void>(Mono::mscorlib, MemoryStream, MemoryStream_Instance, ".ctor", Array, true);
+
+	return MemoryStream_Instance;
+}
+
+void UI::Utilities::ResetMenuItem(const char* Menu)
+{
+	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");
+	Mono::Invoke<void>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "ResetMenuItem", Mono::New_String(Menu));
+}
+
+void UI::Utilities::AddMenuItem(MonoObject* ElementData)
+{
+	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");
+	Mono::Invoke<void>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "AddMenuItem", ElementData, Mono::New_String(""));
+}
+
+MonoObject* UI::Utilities::ElementData(const char* Id, const char* Title, const char* Title2, const char* Icon)
+{
+	MonoClass* ButtonElementData = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "ButtonElementData");
+	MonoClass* ElementData = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "ElementData");
+	MonoObject* Instance = Mono::New_Object(ButtonElementData);
+	mono_runtime_object_init(Instance);
+
+	Mono::Set_Property(ElementData, Instance, "Id", Mono::New_String(Id));
+	Mono::Set_Property(ElementData, Instance, "Title", Mono::New_String(Title));
+	Mono::Set_Property(ElementData, Instance, "SecondTitle", Mono::New_String(Title2));
+	Mono::Set_Property(ElementData, Instance, "Icon", Mono::New_String(Icon));
+
+	return Instance;
+}
+
+MonoObject* UI::Utilities::UIColor(float R, float G, float B, float A)
+{
+	MonoClass* UIColor = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "UIColor");
+
+	//Allocates memory for our new instance of a class.
+	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
+
+	//  Calling the constructor for the struct** Notice that for structs we have to unbox the
+	//  Object first before calling the constructor.
+	MonoObject* Real_Instance = (MonoObject*)mono_object_unbox(UIColor_Instance);
+	Mono::Invoke<void>(Mono::Highlevel_UI2, UIColor, Real_Instance, ".ctor", R, G, B, A);
+
+	return Real_Instance;
+}
+
+MonoObject* UI::Utilities::UIColor(float R, float G, float B)
+{
+	MonoClass* UIColor = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "UIColor");
+
+	//Allocates memory for our new instance of a class.
+	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
+
+	//  Calling the constructor for the struct** Notice that for structs we have to unbox the
+	//  Object first before calling the constructor.
+	MonoObject* Real_Instance = (MonoObject*)mono_object_unbox(UIColor_Instance);
+	Mono::Invoke<void>(Mono::Highlevel_UI2, UIColor, Real_Instance, ".ctor", R, G, B);
+
+	return Real_Instance;
 }

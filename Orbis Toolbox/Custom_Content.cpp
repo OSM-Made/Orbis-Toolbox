@@ -1,15 +1,15 @@
 ﻿#include "Common.h"
-#include "UI.h"
+#include "Debug_Features.h"
 
-Detour* UI::Custom_Content::Detour_ExecuteSelectQuery = nullptr;
-Detour* UI::Custom_Content::Detour_ExecuteCountQuery = nullptr;
-Detour* UI::Custom_Content::Detour_StartDebugSettings = nullptr;
-Detour* UI::Custom_Content::Detour_GetIconPath = nullptr;
+Detour* Debug_Feature::Custom_Content::Detour_ExecuteSelectQuery = nullptr;
+Detour* Debug_Feature::Custom_Content::Detour_ExecuteCountQuery = nullptr;
+Detour* Debug_Feature::Custom_Content::Detour_StartDebugSettings = nullptr;
+Detour* Debug_Feature::Custom_Content::Detour_GetIconPath = nullptr;
 
-bool UI::Custom_Content::Show_App_Home;
-bool UI::Custom_Content::Show_Debug_Settings;
+bool Debug_Feature::Custom_Content::Show_App_Home;
+bool Debug_Feature::Custom_Content::Show_Debug_Settings;
 
-MonoObject* UI::Custom_Content::ExecuteSelectQuery_Hook(MonoObject* Instance, int offset, int limit)
+MonoObject* Debug_Feature::Custom_Content::ExecuteSelectQuery_Hook(MonoObject* Instance, int offset, int limit)
 {
 	//System.Collections.Generic List
 	MonoClass* List = Mono::Get_Class(Mono::mscorlib, "System.Collections.Generic", "List`1");
@@ -18,12 +18,12 @@ MonoObject* UI::Custom_Content::ExecuteSelectQuery_Hook(MonoObject* Instance, in
 	if (Mono::Get_Field<int>(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItemAccessor", Instance, "exclusionFilterTypeAppHome") == 0)
 	{
 		if (Show_Debug_Settings)
-			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, Utilities::NewAppBrowseItem("NPXS20993", "★Orbis Toolbox"));
+			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, UI::Utilities::AppBrowseItem("NPXS20993", "★Orbis Toolbox"));
 
 		if (Show_App_Home)
 		{
-			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, Utilities::NewAppBrowseItem("NPXS29998", "★APP_HOME(data)"));
-			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, Utilities::NewAppBrowseItem("NPXS29999", "★APP_HOME(host)"));
+			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, UI::Utilities::AppBrowseItem("NPXS29998", "★APP_HOME(data)"));
+			Mono::Invoke<void>(Mono::Accessor_Db, List, List_Instance, "Insert", 0, UI::Utilities::AppBrowseItem("NPXS29999", "★APP_HOME(host)"));
 		}
 
 	}
@@ -31,7 +31,7 @@ MonoObject* UI::Custom_Content::ExecuteSelectQuery_Hook(MonoObject* Instance, in
 	return List_Instance;
 }
 
-int UI::Custom_Content::ExecuteCountQuery_Hook(MonoObject* Instance)
+int Debug_Feature::Custom_Content::ExecuteCountQuery_Hook(MonoObject* Instance)
 {
 	int Count = Detour_ExecuteCountQuery->Stub<int>(Instance);
 
@@ -47,7 +47,7 @@ int UI::Custom_Content::ExecuteCountQuery_Hook(MonoObject* Instance)
 	return Count;
 }
 
-void UI::Custom_Content::StartDebugSettings_Hook(MonoObject* Instance)
+void Debug_Feature::Custom_Content::StartDebugSettings_Hook(MonoObject* Instance)
 {
 	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");
 	MonoClass* SettingsApplication = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI", "SettingsApplication");
@@ -60,7 +60,7 @@ MonoString* GetTexture(const char* texId)
 	return Mono::New_String("cxml://BasePlugin/%s", texId);
 }
 
-MonoString* UI::Custom_Content::GetIconPath_Hook(MonoObject* item, bool withTheme)
+MonoString* Debug_Feature::Custom_Content::GetIconPath_Hook(MonoObject* item, bool withTheme)
 {
 	MonoString* IconPath = Detour_GetIconPath->Stub<MonoString*>(item, withTheme);
 
@@ -75,7 +75,7 @@ MonoString* UI::Custom_Content::GetIconPath_Hook(MonoObject* item, bool withThem
 		return IconPath;
 }
 
-void UI::Custom_Content::Init()
+void Debug_Feature::Custom_Content::Init()
 {
 	Detour_ExecuteSelectQuery = new Detour();
 	Detour_ExecuteCountQuery = new Detour();
@@ -88,7 +88,7 @@ void UI::Custom_Content::Init()
 	Detour_GetIconPath->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "AppBrowseItemMethodExteneder", "GetIconPath", 2, (void*)GetIconPath_Hook, 16);
 }
 
-void UI::Custom_Content::Term()
+void Debug_Feature::Custom_Content::Term()
 {
 	delete Detour_ExecuteSelectQuery;
 	delete Detour_ExecuteCountQuery;

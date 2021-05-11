@@ -27,7 +27,7 @@ void Label::Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment 
 
 void Label::Set_Colour(float R, float G, float B, float A)
 {
-	Mono::Set_Property_Invoke(Label_Class, Instance, "TextColor", NewUIColor(R, G, B, A));
+	Mono::Set_Property_Invoke(Label_Class, Instance, "TextColor", UI::Utilities::UIColor(R, G, B, A));
 }
 
 float Label::Get_Text_Width()

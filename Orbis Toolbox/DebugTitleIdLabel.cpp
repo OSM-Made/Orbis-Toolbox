@@ -1,14 +1,14 @@
 #include "Common.h"
-#include "UI.h"
+#include "Debug_Features.h"
 
-void(*UI::DebugTitleIdLabel::CreateDebugTitleIdLabel)(MonoObject* Instance);
-Detour* UI::DebugTitleIdLabel::Detour_ContentDecoratorBase_Constructor = nullptr;
+void(*Debug_Feature::DebugTitleIdLabel::CreateDebugTitleIdLabel)(MonoObject* Instance);
+Detour* Debug_Feature::DebugTitleIdLabel::Detour_ContentDecoratorBase_Constructor = nullptr;
 
-Patcher* UI::DebugTitleIdLabel::Patch_createDevKitPanel = nullptr;
+Patcher* Debug_Feature::DebugTitleIdLabel::Patch_createDevKitPanel = nullptr;
 
-bool UI::DebugTitleIdLabel::ShowLabels = false;
+bool Debug_Feature::DebugTitleIdLabel::ShowLabels = false;
 
-uint64_t UI::DebugTitleIdLabel::ContentDecoratorBase_Constructor_Hook(MonoObject* Instance, uint64_t param)
+uint64_t Debug_Feature::DebugTitleIdLabel::ContentDecoratorBase_Constructor_Hook(MonoObject* Instance, uint64_t param)
 {
 	uint64_t res = Detour_ContentDecoratorBase_Constructor->Stub<uint64_t>(Instance, param);
 
@@ -18,7 +18,7 @@ uint64_t UI::DebugTitleIdLabel::ContentDecoratorBase_Constructor_Hook(MonoObject
 	return res;
 }
 
-void UI::DebugTitleIdLabel::AddTitleId(MonoObject* m_contentsGridList)
+void Debug_Feature::DebugTitleIdLabel::AddTitleId(MonoObject* m_contentsGridList)
 {
 	MonoClass* ReadOnlyCollection = Mono::Get_Class(Mono::mscorlib, "System.Collections.ObjectModel", "ReadOnlyCollection`1");
 
@@ -36,7 +36,7 @@ void UI::DebugTitleIdLabel::AddTitleId(MonoObject* m_contentsGridList)
 	}
 }
 
-void UI::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridList)
+void Debug_Feature::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridList)
 {
 	MonoClass* ReadOnlyCollection = Mono::Get_Class(Mono::mscorlib, "System.Collections.ObjectModel", "ReadOnlyCollection`1");
 
@@ -78,7 +78,7 @@ void UI::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridList)
 	}
 }
 
-void UI::DebugTitleIdLabel::Show()
+void Debug_Feature::DebugTitleIdLabel::Show()
 {
 	MonoClass* ContentsAreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "ContentsAreaManager");
 	MonoObject* m_scene = Mono::Get_Field<MonoObject*>(ContentsAreaManager, Mono::Get_Instance(ContentsAreaManager, "Instance"), "m_scene");
@@ -90,7 +90,7 @@ void UI::DebugTitleIdLabel::Show()
 	ShowLabels = true;
 }
 
-void UI::DebugTitleIdLabel::Hide()
+void Debug_Feature::DebugTitleIdLabel::Hide()
 {
 	MonoClass* ContentsAreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "ContentsAreaManager");
 	MonoObject* m_scene = Mono::Get_Field<MonoObject*>(ContentsAreaManager, Mono::Get_Instance(ContentsAreaManager, "Instance"), "m_scene");
@@ -102,7 +102,7 @@ void UI::DebugTitleIdLabel::Hide()
 	ShowLabels = false;
 }
 
-void UI::DebugTitleIdLabel::Init()
+void Debug_Feature::DebugTitleIdLabel::Init()
 {
 	uint64_t CreateDebugTitleIdLabel_addr = Mono::Get_Address_of_Method(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "ContentDecoratorBase", "CreateDebugTitleIdLabel", 0);
 	CreateDebugTitleIdLabel = decltype(CreateDebugTitleIdLabel)(CreateDebugTitleIdLabel_addr);
@@ -115,7 +115,7 @@ void UI::DebugTitleIdLabel::Init()
 	Detour_ContentDecoratorBase_Constructor->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "ContentDecoratorBase", ".ctor", 1, (void*)ContentDecoratorBase_Constructor_Hook, 15);
 }
 
-void UI::DebugTitleIdLabel::Term()
+void Debug_Feature::DebugTitleIdLabel::Term()
 {
 	//Clean up Patches
 	delete Patch_createDevKitPanel;

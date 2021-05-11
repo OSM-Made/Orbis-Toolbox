@@ -17,7 +17,7 @@ void Panel::Set_Size(float Width, float Height)
 
 void Panel::Set_Colour(float R, float G, float B, float A)
 {
-	Mono::Set_Property_Invoke(Panel_Class, Instance, "BackgroundColor", NewUIColor(R, G, B, A));
+	Mono::Set_Property_Invoke(Panel_Class, Instance, "BackgroundColor", UI::Utilities::UIColor(R, G, B, A));
 }
 
 void Panel::Set_Rendering_Order(RenderingOrder Order)
