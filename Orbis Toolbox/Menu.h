@@ -16,13 +16,7 @@ class MenuOption
 {
 public:
 	Data_Type Type;
-	union
-	{
-		bool* Boolean;
-		int* Integer;
-		float* Float;
-		char* String;
-	}Data;
+	uint64_t* Data;
 	bool Visible;
 	void(*OnPreCreate)();
 	void(*OnPageActivating)();
@@ -42,7 +36,7 @@ public:
 	static MenuOption Add_Option(const char* Option_Id, Value* Data, Data_Type Type, void(*OnPress)() = nullptr, void(*OnPreCreate)() = nullptr, void(*OnPageActivating)() = nullptr)
 	{
 		MenuOption Temp;
-		Temp.Data = Data;
+		Temp.Data = (uint64_t*)Data;
 		Temp.Type = Type;
 		Temp.Visible = true;
 		Temp.OnPreCreate = OnPreCreate;

@@ -110,13 +110,13 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 
 				//Update the shown value of the option.
 				if (Cur.Type == Type_Boolean)
-					Mono::Set_Property(SettingElement, element, "Value", *Cur.Data.Boolean ? Mono::New_String("1") : Mono::New_String("0"));
+					Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur.Data) ? Mono::New_String("1") : Mono::New_String("0"));
 				/*else if (Cur.Type == Type_Integer)
 					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Integer).c_str()));
 				else if (Cur.Type == Type_Float)
 					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Float).c_str()));*/
 				else if (Cur.Type == Type_String)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(Cur.Data.String));
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur.Data));
 
 				//Call the OnPreCreate call back.
 				if (Cur.OnPreCreate != nullptr)
@@ -189,7 +189,7 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 
 		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
-			Log("%s -> OnPress()", it->first);
+			Log("OnPress() -> %s == %s", Id, it->first);
 
 			if (!strcmp(Id, it->first))
 			{
@@ -199,11 +199,11 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 
 				//Update the local value of the option.
 				if (Cur.Type == Type_Boolean)
-					*Cur.Data.Boolean = (atoi(Value) >= 1);
+					*(bool*)Cur.Data = (atoi(Value) >= 1);
 				else if (Cur.Type == Type_Integer)
-					*Cur.Data.Integer = atoi(Value);
+					*Cur.Data = atoi(Value);
 				else if (Cur.Type == Type_Float)
-					*Cur.Data.Float = atof(Value);
+					*Cur.Data = atof(Value);
 				//TODO: Add String
 
 				//Call the OnPress call back.
@@ -257,6 +257,8 @@ void Settings_Menu::Init()
 {
 	Log("Init");
 
+	Log(ORBIS_TOOLBOX_BUILDSTRING);
+
 	Debug_Feature::DevkitPanel::Init();
 	Debug_Feature::DebugTitleIdLabel::Init();
 	Debug_Feature::Custom_Content::Init();
@@ -282,7 +284,7 @@ void Settings_Menu::Init()
 	//Debug Settings Patch
 	Patch_IsDevkit = new Patcher();
 	Patch_AllowDebugMenu = new Patcher();
-	Patch_MainThreadCheck = new Patcher(); //CheckRunningOnMainThread
+	Patch_MainThreadCheck = new Patcher();
 
 	Log("Install Patches");
 	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);

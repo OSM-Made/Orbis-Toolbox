@@ -78,6 +78,11 @@ void Debug_Feature::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridL
 	}
 }
 
+void Debug_Feature::DebugTitleIdLabel::Update()
+{
+	Debug_Feature::DebugTitleIdLabel::ShowLabels ? Show() : Hide();
+}
+
 void Debug_Feature::DebugTitleIdLabel::Show()
 {
 	MonoClass* ContentsAreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "ContentsAreaManager");

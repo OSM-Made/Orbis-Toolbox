@@ -42,7 +42,7 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>ORBIS_TOOLBOX_DEBUG;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>call Increment.bat "Version.h" "ORBIS_TOOLBOX_BUILDVERSION" 
 call build.bat $(IntDir) "$(TargetName)" "$(SolutionDir)"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>del /s /q /f $(IntDir)\*.o

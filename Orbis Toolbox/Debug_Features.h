@@ -39,6 +39,7 @@ public:
 	public:
 		static bool ShowLabels;
 
+		static void Update();
 		static void Show();
 		static void Hide();
 		static void Init();
@@ -55,6 +56,7 @@ public:
 	public:
 		static bool ShowPanel;
 
+		static void Update();
 		static void Show();
 		static void Hide();
 		static bool GetState();

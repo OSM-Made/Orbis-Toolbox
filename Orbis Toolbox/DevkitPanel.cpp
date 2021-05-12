@@ -16,6 +16,11 @@ uint64_t Debug_Feature::DevkitPanel::AreaManager_Constructor_Hook(MonoObject* In
 	return res;
 }
 
+void Debug_Feature::DevkitPanel::Update()
+{
+	Debug_Feature::DevkitPanel::ShowPanel ? Show() : Hide();
+}
+
 void Debug_Feature::DevkitPanel::Show()
 {
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");

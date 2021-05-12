@@ -112,7 +112,7 @@
       
     </setting_list>
 
-     <button id="id_Test" title="Test Button" value="0"/> 
+     <button id="id_test" title="Test Button" value="0"/> 
 
     <!-- Enable Debug Settings -->
     <!-- <toggle_switch id="id_enable_debug_settings" title="Enable ★Debug Settings" value="0"/> -->
