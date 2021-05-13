@@ -220,6 +220,17 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 
 void Settings_Menu::Init_Debug_Label()
 {
+	MonoClass* Scene = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Scene");
+	MonoClass* LayerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "LayerManager");
+	MonoClass* ContainerScene = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "ContainerScene");
+
+	MonoObject* New_Scene = Mono::New_Object(Scene);
+	mono_runtime_object_init(New_Scene);
+
+	Mono::Set_Property(Scene, New_Scene, "Focusable", false);
+
+	rootWidget->Instance = Mono::Get_Property_Invoke<MonoObject*>(Scene, New_Scene, "RootWidget");
+
 	if (!rootWidget->Has_Child("BuildPanel"))
 	{
 		//Create new Label for the build string.
@@ -238,6 +249,9 @@ void Settings_Menu::Init_Debug_Label()
 	}
 	else
 		rootWidget->Remove_Child("BuildPanel");
+
+	MonoObject* SystemOverlay = Mono::Invoke<MonoObject*>(Mono::App_exe, LayerManager, nullptr, "FindContainerSceneByPath", Mono::New_String("SystemOverlay"));
+	Mono::Invoke<void>(Mono::App_exe, ContainerScene, SystemOverlay, "AddScene", New_Scene);
 }
 
 void Settings_Menu::Log(const char* fmt, ...)
@@ -293,7 +307,7 @@ void Settings_Menu::Init()
 
 	Log("Getting Root Widget");
 	rootWidget = new Widget();
-	rootWidget->Instance = UI::Utilities::Get_root_Widget();
+	//rootWidget->Instance = UI::Utilities::Get_root_Widget();
 
 	Log("Init Debug Label.");
 	//Init_Debug_Label();

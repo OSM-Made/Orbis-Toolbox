@@ -96,7 +96,7 @@
     <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="https://i.imgur.com/Ye49LWV.png">
       
       <!-- Load Config on Startup -->
-      <toggle_switch id="id_load_cfg_on_start" title="Load Config on Startup" value="0"/>
+      <toggle_switch id="id_load_cfg_on_start" title="Load Config on Startup" second_title="Will attempt to load a config file from &quot;/user/temp/Orbis Toolbox/Settings.cfg&quot;." value="0"/>
       
       <!-- Show TitleID Labels -->
       <toggle_switch id="id_system_disp_titleid" title="Show TitleID Labels" value="0"/>
@@ -109,7 +109,13 @@
 
       <!-- Show ";★APP_HOME" -->
       <toggle_switch id="id_system_disp_app_home_panel" title="Show &quot;★APP_HOME&quot;" value="0"/>
-      
+
+      <!-- Load Settings -->
+      <button id="id_load_settings" title="Load Settings"/>
+
+      <!-- Save Settings -->
+      <button id="id_save_settings" title="Save Settings"/>
+
     </setting_list>
 
      <button id="id_test" title="Test Button" value="0"/> 

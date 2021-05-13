@@ -1,5 +1,6 @@
 #pragma once
 
+#include <errno.h>
 #include <map>
 #include <vector>
 #include <string>
