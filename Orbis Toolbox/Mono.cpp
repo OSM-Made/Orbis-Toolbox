@@ -5,7 +5,7 @@ MonoDomain* Mono::Root_Domain;
 MonoImage* Mono::PlayStation_Core;
 MonoImage* Mono::App_exe;
 MonoImage* Mono::platform_dll;
-MonoImage* Mono::Highlevel_UI2;
+MonoImage* Mono::PUI;
 MonoImage* Mono::KernelSysWrapper;
 MonoImage* Mono::mscorlib;
 MonoImage* Mono::Accessor_Db;
@@ -26,10 +26,10 @@ bool Mono::Init()
 
 	MonoLog("Get Images");
 
+	PUI = Get_Image("/%s/common/lib/Sce.PlayStation.PUI.dll", sceKernelGetFsSandboxRandomWord());
 	App_exe = Get_Image("/app0/psm/Application/app.exe");
-	PlayStation_Core = Get_Image("/%s/common/lib/Sce.PlayStation.Core.dll", sceKernelGetFsSandboxRandomWord());
 	platform_dll = Get_Image("/app0/psm/Application/platform.dll");
-	Highlevel_UI2 = Get_Image("/%s/common/lib/Sce.PlayStation.HighLevel.UI2.dll", sceKernelGetFsSandboxRandomWord());
+	PlayStation_Core = Get_Image("/%s/common/lib/Sce.PlayStation.Core.dll", sceKernelGetFsSandboxRandomWord());
 	KernelSysWrapper = Get_Image("/%s/common/lib/Sce.Vsh.KernelSysWrapper.dll", sceKernelGetFsSandboxRandomWord());
 	mscorlib = Get_Image("/%s/common/lib/mscorlib.dll", sceKernelGetFsSandboxRandomWord());
 	Accessor_Db = Get_Image("/%s/common/lib/Sce.Vsh.Accessor.Db.dll", sceKernelGetFsSandboxRandomWord());

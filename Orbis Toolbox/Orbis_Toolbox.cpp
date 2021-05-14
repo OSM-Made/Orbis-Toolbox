@@ -5,13 +5,9 @@ int* __errno_location();
 
 extern "C"
 {
-
-
 	int module_start()
 	{
 		klog("!! Hello World !!\n");
-
-		mount_large_fs("/dev/da0x4.crypt", "/system", "exfatfs", "511", MNT_UPDATE);
 
 		Mono::Init();
 

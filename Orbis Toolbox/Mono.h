@@ -9,7 +9,7 @@ public:
 	static MonoImage* App_exe;
 	static MonoImage* PlayStation_Core;
 	static MonoImage* platform_dll;
-	static MonoImage* Highlevel_UI2;
+	static MonoImage* PUI;
 	static MonoImage* KernelSysWrapper;
 	static MonoImage* mscorlib;
 	static MonoImage* Accessor_Db;

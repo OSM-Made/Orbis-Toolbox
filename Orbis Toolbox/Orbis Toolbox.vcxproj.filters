@@ -111,6 +111,9 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files\Utilites</Filter>
     </ClCompile>
+    <ClCompile Include="LncUtil.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -156,6 +159,9 @@
       <Filter>Header Files\Menu\Sub Menus</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="LncUtil.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
