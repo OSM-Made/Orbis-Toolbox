@@ -32,7 +32,7 @@ void Panel::Set_Layout_Rule(MonoObject* Rule)
 
 Panel::Panel(const char* Name)
 {
-	Panel_Class = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Panel");
+	Panel_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Panel");
 
 	//Allocates memory for our new instance of a class.
 	Instance = Mono::New_Object(Panel_Class);
@@ -46,7 +46,7 @@ Panel::Panel(const char* Name)
 
 Panel::Panel(const char* Name, float X, float Y, float Width, float Height, float R, float G, float B, float A, RenderingOrder Order, MonoObject* Rule)
 {
-	Panel_Class = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Panel");
+	Panel_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Panel");
 
 	//Allocates memory for our new instance of a class.
 	Instance = Mono::New_Object(Panel_Class);
