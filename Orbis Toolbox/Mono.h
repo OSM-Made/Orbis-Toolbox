@@ -9,11 +9,13 @@ public:
 	static MonoImage* App_exe;
 	static MonoImage* PlayStation_Core;
 	static MonoImage* platform_dll;
-	static MonoImage* Highlevel_UI2;
+	static MonoImage* UI_dll;
 	static MonoImage* KernelSysWrapper;
 	static MonoImage* mscorlib;
 	static MonoImage* Accessor_Db;
 	static MonoImage* Vsh_Lx;
+
+	static bool PUI2;
 
 	static bool Init();
 	static void MonoLog(const char* fmt, ...);

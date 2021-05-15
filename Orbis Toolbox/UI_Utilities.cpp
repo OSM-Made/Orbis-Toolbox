@@ -40,12 +40,12 @@ MonoObject* UI::Utilities::Get_Top_Scene()
 
 MonoObject* UI::Utilities::Get_root_Widget()
 {
-	return Mono::Get_Property<MonoObject*>(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Scene", Get_Top_Scene(), "RootWidget");
+	return Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene", Get_Top_Scene(), "RootWidget");
 }
 
 MonoObject* UI::Utilities::Adjust_Content(int AlignOrientation, float PaddingLeft, float PaddingRight, float PaddingTop, float PaddingBottom)
 {
-	MonoClass* AdjustContent = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "AdjustContent");
+	MonoClass* AdjustContent = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "AdjustContent");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* AdjustContent_Instance = Mono::New_Object(AdjustContent);
@@ -65,7 +65,7 @@ MonoObject* UI::Utilities::Adjust_Content(int AlignOrientation, float PaddingLef
 
 MonoObject* UI::Utilities::Fit_To_Children()
 {
-	MonoClass* FitToChildren = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "FitToChildren");
+	MonoClass* FitToChildren = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "FitToChildren");
 
 	MonoObject* FitToChildren_Instance = Mono::New_Object(FitToChildren);
 	mono_runtime_object_init(FitToChildren_Instance);
@@ -75,7 +75,7 @@ MonoObject* UI::Utilities::Fit_To_Children()
 
 MonoObject* UI::Utilities::IUFont(int size, int style, int weight)
 {
-	MonoClass* UIFont = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "UIFont");
+	MonoClass* UIFont = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "UIFont");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIFont_Instance = Mono::New_Object(UIFont);
@@ -126,7 +126,7 @@ MonoObject* UI::Utilities::ElementData(const char* Id, const char* Title, const 
 
 MonoObject* UI::Utilities::UIColor(float R, float G, float B, float A)
 {
-	MonoClass* UIColor = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "UIColor");
+	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIColor");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
@@ -134,14 +134,14 @@ MonoObject* UI::Utilities::UIColor(float R, float G, float B, float A)
 	//  Calling the constructor for the struct** Notice that for structs we have to unbox the
 	//  Object first before calling the constructor.
 	MonoObject* Real_Instance = (MonoObject*)mono_object_unbox(UIColor_Instance);
-	Mono::Invoke<void>(Mono::Highlevel_UI2, UIColor, Real_Instance, ".ctor", R, G, B, A);
+	Mono::Invoke<void>(Mono::UI_dll, UIColor, Real_Instance, ".ctor", R, G, B, A);
 
 	return Real_Instance;
 }
 
 MonoObject* UI::Utilities::UIColor(float R, float G, float B)
 {
-	MonoClass* UIColor = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "UIColor");
+	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIColor");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
@@ -149,7 +149,7 @@ MonoObject* UI::Utilities::UIColor(float R, float G, float B)
 	//  Calling the constructor for the struct** Notice that for structs we have to unbox the
 	//  Object first before calling the constructor.
 	MonoObject* Real_Instance = (MonoObject*)mono_object_unbox(UIColor_Instance);
-	Mono::Invoke<void>(Mono::Highlevel_UI2, UIColor, Real_Instance, ".ctor", R, G, B);
+	Mono::Invoke<void>(Mono::UI_dll, UIColor, Real_Instance, ".ctor", R, G, B);
 
 	return Real_Instance;
 }

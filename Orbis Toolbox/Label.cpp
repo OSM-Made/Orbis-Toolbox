@@ -42,7 +42,7 @@ float Label::Get_Text_Height()
 
 Label::Label(const char* Name)
 {
-	Label_Class = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Label");
+	Label_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Label");
 
 	//Allocates memory for our new instance of a class.
 	Instance = Mono::New_Object(Label_Class);
@@ -56,7 +56,7 @@ Label::Label(const char* Name)
 
 Label::Label(const char* Name, float X, float Y, const char* Text, int Size, FontStyle Style, FontWeight Weight, VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align, float R, float G, float B, float A)
 {
-	Label_Class = Mono::Get_Class(Mono::Highlevel_UI2, "Sce.PlayStation.HighLevel.UI2", "Label");
+	Label_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI3", "Label");
 
 	//Allocates memory for our new instance of a class.
 	Instance = Mono::New_Object(Label_Class);

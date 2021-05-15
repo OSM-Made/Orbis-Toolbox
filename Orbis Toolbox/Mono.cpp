@@ -5,11 +5,13 @@ MonoDomain* Mono::Root_Domain;
 MonoImage* Mono::PlayStation_Core;
 MonoImage* Mono::App_exe;
 MonoImage* Mono::platform_dll;
-MonoImage* Mono::Highlevel_UI2;
+MonoImage* Mono::UI_dll;
 MonoImage* Mono::KernelSysWrapper;
 MonoImage* Mono::mscorlib;
 MonoImage* Mono::Accessor_Db;
 MonoImage* Mono::Vsh_Lx;
+
+bool Mono::PUI2 = true;
 
 bool Mono::Init()
 {
@@ -26,10 +28,20 @@ bool Mono::Init()
 
 	MonoLog("Get Images");
 
+	PUI2 = true;
+	UI_dll = Get_Image("/%s/common/lib/Sce.PlayStation.PUI.dll", sceKernelGetFsSandboxRandomWord());
+	if (!UI_dll)
+	{
+		klog("Using Highlevel.UI2...\n");
+		UI_dll = Get_Image("/%s/common/lib/Sce.PlayStation.HighLevel.UI2.dll", sceKernelGetFsSandboxRandomWord());
+		PUI2 = false;
+	}
+	else
+		klog("Using PUI...\n");
+
 	App_exe = Get_Image("/app0/psm/Application/app.exe");
-	PlayStation_Core = Get_Image("/%s/common/lib/Sce.PlayStation.Core.dll", sceKernelGetFsSandboxRandomWord());
 	platform_dll = Get_Image("/app0/psm/Application/platform.dll");
-	Highlevel_UI2 = Get_Image("/%s/common/lib/Sce.PlayStation.HighLevel.UI2.dll", sceKernelGetFsSandboxRandomWord());
+	PlayStation_Core = Get_Image("/%s/common/lib/Sce.PlayStation.Core.dll", sceKernelGetFsSandboxRandomWord());
 	KernelSysWrapper = Get_Image("/%s/common/lib/Sce.Vsh.KernelSysWrapper.dll", sceKernelGetFsSandboxRandomWord());
 	mscorlib = Get_Image("/%s/common/lib/mscorlib.dll", sceKernelGetFsSandboxRandomWord());
 	Accessor_Db = Get_Image("/%s/common/lib/Sce.Vsh.Accessor.Db.dll", sceKernelGetFsSandboxRandomWord());
@@ -66,14 +78,14 @@ MonoImage* Mono::Get_Image(const char* Assembly_Name, ...)
 	MonoAssembly* Assembly = mono_domain_assembly_open(Root_Domain, va_Buffer);
 	if (Assembly == nullptr)
 	{
-		MonoLog("GetImage: Failed to open \"%s\" assembly.\n", va_Buffer);
+		MonoLog("GetImage: Failed to open \"%s\" assembly.", va_Buffer);
 		return nullptr;
 	}
 
 	MonoImage* Assembly_Image = mono_assembly_get_image(Assembly);
 	if (Assembly_Image == nullptr)
 	{
-		MonoLog("GetImage: Failed to open \"%s\" Image.\n", va_Buffer);
+		MonoLog("GetImage: Failed to open \"%s\" Image.", va_Buffer);
 		return nullptr;
 	}
 

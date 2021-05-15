@@ -82,10 +82,10 @@ void Debug_Feature::Custom_Content::Init()
 	Detour_StartDebugSettings = new Detour();
 	Detour_GetIconPath = new Detour();
 
-	Detour_ExecuteSelectQuery->DetourMethod(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItemAccessor", "ExecuteSelectQuery", 2, (void*)ExecuteSelectQuery_Hook, 15);
-	Detour_ExecuteCountQuery->DetourMethod(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItemAccessor", "ExecuteCountQuery", 0, (void*)ExecuteCountQuery_Hook, 15);
-	Detour_StartDebugSettings->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI", "SettingsApplication", "StartDebugSettings", 0, (void*)StartDebugSettings_Hook, 14);
-	Detour_GetIconPath->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "AppBrowseItemMethodExteneder", "GetIconPath", 2, (void*)GetIconPath_Hook, 16);
+	Detour_ExecuteSelectQuery->DetourMethod(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItemAccessor", "ExecuteSelectQuery", 2, (void*)ExecuteSelectQuery_Hook);
+	Detour_ExecuteCountQuery->DetourMethod(Mono::Accessor_Db, "Sce.Vsh.Accessor.Db", "AppBrowseItemAccessor", "ExecuteCountQuery", 0, (void*)ExecuteCountQuery_Hook);
+	Detour_StartDebugSettings->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI", "SettingsApplication", "StartDebugSettings", 0, (void*)StartDebugSettings_Hook);
+	Detour_GetIconPath->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "AppBrowseItemMethodExteneder", "GetIconPath", 2, (void*)GetIconPath_Hook);
 }
 
 void Debug_Feature::Custom_Content::Term()

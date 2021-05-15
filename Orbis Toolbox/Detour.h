@@ -19,8 +19,8 @@ public:
 	}
 
 	void WriteJump(void* Address, void* Destination);
-	void* DetourFunction(uint64_t FunctionPtr, void* HookPtr, int32_t InstructionSize);
-	void* DetourMethod(MonoImage* Assembly_Image, const char* Namespace, const char* Klass, const char* Method, int Param_Count, void* HookPtr, int32_t InstructionSize);
+	void* DetourFunction(uint64_t FunctionPtr, void* HookPtr);
+	void* DetourMethod(MonoImage* Assembly_Image, const char* Namespace, const char* Klass, const char* Method, int Param_Count, void* HookPtr);
 	void RestoreFunction();
 
 	Detour();

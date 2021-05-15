@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Detour.h"
 #include "Mono.h"
+#include "hde64.h"
 
 void Detour::WriteJump(void* Address, void* Destination)
 {
@@ -15,13 +16,27 @@ void Detour::WriteJump(void* Address, void* Destination)
 	memcpy(Address, JumpInstructions, sizeof(JumpInstructions));
 }
 
-void* Detour::DetourFunction(uint64_t FunctionPtr, void* HookPtr, int32_t InstructionSize)
+void* Detour::DetourFunction(uint64_t FunctionPtr, void* HookPtr)
 {
 	if (FunctionPtr == NULL || HookPtr == NULL)
 	{
 		klog("[Detour] DetourFunction: FunctionPtr or HookPtr NULL (%llX -> %llX)\n", FunctionPtr, HookPtr);
 		return (void*)0;
 	}
+	uint32_t InstructionSize = 0;
+
+	while (InstructionSize < 14)
+	{
+		hde64s hs;
+		uint32_t temp = hde64_disasm((void*)(FunctionPtr + InstructionSize), &hs);
+
+		if (hs.flags & F_ERROR)
+			return (void*)0;
+
+		InstructionSize += temp;
+	}
+
+	klog("InstructionSize: %i\n", InstructionSize);
 
 	if (InstructionSize < 14)
 	{
@@ -56,7 +71,7 @@ void* Detour::DetourFunction(uint64_t FunctionPtr, void* HookPtr, int32_t Instru
 	return this->StubPtr;
 }
 
-void* Detour::DetourMethod(MonoImage* Assembly_Image, const char* Namespace, const char* Klass, const char* Method, int Param_Count, void* HookPtr, int32_t InstructionSize)
+void* Detour::DetourMethod(MonoImage* Assembly_Image, const char* Namespace, const char* Klass, const char* Method, int Param_Count, void* HookPtr)
 {
 	uint64_t Method_addr = Mono::Get_Address_of_Method(Assembly_Image, Namespace, Klass, Method, Param_Count);
 
@@ -66,7 +81,7 @@ void* Detour::DetourMethod(MonoImage* Assembly_Image, const char* Namespace, con
 		return (void*)0;
 	}
 
-	return DetourFunction(Method_addr, HookPtr, InstructionSize);
+	return DetourFunction(Method_addr, HookPtr);
 }
 
 void Detour::RestoreFunction()

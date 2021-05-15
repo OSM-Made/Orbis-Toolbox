@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "Power_Options.h"
+#include "LncUtil.h"
 
 void Power_Options::Reload_ShellUI()
 {
@@ -8,15 +9,15 @@ void Power_Options::Reload_ShellUI()
 
 void Power_Options::Reboot()
 {
-	Notify("%s", __FUNCTION__);
+	LncUtil::SystemReboot();
 }
 
 void Power_Options::Shutdown()
 {
-	Notify("%s", __FUNCTION__);
+	LncUtil::SystemShutdown(LncUtil::None);
 }
 
 void Power_Options::Suspend()
 {
-	Notify("%s", __FUNCTION__);
+	LncUtil::SystemShutdown(LncUtil::Eap);
 }
