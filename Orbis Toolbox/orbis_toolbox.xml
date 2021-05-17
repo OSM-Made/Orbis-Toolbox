@@ -110,6 +110,27 @@
       <!-- Show ";★APP_HOME" -->
       <toggle_switch id="id_system_disp_app_home_panel" title="Show &quot;★APP_HOME&quot;" value="0"/>
 
+      <!-- Game Overlay -->
+      <setting_list id="game_overlay" title="Game Overlay">
+
+        <!-- Overlay Location -->
+        <list id="id_overlay_loc" title="Overlay Location" value="Left" >
+          <list_item id="id_overlay_Left" title="Left" value="Left"/>
+          <list_item id="id_overlay_right" title="Right" value="Right"/>
+          <list_item id="id_overlay_center" title="Center" value="Center"/>
+        </list>
+        
+        <!-- CPU Temperature -->
+        <toggle_switch id="id_overlay_cpu" title="CPU Temperature" value="0"/>
+
+        <!-- SOC Temperature -->
+        <toggle_switch id="id_overlay_soc" title="SOC Temperature" value="0"/>
+        
+      </setting_list>
+
+      <!-- Debug Overlay -->
+      <toggle_switch id="id_overlay_dbg" title="Debug Overlay" value="0"/>
+
       <!-- Load Settings -->
       <button id="id_load_settings" title="Load Settings"/>
 
@@ -118,8 +139,8 @@
 
     </setting_list>
 
-     <button id="id_test" title="Test Button" value="0"/> 
-
+    <button id="id_test" title="Test Game Scene" value="0"/>
+    
     <!-- Enable Debug Settings -->
     <!-- <toggle_switch id="id_enable_debug_settings" title="Enable ★Debug Settings" value="0"/> -->
 

@@ -33,11 +33,26 @@ public:
 	};
 
 	void Set_Location(float X, float Y);
-	void Set_Text(const char* Text);
+	template<typename ...pack>
+	void Set_Text(const char* Text, pack... Args)
+	{
+		if (hAlign == HorizontalAlignment::hLeft)
+			Set_Location(X, Y);
+		else if (hAlign == HorizontalAlignment::hRight)
+			Set_Location(X - Get_Text_Width(), Y);
+		else if (hAlign == HorizontalAlignment::hCenter)
+			Set_Location(X - (Get_Text_Width() / 2), Y);
+
+		Mono::Set_Property(Label_Class, Instance, "Text", Mono::New_String(Text, Args...));
+	}
 	void Set_Font(int Size, FontStyle Style, FontWeight Weight);
 	void Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align);
 	void Set_Colour(float R, float G, float B, float A);
 
+	float X, Y;
+	VerticalAlignment vAlign;
+	HorizontalAlignment hAlign;
+	float R, G, B, A;
 	float Get_Text_Width();
 	float Get_Text_Height();
 

@@ -3,6 +3,8 @@
 
 #include "UI.h"
 #include "Debug_Features.h"
+#include "Game_Overlay.h"
+#include "Build_Overlay.h"
 
 //Embedded xmls
 extern uint8_t settings_root[];
@@ -18,13 +20,12 @@ Detour* Settings_Menu::Detour_OnCheckVisible = nullptr;
 Detour* Settings_Menu::Detour_OnPreCreate = nullptr;
 Detour* Settings_Menu::Detour_OnPageActivating = nullptr;
 Detour* Settings_Menu::Detour_OnPress = nullptr;
+Detour* Settings_Menu::Detour_OnRender = nullptr;
 
 //Patches
 Patcher* Settings_Menu::Patch_IsDevkit;
 Patcher* Settings_Menu::Patch_AllowDebugMenu;
 Patcher* Settings_Menu::Patch_MainThreadCheck;
-
-Widget* Settings_Menu::rootWidget;
 
 /*
 	GetManifestResourceStream:
@@ -204,7 +205,8 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 					*Cur.Data = atoi(Value);
 				else if (Cur.Type == Type_Float)
 					*Cur.Data = atof(Value);
-				//TODO: Add String
+				else if (Cur.Type == Type_String)
+					strcpy((char*)Cur.Data, Value);
 
 				//Call the OnPress call back.
 				if (Cur.OnPress != nullptr)
@@ -218,40 +220,26 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 	Detour_OnPress->Stub<void>(Instance, element, e);
 }
 
-void Settings_Menu::Init_Debug_Label()
+void Settings_Menu::OnRender_Hook(MonoObject* Instance)
 {
-	MonoClass* Scene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene");
-	MonoClass* LayerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "LayerManager");
-	MonoClass* ContainerScene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ContainerScene");
-
-	MonoObject* New_Scene = Mono::New_Object(Scene);
-	mono_runtime_object_init(New_Scene);
-
-	Mono::Set_Property(Scene, New_Scene, "Focusable", false);
-
-	rootWidget->Instance = Mono::Get_Property_Invoke<MonoObject*>(Scene, New_Scene, "RootWidget");
-
-	if (!rootWidget->Has_Child("BuildPanel"))
+	static bool Do_Once = false;
+	if (!Do_Once)
 	{
-		//Create new Label for the build string.
-		Label* BuildLabel = new Label("BuildLabel", 20.0f, 36.0f, ORBIS_TOOLBOX_BUILDSTRING, 20, Label::fsItalic,
-			Label::fwBold, Label::VerticalAlignment::vCenter, Label::HorizontalAlignment::hCenter, 1.0f, 1.0f, 1.0f, 1.0f);
+		Log("Init Game Overlay");
+		Game_Overlay::Init();
 
-		//Create new panel for the build Panel.
-		Panel* BuildPanel = new Panel("BuildPanel", 1920.0f - (BuildLabel->Get_Text_Width() + 30.0f), 20.0f, 440.0f, 100.0f,
-			0.92f, 0.2f, 0.16f, 0.8f, Panel::RenderingOrder::Last, UI::Utilities::Adjust_Content(Panel::Vertical, 4, 4, 4, 4));
+		Log("Init Build Overlay");
+		Build_Overlay::Init();
 
-		//Append the Text to the Build Panel.
-		BuildPanel->Append_Child("BuildLabel", BuildLabel);
+		Build_Overlay::Draw = true;
+		Build_Overlay::Update();
 
-		//Append the Label to the root widget.
-		rootWidget->Append_Child("BuildPanel", BuildPanel);
+		Do_Once = true;
 	}
-	else
-		rootWidget->Remove_Child("BuildPanel");
 
-	MonoObject* SystemOverlay = Mono::Invoke<MonoObject*>(Mono::App_exe, LayerManager, nullptr, "FindContainerSceneByPath", Mono::New_String("SystemOverlay"));
-	Mono::Invoke<void>(Mono::App_exe, ContainerScene, SystemOverlay, "AddScene", New_Scene);
+	Game_Overlay::OnRender();
+
+	Detour_OnRender->Stub<void>(Instance);
 }
 
 void Settings_Menu::Log(const char* fmt, ...)
@@ -273,6 +261,16 @@ void Settings_Menu::Init()
 
 	Log(ORBIS_TOOLBOX_BUILDSTRING);
 
+	//Debug Settings Patch
+	Patch_IsDevkit = new Patcher();
+	Patch_AllowDebugMenu = new Patcher();
+	Patch_MainThreadCheck = new Patcher();
+
+	Log("Install Patches");
+	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
+	Patch_AllowDebugMenu->Install_Method_Patch(Mono::platform_dll, "Sce.Vsh.ShellUI.Settings.Sbl", "SblWrapper", "SblRcMgrIsAllowDebugMenuForSettings", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
+	Patch_MainThreadCheck->Install_Method_Patch(Mono::PlayStation_Core, "Sce.PlayStation.Core.Runtime", "Diagnostics", "CheckRunningOnMainThread", 0, 0, "\xC3", 1);
+
 	Debug_Feature::DevkitPanel::Init();
 	Debug_Feature::DebugTitleIdLabel::Init();
 	Debug_Feature::Custom_Content::Init();
@@ -287,6 +285,7 @@ void Settings_Menu::Init()
 	Detour_OnPreCreate = new Detour();
 	Detour_OnPageActivating = new Detour();
 	Detour_OnPress = new Detour();
+	Detour_OnRender = new Detour();
 
 	Log("Detour Methods");
 	Detour_GetManifestResourceStream->DetourMethod(Mono::mscorlib, "System.Reflection", "Assembly", "GetManifestResourceStream", 1, (void*)GetManifestResourceStream_Hook);
@@ -294,23 +293,7 @@ void Settings_Menu::Init()
 	Detour_OnPreCreate->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPreCreate", 2, (void*)OnPreCreate_Hook);
 	Detour_OnPageActivating->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPageActivating", 2, (void*)OnPageActivating_Hook);
 	Detour_OnPress->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPress", 2, (void*)OnPress_Hook);
-
-	//Debug Settings Patch
-	Patch_IsDevkit = new Patcher();
-	Patch_AllowDebugMenu = new Patcher();
-	Patch_MainThreadCheck = new Patcher();
-
-	Log("Install Patches");
-	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
-	Patch_AllowDebugMenu->Install_Method_Patch(Mono::platform_dll, "Sce.Vsh.ShellUI.Settings.Sbl", "SblWrapper", "SblRcMgrIsAllowDebugMenuForSettings", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
-	Patch_MainThreadCheck->Install_Method_Patch(Mono::PlayStation_Core, "Sce.PlayStation.Core.Runtime", "Diagnostics", "CheckRunningOnMainThread", 0, 0, "\xC3", 1);
-
-	Log("Getting Root Widget");
-	rootWidget = new Widget();
-	//rootWidget->Instance = UI::Utilities::Get_root_Widget();
-
-	Log("Init Debug Label.");
-	//Init_Debug_Label();
+	Detour_OnRender->DetourMethod(Mono::UI_dll, "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook); //TODO: Fetch for 6.72
 
 	Log("Init Complete");
 }
@@ -320,6 +303,9 @@ void Settings_Menu::Term()
 	Debug_Feature::DevkitPanel::Term();
 	Debug_Feature::DebugTitleIdLabel::Term();
 	Debug_Feature::Custom_Content::Term();
+
+	Game_Overlay::Term();
+	Build_Overlay::Term();
 
 	//Remove Denug Settings Patch
 	delete Patch_IsDevkit;
@@ -332,10 +318,8 @@ void Settings_Menu::Term()
 	delete Detour_OnPreCreate;
 	delete Detour_OnPageActivating;
 	delete Detour_OnPress;
-
-	//Clean up custom drawn elements.
-	rootWidget->Remove_Child("BuildPanel");
+	delete Detour_OnRender;
 
 	//Clean up menu
-	Menu::Init();
+	Menu::Term();
 }

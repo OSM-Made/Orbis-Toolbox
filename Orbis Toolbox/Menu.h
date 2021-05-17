@@ -1,8 +1,6 @@
 #pragma once
 #include "Common.h"
 
-#include "Power_Options.h"
-
 enum Data_Type
 {
 	Type_None,

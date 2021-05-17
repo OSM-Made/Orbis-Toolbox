@@ -5,13 +5,14 @@
 
 void Label::Set_Location(float X, float Y)
 {
+	if (hAlign == HorizontalAlignment::hRight)
+		X -= Get_Text_Width();
+	else if (hAlign == HorizontalAlignment::hCenter)
+		X -= (Get_Text_Width() / 2.0f);
+
+	this->X = X; this->Y = Y;
 	Mono::Set_Property(Label_Class, Instance, "X", X);
 	Mono::Set_Property(Label_Class, Instance, "Y", Y);
-}
-
-void Label::Set_Text(const char* Text)
-{
-	Mono::Set_Property(Label_Class, Instance, "Text", Mono::New_String(Text));
 }
 
 void Label::Set_Font(int Size, FontStyle Style, FontWeight Weight)
@@ -21,12 +22,23 @@ void Label::Set_Font(int Size, FontStyle Style, FontWeight Weight)
 
 void Label::Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align)
 {
+	vAlign = Vertical_Align;
+	hAlign = Horizontal_Align;
+
+	if (Horizontal_Align == HorizontalAlignment::hLeft)
+		Set_Location(X, Y);
+	else if (Horizontal_Align == HorizontalAlignment::hRight)
+		Set_Location(X - Get_Text_Width(), Y);
+	else if (Horizontal_Align == HorizontalAlignment::hCenter)
+		Set_Location(X - (Get_Text_Width() / 2), Y);
+
 	Mono::Set_Property(Label_Class, Instance, "VerticalAlignment", Vertical_Align);
 	Mono::Set_Property(Label_Class, Instance, "HorizontalAlignment", Horizontal_Align);
 }
 
 void Label::Set_Colour(float R, float G, float B, float A)
 {
+	this->R = R; this->G = G; this->B = B; this->A = A;
 	Mono::Set_Property_Invoke(Label_Class, Instance, "TextColor", UI::Utilities::UIColor(R, G, B, A));
 }
 
@@ -56,7 +68,8 @@ Label::Label(const char* Name)
 
 Label::Label(const char* Name, float X, float Y, const char* Text, int Size, FontStyle Style, FontWeight Weight, VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align, float R, float G, float B, float A)
 {
-	Label_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI3", "Label");
+	Label_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Label");
+	//TODO: Add checks to see if it got the class.
 
 	//Allocates memory for our new instance of a class.
 	Instance = Mono::New_Object(Label_Class);

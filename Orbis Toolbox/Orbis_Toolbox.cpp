@@ -1,8 +1,6 @@
 #include "Common.h"
 #include "Settings_Menu.h"
 
-int* __errno_location();
-
 extern "C"
 {
 	int module_start()
@@ -10,8 +8,6 @@ extern "C"
 		klog("!! Hello World !!\n");
 
 		Mono::Init();
-
-		//UISystem.ScreenWidth
 
 		UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		Settings_Menu::Init();

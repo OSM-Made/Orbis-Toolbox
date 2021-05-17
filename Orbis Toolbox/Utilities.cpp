@@ -75,7 +75,7 @@ void build_iovec(Myiovec** iov, int* iovlen, const char* name, const void* val, 
 	*iovlen = ++i;
 }
 
-unsigned long Syscall(unsigned int n, ...) {
+/*unsigned long Syscall(unsigned int n, ...) {
 	asm(".intel_syntax noprefix");
 	asm("xor %rax, %rax");
 	asm("mov %r10, %rcx");
@@ -114,4 +114,4 @@ int mount_large_fs(const char* device, const char* mountpoint, const char* fstyp
 	}
 
 	return nmount(iov, iovlen, flags);
-}
+}*/

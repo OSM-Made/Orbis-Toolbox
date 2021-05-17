@@ -8,7 +8,7 @@ void Widget::Remove_Child(const char* Child_Name)
 {
 	if (Instance)
 	{
-		if (Children.find(Child_Name) != Children.end())
+		if (Has_Child(Child_Name))
 		{
 			MonoObject* ChildWidget = Mono::Invoke<MonoObject*>(Mono::App_exe, Widget_Class, Instance, "FindWidgetByName", Mono::New_String(Child_Name));
 			Mono::Invoke<void>(Mono::App_exe, Widget_Class, ChildWidget, "RemoveFromParent");
@@ -23,7 +23,10 @@ void Widget::Remove_Child(const char* Child_Name)
 void* Widget::Get_Child(const char* Child_Name)
 {
 	if (Has_Child(Child_Name))
+	{
+		Children[Child_Name]->Instance = Mono::Invoke<MonoObject*>(Mono::App_exe, Widget_Class, this->Instance, "FindWidgetByName", Mono::New_String(Child_Name));
 		return Children[Child_Name];
+	}
 	else
 		klog("[Widget] %s(): Child \"%s\" Does not exist on Parent.\n", __FUNCTION__, Child_Name);
 	return 0;

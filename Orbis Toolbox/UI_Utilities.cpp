@@ -1,5 +1,5 @@
 #include "Common.h"
-#include "UI.h"
+#include "UI_Utilities.h"
 
 void UI::Utilities::SetVersionString(const char* str)
 {
@@ -75,7 +75,7 @@ MonoObject* UI::Utilities::Fit_To_Children()
 
 MonoObject* UI::Utilities::IUFont(int size, int style, int weight)
 {
-	MonoClass* UIFont = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "UIFont");
+	MonoClass* UIFont = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIFont");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIFont_Instance = Mono::New_Object(UIFont);
@@ -152,4 +152,16 @@ MonoObject* UI::Utilities::UIColor(float R, float G, float B)
 	Mono::Invoke<void>(Mono::UI_dll, UIColor, Real_Instance, ".ctor", R, G, B);
 
 	return Real_Instance;
+}
+
+float UI::Utilities::ScreenHeight()
+{
+	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UISystem");
+	return Mono::Get_Property<int>(UISystem, nullptr, "ScreenHeight");
+}
+
+float UI::Utilities::ScreenWidth()
+{
+	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UISystem");
+	return Mono::Get_Property<int>(UISystem, nullptr, "ScreenWidth");
 }

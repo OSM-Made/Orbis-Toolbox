@@ -65,16 +65,17 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Build_Overlay.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Custom_Content.cpp" />
     <ClCompile Include="DebugTitleIdLabel.cpp" />
     <ClCompile Include="Detour.cpp" />
     <ClCompile Include="DevkitPanel.cpp" />
+    <ClCompile Include="Game_Overlay.cpp" />
     <ClCompile Include="hde64.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LncUtil.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="Power_Options.cpp" />
     <ClCompile Include="Mono.cpp" />
     <ClCompile Include="Orbis_Toolbox.cpp" />
     <ClCompile Include="Panel.cpp" />
@@ -85,21 +86,23 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Build_Overlay.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Debug_Features.h" />
     <ClInclude Include="Detour.h" />
+    <ClInclude Include="Game_Overlay.h" />
     <ClInclude Include="hde64.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="LncUtil.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="Power_Options.h" />
     <ClInclude Include="Mono.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="Patcher.h" />
     <ClInclude Include="Settings_Menu.h" />
     <ClInclude Include="table64.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UI_Utilities.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Widget.h" />
@@ -112,7 +115,9 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
   <ItemGroup>
     <Xml Include="external_hdd.xml" />
     <Xml Include="orbis_toolbox.xml" />
-    <Xml Include="settings_root.xml" />
+    <Xml Include="settings_root.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

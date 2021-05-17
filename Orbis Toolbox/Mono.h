@@ -75,15 +75,15 @@ public:
 	{
 		if (Klass == nullptr)
 		{
-			MonoLog("Set_Property: Klass was null.");
+			MonoLog("Get_Property: Klass was null.");
 			return (result)0;
 		}
 
-		if (Instance == nullptr)
+		/*if (Instance == nullptr)
 		{
-			MonoLog("Set_Property: Instance was null.");
+			MonoLog("Get_Property: Instance was null.");
 			return (result)0;
-		}
+		}*/
 
 		MonoProperty* Prop = mono_class_get_property_from_name(Klass, Property_Name);
 
@@ -109,8 +109,16 @@ public:
 			return (result)NULL;
 		}
 
-		result(*Method)(MonoObject* Instance) = decltype(Method)(Get_Method_Thunk);
-		return Method(Instance);
+		if (Instance != nullptr)
+		{
+			result(*Method)(MonoObject* Instance) = decltype(Method)(Get_Method_Thunk);
+			return Method(Instance);
+		}
+		else
+		{
+			result(*Method)() = decltype(Method)(Get_Method_Thunk);
+			return Method();
+		}
 	}
 
 	template <typename result>
@@ -258,6 +266,40 @@ public:
 
 		mono_runtime_invoke(Set_Method, Instance, (void**)&Value, NULL);
 	}
+
+	template <typename Param>
+	static void Set_Property_test(MonoClass* Klass, MonoObject* Instance, const char* Property_Name, Param Value)
+	{
+		if (Klass == nullptr)
+		{
+			MonoLog("Set_Property: Klass was null.");
+			return;
+		}
+
+		if (Instance == nullptr)
+		{
+			MonoLog("Set_Property: Instance was null.");
+			return;
+		}
+
+		MonoProperty* Prop = mono_class_get_property_from_name(Klass, Property_Name);
+
+		if (Prop == nullptr)
+		{
+			MonoLog("Set_Property: Property \"%s\" could not be found on class \"%s\".", Property_Name, Klass->name);
+			return;
+		}
+
+		MonoMethod* Set_Method = mono_property_get_set_method(Prop);
+
+		if (Set_Method == nullptr)
+		{
+			MonoLog("Set_Property: Could not find Set Method for \"%s\" in class \"%s\".", Property_Name, Klass->name);
+			return;
+		}
+		void* Argsv[] = { &Value };
+		mono_runtime_invoke(Set_Method, Instance, Argsv, NULL);
+	}
 	
 	template <typename Param>
 	static void Set_Property(MonoObject* Instance, const char* Property_Name, Param Value)
@@ -304,11 +346,11 @@ public:
 			return (result)0;
 		}
 
-		if (Instance == nullptr)
+		/*if (Instance == nullptr)
 		{
 			MonoLog("Get_Field: Instance was null.");
 			return (result)0;
-		}
+		}*/
 
 		MonoClassField* Field = mono_class_get_field_from_name(Klass, Field_Name);
 
