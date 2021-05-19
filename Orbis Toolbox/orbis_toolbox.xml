@@ -110,6 +110,9 @@
       <!-- Show ";★APP_HOME" -->
       <toggle_switch id="id_system_disp_app_home_panel" title="Show &quot;★APP_HOME&quot;" value="0"/>
 
+      <!-- Debug Overlay -->
+      <toggle_switch id="id_overlay_dbg" title="Debug Overlay" value="0"/>
+
       <!-- Game Overlay -->
       <setting_list id="game_overlay" title="Game Overlay">
 
@@ -125,6 +128,12 @@
 
         <!-- Thread Count -->
         <toggle_switch id="id_overlay_thr_count" title="Thread Count" value="0"/>
+
+        <!-- RAM Usage -->
+        <toggle_switch id="id_overlay_ram" title="RAM Usage" value="0"/>
+
+        <!-- Video RAM Usage -->
+        <toggle_switch id="id_overlay_vram" title="Video RAM Usage" value="0"/>
         
         <!-- CPU Temperature -->
         <toggle_switch id="id_overlay_cpu" title="CPU Temperature" value="0"/>
@@ -133,9 +142,6 @@
         <toggle_switch id="id_overlay_soc" title="SOC Temperature" value="0"/>
         
       </setting_list>
-
-      <!-- Debug Overlay -->
-      <toggle_switch id="id_overlay_dbg" title="Debug Overlay" value="0"/>
 
       <!-- Load Settings -->
       <button id="id_load_settings" title="Load Settings"/>

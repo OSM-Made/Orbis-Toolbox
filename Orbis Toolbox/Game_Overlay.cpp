@@ -3,6 +3,8 @@
 #include "CPU_Monitor.h"
 
 float Game_Overlay::X, Game_Overlay::Y;
+bool Game_Overlay::Show_CPU_Usage;
+bool Game_Overlay::Show_Thread_Count;
 bool Game_Overlay::Show_CPU_Temp = false;
 bool Game_Overlay::Show_SOC_Temp = false;
 char Game_Overlay::Location[0x100] = { "Left" };
@@ -12,6 +14,12 @@ Widget* Game_Overlay::Game_Widget = nullptr;
 std::map<const char*, CALL_BACK_TYPE>* Game_Overlay::Updater;
 bool Game_Overlay::Shutdown = false;
 
+/*
+	Init_Overlay(const char* Name, CALL_BACK_TYPE_D)
+		This will push each of our labels made and their call backs for data updates
+		to a std::map. Currently it has issues with ordering **Needs refactor**.
+*/
+
 void Game_Overlay::Init_Overlay(const char* Name, CALL_BACK_TYPE_D)
 {
 	Label* Temp = new Label(Name, 10.0f, 10.0f, "", 20, Label::fsNormal, Label::fwMedium, Label::vBottom, Label::hLeft, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -20,6 +28,15 @@ void Game_Overlay::Init_Overlay(const char* Name, CALL_BACK_TYPE_D)
 
 	Updater->insert(Updater->begin(), std::make_pair(Name, CallBack));
 }
+
+/*
+	Update_Location()
+		This will update the global vars for X and Y depending on where the user
+		decides to draw the overlay which is stored in the text Location.
+
+		Currenttly supporting Left, Right and Center. May Impliment a vertical
+		location to this in the future.
+*/
 
 void Game_Overlay::Update_Location()
 {
@@ -55,6 +72,17 @@ void Game_Overlay::Update_Location()
 	}
 
 }
+
+/*
+	OnRender()
+		Anything called in this function will be called in the main mono render
+		loop. 
+
+		Checks for Game_Widget pointer and boolean Shutdown for safety.
+
+		Here we will iterate through all of the overlays supported and decide 
+		which to draw and their location.
+*/
 
 void Game_Overlay::OnRender()
 {
@@ -107,7 +135,7 @@ void Game_Overlay::Init()
 			sceKernelGetCpuTemperature(&Temp);
 			Instance->Set_Text("CPU Temp: %i C", Temp);
 
-			return 3;
+			return 6;
 		}
 		else
 			return 0;
@@ -123,7 +151,7 @@ void Game_Overlay::Init()
 			sceKernelGetSocSensorTemperature(0, &Temp);
 			Instance->Set_Text("SOC Temp: %i C", Temp);
 
-			return 4;
+			return 5;
 		}
 		else 
 			return 0;
@@ -145,6 +173,24 @@ void Game_Overlay::Init()
 			CPU_Monitor::Usage[4], CPU_Monitor::Usage[5], CPU_Monitor::Usage[6], CPU_Monitor::Usage[7]);
 
 		return 1;
+	});
+
+	Init_Overlay("RAMUSAGE", [](Label* Instance) -> int {
+
+		int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
+		Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
+		Instance->Set_Text("RAM: %u MB / %u MB", cpuUsed, cpuTotal);
+		return 3;
+
+	});
+
+	Init_Overlay("VRAMUSAGE", [](Label* Instance) -> int {
+
+		int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
+		Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
+		Instance->Set_Text("VRAM:  %u MB / %u MB", gpuUsed, gpuTotal);
+		return 4;
+
 	});
 }
 

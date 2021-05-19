@@ -8,6 +8,8 @@
 class Game_Overlay
 {
 public:
+	static bool Show_CPU_Usage;
+	static bool Show_Thread_Count;
 	static bool Show_CPU_Temp;
 	static bool Show_SOC_Temp;
 	static char Location[0x100];

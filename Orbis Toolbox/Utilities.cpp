@@ -75,13 +75,23 @@ void build_iovec(Myiovec** iov, int* iovlen, const char* name, const void* val, 
 	*iovlen = ++i;
 }
 
-unsigned long Syscall(unsigned int n, ...) {
+void Get_Page_Table_Stats(int *cpuUsed, int *cpuTotal, int *gpuUsed, int *gpuTotal)
+{
+	int CPU_Available, GPU_Available;
+	if (!sceKernelGetPageTableStats(cpuTotal, &CPU_Available, gpuTotal, &GPU_Available))
+	{
+		*cpuUsed = (*cpuTotal - CPU_Available);
+		*gpuUsed = (*gpuTotal - GPU_Available);
+	}
+}
+
+/*unsigned long Syscall(unsigned int n, ...) {
 	asm(".intel_syntax noprefix");
 	asm("xor %rax, %rax");
 	asm("mov %r10, %rcx");
 	asm("syscall");
 	asm("ret");
-}
+}*/
 
 /*int nmount(Myiovec *iov, uint32_t niov, int flags)
 {

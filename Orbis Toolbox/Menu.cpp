@@ -59,6 +59,8 @@ void Menu::Init()
 
 	//Overlay
 	Add_Option("id_overlay_loc", &Game_Overlay::Location, Type_String, Game_Overlay::Update_Location);
+	Add_Option("id_overlay_cpu_usage", &Game_Overlay::Show_CPU_Usage, Type_Boolean);
+	Add_Option("id_overlay_thr_count", &Game_Overlay::Show_Thread_Count, Type_Boolean);
 	Add_Option("id_overlay_cpu", &Game_Overlay::Show_CPU_Temp, Type_Boolean);
 	Add_Option("id_overlay_soc", &Game_Overlay::Show_SOC_Temp, Type_Boolean);
 

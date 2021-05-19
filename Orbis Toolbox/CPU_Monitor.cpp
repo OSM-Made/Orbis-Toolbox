@@ -41,10 +41,6 @@ void CPU_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, threa
 
 	for (int i = 0; i < 8; i++)
 	{
-		double xmm1 = 1000000.0f;
-		double xmm2 = 1.0f;
-		double xmm3 = 0.0f;
-
 		float Prev_Usage_Time = (Data[i].Prev->system_cpu_usage_time.tv_sec + (Data[i].Prev->system_cpu_usage_time.tv_nsec / 1000000.0f));
 		Prev_Usage_Time += (Data[i].Prev->user_cpu_usage_time.tv_sec + (Data[i].Prev->user_cpu_usage_time.tv_nsec / 1000000.0f));
 
@@ -92,7 +88,7 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 	int Current_Bank = 0;
 	while (Should_Run_Thread)
 	{
-		klog("Getting Bank %i\n", Current_Bank);
+		//klog("Getting Bank %i\n", Current_Bank);
 
 		//grab thread data with max threads of 3072.
 		gThread_Data[Current_Bank].Thread_Count = 3072;
@@ -101,7 +97,7 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 			//Store the thread count.
 			CPU_Monitor::Thread_Count = gThread_Data[Current_Bank].Thread_Count;
 
-			klog("ThreadCount[%i] = %i\n", Current_Bank, gThread_Data[Current_Bank].Thread_Count);
+			//klog("ThreadCount[%i] = %i\n", Current_Bank, gThread_Data[Current_Bank].Thread_Count);
 
 			//Set the current time.
 			sceKernelClockGettime(4, &gThread_Data[Current_Bank].current_time);
