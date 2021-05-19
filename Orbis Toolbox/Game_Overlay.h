@@ -2,6 +2,9 @@
 #include "Widget.h"
 #include "Common.h"
 
+#define CALL_BACK_TYPE int(*)(Label*)
+#define CALL_BACK_TYPE_D int(*CallBack)(Label*)
+
 class Game_Overlay
 {
 public:
@@ -20,8 +23,8 @@ private:
 	static float Text_Height;
 	static Widget* Game_Widget;
 
-	static std::map<const char*, void(*)(int*, Label*)>* Updater;
+	static std::map<const char*, CALL_BACK_TYPE>* Updater;
 	static bool Shutdown;
 
-	static void Init_Overlay(const char* Name, void(*CallBack)(int*, Label*));
+	static void Init_Overlay(const char* Name, CALL_BACK_TYPE_D);
 };

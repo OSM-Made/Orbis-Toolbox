@@ -5,6 +5,9 @@
 
 void Label::Set_Location(float X, float Y)
 {
+	if (this->X == X && this->Y == Y)
+		return;
+
 	if (hAlign == HorizontalAlignment::hRight)
 		X -= Get_Text_Width();
 	else if (hAlign == HorizontalAlignment::hCenter)
@@ -38,6 +41,9 @@ void Label::Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment 
 
 void Label::Set_Colour(float R, float G, float B, float A)
 {
+	if (this->R == R && this->G == G && this->B == B && this->A == A)
+		return;
+
 	this->R = R; this->G = G; this->B = B; this->A = A;
 	Mono::Set_Property_Invoke(Label_Class, Instance, "TextColor", UI::Utilities::UIColor(R, G, B, A));
 }
@@ -66,6 +72,17 @@ Label::Label(const char* Name)
 	Mono::Set_Property(Label_Class, Instance, "Name", Mono::New_String(Name));
 }
 
+MonoObject* NewTextShadowSettings(float R, float G, float B)
+{
+	MonoClass* TextShadowSettings = Mono::Get_Class(Mono::UI_dll, "Sce.PlayStation.HighLevel.UI2", "TextShadowSettings");
+
+	MonoObject* TextShadow_Instance = Mono::New_Object(TextShadowSettings);
+	mono_runtime_object_init(TextShadow_Instance);
+	Mono::Set_Property_Invoke(TextShadowSettings, TextShadow_Instance, "Color", UI::Utilities::UIColor(R, G, B));
+
+	return TextShadow_Instance;
+}
+
 Label::Label(const char* Name, float X, float Y, const char* Text, int Size, FontStyle Style, FontWeight Weight, VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align, float R, float G, float B, float A)
 {
 	Label_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Label");
@@ -88,6 +105,8 @@ Label::Label(const char* Name, float X, float Y, const char* Text, int Size, Fon
 	Set_Colour(R, G, B, A);
 	Mono::Set_Property(Label_Class, Instance, "FitWidthToText", true);
 	Mono::Set_Property(Label_Class, Instance, "FitHeightToText", true);
+
+	Mono::Set_Property(Label_Class, Instance, "TextShadow", NewTextShadowSettings(0.0f, 0.0f, 0.0f));
 }
 
 Label::~Label()

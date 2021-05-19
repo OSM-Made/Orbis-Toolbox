@@ -68,51 +68,8 @@ void Menu::Init()
 
 #ifdef ORBIS_TOOLBOX_DEBUG
 	
-	/*Add_Option("id_test", []() -> void {
-		Label* CPU_Temp = nullptr;
-		MonoClass* Scene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene");
-		MonoClass* LayerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "LayerManager");
-		MonoClass* ContainerScene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ContainerScene");
-
-		MonoObject* Game = Mono::Invoke<MonoObject*>(Mono::App_exe, LayerManager, nullptr, "FindContainerSceneByPath", Mono::New_String("Game"));
-
-		Game_Widget = new Widget();
-		Game_Widget->Instance = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene", Game, "RootWidget");
-
-		CPU_Temp = new Label("CPUTEMP", 1910.0f, 10.0f, "CPU TEMP: 60C", 20, Label::fsNormal, Label::fwMedium, Label::vTop, Label::hCenter, 1.0f, 1.0f, 1.0f, 1.0f);
-		Game_Widget->Append_Child("CPUTEMP", CPU_Temp);*
-		
-		Notify("Test Button Pressed.");
-	});
-	Add_Option("id_test2", Test_Func);
-
-	Add_Option("id_Test_List", &Drawing_Style, Type_String, []() -> void {
-
-		MonoClass* Scene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene");
-		MonoClass* LayerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "LayerManager");
-		MonoClass* ContainerScene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ContainerScene");
-
-		MonoObject* Game = Mono::Invoke<MonoObject*>(Mono::App_exe, LayerManager, nullptr, "FindContainerSceneByPath", Mono::New_String("Game"));
-
-		if(!Game_Widget)
-			Game_Widget = new Widget();
-
-		Game_Widget->Instance = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene", Game, "RootWidget");
-
-		Label* CPU_Temp = (Label*)Game_Widget->Get_Child("CPUTEMP");
-
-		//Gheto but works till i can fix alignment lol
-		if (!strcmp(Drawing_Style, "Left")) 
-			CPU_Temp->Set_Location(10.0f, 10.0f);
-		else if (!strcmp(Drawing_Style, "Right")) 
-			CPU_Temp->Set_Location(1910.0f - CPU_Temp->Get_Text_Width(), 0);
-		else if (!strcmp(Drawing_Style, "Center")) 
-			CPU_Temp->Set_Location(1920.0f / 2.0f - (CPU_Temp->Get_Text_Width() / 2), 0);
-
-		Notify("Test List Selection. %s", Drawing_Style);
-	});*/
 #else
-	Add_Option("id_test2", []() -> void { });
+	Add_Option("id_test", []() -> void { });
 	(*Options)["id_test"].Visible = false;
 #endif
 }

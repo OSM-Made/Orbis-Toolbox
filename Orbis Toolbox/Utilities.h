@@ -66,4 +66,5 @@ typedef unsigned char vm_prot_t;	/* protection codes */
 void klog(const char* fmt, ...);
 void Notify(const char* MessageFMT, ...);
 
+unsigned long Syscall(unsigned int n, ...);
 int mount_large_fs(const char* device, const char* mountpoint, const char* fstype, const char* mode, unsigned int flags);

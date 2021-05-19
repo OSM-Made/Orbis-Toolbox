@@ -75,7 +75,7 @@ void build_iovec(Myiovec** iov, int* iovlen, const char* name, const void* val, 
 	*iovlen = ++i;
 }
 
-/*unsigned long Syscall(unsigned int n, ...) {
+unsigned long Syscall(unsigned int n, ...) {
 	asm(".intel_syntax noprefix");
 	asm("xor %rax, %rax");
 	asm("mov %r10, %rcx");
@@ -83,7 +83,7 @@ void build_iovec(Myiovec** iov, int* iovlen, const char* name, const void* val, 
 	asm("ret");
 }
 
-int nmount(Myiovec *iov, uint32_t niov, int flags)
+/*int nmount(Myiovec *iov, uint32_t niov, int flags)
 {
 	return Syscall(378, iov, niov, flags);
 }
