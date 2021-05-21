@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "typeinfo": "cpp",
+        "cstdarg": "cpp",
+        "common.h": "c",
+        "ptrace.h": "c",
+        "utils.h": "c",
+        "resolver.h": "c"
+    }
+}

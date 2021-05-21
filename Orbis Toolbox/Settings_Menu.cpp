@@ -293,7 +293,7 @@ void Settings_Menu::Init()
 	Detour_OnPreCreate->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPreCreate", 2, (void*)OnPreCreate_Hook);
 	Detour_OnPageActivating->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPageActivating", 2, (void*)OnPageActivating_Hook);
 	Detour_OnPress->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPress", 2, (void*)OnPress_Hook);
-	Detour_OnRender->DetourMethod(Mono::UI_dll, "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook); //TODO: Fetch for 6.72
+	Detour_OnRender->DetourMethod(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook); //TODO: Fetch for 6.72
 
 	Log("Init Complete");
 }

@@ -1,0 +1,29 @@
+OUTPUT_FORMAT("elf64-x86-64", "elf64-x86-64", "elf64-x86-64")
+OUTPUT_ARCH(i386:x86-64)
+
+ENTRY(_start)
+
+PHDRS
+{
+	code PT_LOAD FILEHDR PHDRS;
+  	headers PT_PHDR PHDRS;
+	text PT_LOAD FILEHDR PHDRS;
+	data PT_LOAD;
+	bss PT_LOAD;
+}
+
+SECTIONS
+{
+  .text 0x500: { *(.text) } :code
+  .rodata : {
+		*(.rodata)
+		*(.rodata.*)
+		*(.data) 
+	  	*(.data.*)
+	} :text
+  .data : { 
+	  *(.data)
+	  } :data
+  .bss : { *(.bss) }
+  /DISCARD/ : { *(.eh_frame) }
+}

@@ -36,14 +36,8 @@ public:
 	template<typename ...pack>
 	void Set_Text(const char* Text, pack... Args)
 	{
-		if (hAlign == HorizontalAlignment::hLeft)
-			Set_Location(X, Y);
-		else if (hAlign == HorizontalAlignment::hRight)
-			Set_Location(X - Get_Text_Width(), Y);
-		else if (hAlign == HorizontalAlignment::hCenter)
-			Set_Location(X - (Get_Text_Width() / 2), Y);
-
 		Mono::Set_Property(Label_Class, Instance, "Text", Mono::New_String(Text, Args...));
+		Set_Location(X, Y);
 	}
 	void Set_Font(int Size, FontStyle Style, FontWeight Weight);
 	void Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment Horizontal_Align);

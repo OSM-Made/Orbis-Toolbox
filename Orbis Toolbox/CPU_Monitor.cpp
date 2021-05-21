@@ -62,7 +62,7 @@ void CPU_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, threa
 
 void* CPU_Monitor::Monitor_Thread(void* args)
 {
-	klog("Hi from thread\n");
+	klog("[CPU Monitor] Thread Started\n");
 
 	unsigned int Idle_Thread_ID[8];
 
@@ -75,16 +75,16 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 		{
 			if (!sceKernelGetThreadName(Stat_Data[i].td_tid, Thread_Name) && sscanf(Thread_Name, "SceIdleCpu%d", &Core_Count) == 1 && Core_Count <= 7)
 			{
-				klog("[SceIdleCpu%d] -> %i\n", Core_Count, Stat_Data[i].td_tid);
+				klog("[CPU Monitor][SceIdleCpu%d] -> %i\n", Core_Count, Stat_Data[i].td_tid);
 
 				Idle_Thread_ID[Core_Count] = Stat_Data[i].td_tid;
 			}
 		}
 	}
 
-	klog("Got Idle Threads...\n");
+	klog("[CPU Monitor] Got Idle Threads...\n");
 
-	klog("Starting Monitor...\n");
+	klog("[CPU Monitor] Starting Monitor...\n");
 	int Current_Bank = 0;
 	while (Should_Run_Thread)
 	{
@@ -121,7 +121,7 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 	}
 
 	Should_Run_Thread = true;
-	klog("bye from thread\n");
+	klog("[CPU Monitor] Thread Shutdown.\n");
 	void* res;
 	scePthreadExit(res);
 	return res;
@@ -129,7 +129,7 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 
 void CPU_Monitor::Init()
 {
-	klog("Starting CPU Monitor Thread...\n");
+	klog("[CPU Monitor] Starting CPU Monitor Thread...\n");
 
 	OrbisPthreadAttr attr;
 	scePthreadAttrInit(&attr);

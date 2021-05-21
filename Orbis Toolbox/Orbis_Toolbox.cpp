@@ -9,12 +9,6 @@ extern "C"
 		//sceKernelSetProcessName
 		klog("!! Hello World !!\n");
 
-		
-		int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
-		Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
-
-		klog("RAM: %u MB / %u MB\nVRAM: %u MB / %u MB\n", cpuUsed, cpuTotal, gpuUsed, gpuTotal);
-
 		Mono::Init();
 
 		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");

@@ -39,13 +39,16 @@ void Menu::Init()
 	//		 because of the fact its managed by the system.
 
 	// Daemon Manager
-
+	Add_Option("id_daemons");
+	(*Options)["id_daemons"].Visible = false;
 
 	// ShellUI Plugin Manager
-
+	Add_Option("id_plugins");
+	(*Options)["id_plugins"].Visible = false;
 
 	// Payload Loader
-
+	Add_Option("id_payloads");
+	(*Options)["id_payloads"].Visible = false;
 
 	// Note: System settings does not need to be done here
 	//		 because of the fact its managed by the system.
@@ -57,19 +60,20 @@ void Menu::Init()
 	Add_Option("id_system_disp_debug_settings_panel", &Debug_Feature::Custom_Content::Show_Debug_Settings, Type_Boolean, UI::Utilities::ReloadItemList);
 	Add_Option("id_system_disp_app_home_panel", &Debug_Feature::Custom_Content::Show_App_Home, Type_Boolean, UI::Utilities::ReloadItemList);
 
-	//Overlay
-	Add_Option("id_overlay_loc", &Game_Overlay::Location, Type_String, Game_Overlay::Update_Location);
-	Add_Option("id_overlay_cpu_usage", &Game_Overlay::Show_CPU_Usage, Type_Boolean);
-	Add_Option("id_overlay_thr_count", &Game_Overlay::Show_Thread_Count, Type_Boolean);
-	Add_Option("id_overlay_cpu", &Game_Overlay::Show_CPU_Temp, Type_Boolean);
-	Add_Option("id_overlay_soc", &Game_Overlay::Show_SOC_Temp, Type_Boolean);
-
 	//Debug Overlay
 	Add_Option("id_overlay_dbg", &Build_Overlay::Draw, Type_Boolean, Build_Overlay::Update);
 
+	//Overlay
+	Add_Option("id_overlay_loc", &Game_Overlay::Location, Type_String, Game_Overlay::Update_Location);
+	Add_Option("id_overlay_cpu_usage", &Game_Overlay::Show_CPU_Usage, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_overlay_thr_count", &Game_Overlay::Show_Thread_Count, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_overlay_ram", &Game_Overlay::Show_ram, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_overlay_vram", &Game_Overlay::Show_vram, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_overlay_cpu", &Game_Overlay::Show_CPU_Temp, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_overlay_soc", &Game_Overlay::Show_SOC_Temp, Type_Boolean, Game_Overlay::Update);
 
 #ifdef ORBIS_TOOLBOX_DEBUG
-	
+	Add_Option("id_test", []() -> void {});
 #else
 	Add_Option("id_test", []() -> void { });
 	(*Options)["id_test"].Visible = false;

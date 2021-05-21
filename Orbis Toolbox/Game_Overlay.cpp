@@ -3,8 +3,10 @@
 #include "CPU_Monitor.h"
 
 float Game_Overlay::X, Game_Overlay::Y;
-bool Game_Overlay::Show_CPU_Usage;
-bool Game_Overlay::Show_Thread_Count;
+bool Game_Overlay::Show_CPU_Usage = false;
+bool Game_Overlay::Show_Thread_Count = false;
+bool Game_Overlay::Show_ram = false;
+bool Game_Overlay::Show_vram = false;
 bool Game_Overlay::Show_CPU_Temp = false;
 bool Game_Overlay::Show_SOC_Temp = false;
 char Game_Overlay::Location[0x100] = { "Left" };
@@ -43,34 +45,32 @@ void Game_Overlay::Update_Location()
 	if (!strcmp(Location, "Left")) 
 	{
 		X = 10.0f, Y = 5.0f;
-
 		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
 		{
 			Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
-			Instance->Set_Alignment(Label::vTop, Label::hLeft);
+			Instance->hAlign = Label::hLeft;
 		}
-	}
-	else if (!strcmp(Location, "Right"))
+	}	
+	else if (!strcmp(Location, "Right")) 
 	{
 		X = UI::Utilities::ScreenWidth() - 10.0f, Y = 5.0f;
-
 		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
 		{
 			Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
-			Instance->Set_Alignment(Label::vTop, Label::hRight);
+			Instance->hAlign = Label::hRight;
 		}
 	}
 	else if (!strcmp(Location, "Center"))
 	{
 		X = UI::Utilities::ScreenWidth() / 2.0f, Y = 5.0f;
-
 		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
 		{
 			Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
-			Instance->Set_Alignment(Label::vTop, Label::hCenter);
+			Instance->hAlign = Label::hCenter;
 		}
 	}
 
+	Update();
 }
 
 /*
@@ -89,19 +89,54 @@ void Game_Overlay::OnRender()
 	if (!Game_Widget || Shutdown)
 		return;
 
-	for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
+	// Static but allows us to decide the order while retaining labels
+	// are pushed up depending on which ones are enabled.
+	static int Waiter = 0;
+
+	if (Waiter <= 0)
 	{
-		Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
-		int Order = it->second(Instance);
-		if (Order)
+		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
 		{
-			Instance->Set_Location(X, Y + ((Order - 1) * 25.0f));
-			Instance->Set_Colour(1.0f, 1.0f, 1.0f, 1.0f);
+			Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
+			it->second(Instance);
 		}
-		else
-			Instance->Set_Colour(1.0f, 1.0f, 1.0f, 0.0f);
+
+		Waiter = 20;
 	}
-		
+	else
+		Waiter--;
+}
+
+void inline Game_Overlay::Update_Label(int* Location, const char* Name)
+{
+	Label* Instance = (Label*)Game_Widget->Get_Child(Name);
+	if ((*Updater)[Name](Instance))
+	{
+		/*if (!strcmp(Game_Overlay::Location, "Left"))
+			Instance->Set_Location(X, Y + (*Location * 25.0f));
+		else if (!strcmp(Game_Overlay::Location, "Right"))
+			Instance->Set_Location(X - Instance->Get_Text_Width(), Y + (*Location * 25.0f));
+		else if (!strcmp(Game_Overlay::Location, "Center"))
+			Instance->Set_Location(X - (Instance->Get_Text_Width() / 2), Y + (*Location * 25.0f));*/
+		Instance->Set_Location(X, Y + (*Location * 25.0f));
+		Instance->Set_Colour(1.0f, 1.0f, 1.0f, 1.0f);
+		*Location += 1;
+	}
+	else
+		Instance->Set_Colour(1.0f, 1.0f, 1.0f, 0.0f);
+}
+
+void Game_Overlay::Update()
+{
+	klog("Update...\n");
+
+	int Count = 0;
+	Update_Label(&Count, "CPUUSAGE");
+	Update_Label(&Count, "THREADCOUNT");
+	Update_Label(&Count, "RAMUSAGE");
+	Update_Label(&Count, "VRAMUSAGE");
+	Update_Label(&Count, "CPUTEMP");
+	Update_Label(&Count, "SOCTEMP");
 }
 
 void Game_Overlay::Init()
@@ -119,77 +154,94 @@ void Game_Overlay::Init()
 	strcpy(Location, "Left");
 	X = 10.0f, Y = 5.0f;
 
-	//Init map.
+	//Init map: For somereason doesnt work with out being allocated.
 	Updater = new std::map<const char*, CALL_BACK_TYPE>();
-	Show_CPU_Temp = true;
-	Show_SOC_Temp = true;
 
-	int Order = 1;
 	//Initialize call back for updating overlay types.
-	Init_Overlay("CPULABEL", [](Label* Instance) -> int {
+	Init_Overlay("CPUTEMP", [](Label* Instance) -> bool {
 
 		if (Show_CPU_Temp)
 		{
-			//Update temp and set colour as visible.
 			int Temp = 0;
 			sceKernelGetCpuTemperature(&Temp);
 			Instance->Set_Text("CPU Temp: %i C", Temp);
 
-			return 6;
+			return true;
 		}
 		else
-			return 0;
+			return false;
 
 	});
 
-	Init_Overlay("SOCLABEL", [](Label* Instance) -> int {
+	Init_Overlay("SOCTEMP", [](Label* Instance) -> bool {
 
 		if (Show_SOC_Temp)
 		{
-			//Update temp and set colour as visible.
 			int Temp = 0;
 			sceKernelGetSocSensorTemperature(0, &Temp);
 			Instance->Set_Text("SOC Temp: %i C", Temp);
 
-			return 5;
+			return true;
 		}
-		else 
-			return 0;
+		else
+			return false;
 
 	});
 
-	Init_Overlay("THREADCOUNT", [](Label* Instance) -> int {
+	Init_Overlay("THREADCOUNT", [](Label* Instance) -> bool {
 
-		Instance->Set_Text("Thread Count: %i", CPU_Monitor::Thread_Count);
-		return 2;
-
-	});
-
-	Init_Overlay("CPUUSAGE", [](Label* Instance) -> int {
-
-		//Update temp and set colour as visible.
-		Instance->Set_Text("CPU Usage: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%", 
-			CPU_Monitor::Usage[0], CPU_Monitor::Usage[1], CPU_Monitor::Usage[2], CPU_Monitor::Usage[3], 
-			CPU_Monitor::Usage[4], CPU_Monitor::Usage[5], CPU_Monitor::Usage[6], CPU_Monitor::Usage[7]);
-
-		return 1;
-	});
-
-	Init_Overlay("RAMUSAGE", [](Label* Instance) -> int {
-
-		int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
-		Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
-		Instance->Set_Text("RAM: %u MB / %u MB", cpuUsed, cpuTotal);
-		return 3;
+		if (Show_Thread_Count)
+		{
+			Instance->Set_Text("Thread Count: %i", CPU_Monitor::Thread_Count);
+		
+			return true;
+		}
+		else
+			return false;
 
 	});
 
-	Init_Overlay("VRAMUSAGE", [](Label* Instance) -> int {
+	Init_Overlay("CPUUSAGE", [](Label* Instance) -> bool {
 
-		int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
-		Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
-		Instance->Set_Text("VRAM:  %u MB / %u MB", gpuUsed, gpuTotal);
-		return 4;
+		if (Show_CPU_Usage)
+		{
+			Instance->Set_Text("CPU Usage: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%", 
+				CPU_Monitor::Usage[0], CPU_Monitor::Usage[1], CPU_Monitor::Usage[2], CPU_Monitor::Usage[3], 
+				CPU_Monitor::Usage[4], CPU_Monitor::Usage[5], CPU_Monitor::Usage[6], CPU_Monitor::Usage[7]);
+
+			return true;
+		}
+		else
+			return false;
+	});
+
+	Init_Overlay("RAMUSAGE", [](Label* Instance) -> bool {
+
+		if (Show_ram)
+		{
+			int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
+			Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
+			Instance->Set_Text("RAM: %u MB / %u MB", cpuUsed, cpuTotal);
+
+			return true;
+		}
+		else
+			return false;
+
+	});
+
+	Init_Overlay("VRAMUSAGE", [](Label* Instance) -> bool {
+
+		if (Show_vram)
+		{
+			int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
+			Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
+			Instance->Set_Text("VRAM:  %u MB / %u MB", gpuUsed, gpuTotal);
+
+			return true;
+		}
+		else
+			return false;
 
 	});
 }

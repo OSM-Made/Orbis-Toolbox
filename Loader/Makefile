@@ -1,0 +1,36 @@
+SHELL=/bin/bash
+
+build:
+	+$(MAKE) -C Kernel clean
+	+$(MAKE) -C Kernel
+	+$(MAKE) -C Userland clean
+	+$(MAKE) -C Userland pack_resources
+	+$(MAKE) -C Userland
+
+	objcopy -O binary Userland/Userland.elf ../Orbis-Toolbox-$(VERSION).bin
+
+	printf "\e[1m\e[32m[%0.2f Build Sucess!]\033[37m\n" "$$(($(VERSION) * 1))e-2"
+
+505:
+	+$(MAKE) VERSION=505
+
+672:
+	+$(MAKE) VERSION=672
+
+702:
+	+$(MAKE) VERSION=702
+
+755:
+	+$(MAKE) VERSION=755
+
+all:
+	+$(MAKE) VERSION=505
+	+$(MAKE) VERSION=672
+	+$(MAKE) VERSION=702
+	+$(MAKE) VERSION=755
+
+	@/bin/echo -e "\e[1m\e[32m[All Build Sucess!]\033[37m"
+
+clean:
+	#+$(MAKE) -C Kernel clean
+	+$(MAKE) -C Userland clean

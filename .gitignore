@@ -11,6 +11,7 @@
 *.oelf
 *.prx
 *.sprx
+*.o
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

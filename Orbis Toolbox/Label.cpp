@@ -5,15 +5,13 @@
 
 void Label::Set_Location(float X, float Y)
 {
-	if (this->X == X && this->Y == Y)
-		return;
+	this->X = X; this->Y = Y;
 
 	if (hAlign == HorizontalAlignment::hRight)
 		X -= Get_Text_Width();
 	else if (hAlign == HorizontalAlignment::hCenter)
 		X -= (Get_Text_Width() / 2.0f);
 
-	this->X = X; this->Y = Y;
 	Mono::Set_Property(Label_Class, Instance, "X", X);
 	Mono::Set_Property(Label_Class, Instance, "Y", Y);
 }
@@ -27,13 +25,7 @@ void Label::Set_Alignment(VerticalAlignment Vertical_Align, HorizontalAlignment 
 {
 	vAlign = Vertical_Align;
 	hAlign = Horizontal_Align;
-
-	if (Horizontal_Align == HorizontalAlignment::hLeft)
-		Set_Location(X, Y);
-	else if (Horizontal_Align == HorizontalAlignment::hRight)
-		Set_Location(X - Get_Text_Width(), Y);
-	else if (Horizontal_Align == HorizontalAlignment::hCenter)
-		Set_Location(X - (Get_Text_Width() / 2), Y);
+	Set_Location(X, Y);
 
 	Mono::Set_Property(Label_Class, Instance, "VerticalAlignment", Vertical_Align);
 	Mono::Set_Property(Label_Class, Instance, "HorizontalAlignment", Horizontal_Align);
