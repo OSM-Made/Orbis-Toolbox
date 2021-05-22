@@ -29,4 +29,4 @@ $(ODIR):
 .PHONY: clean
 
 clean:
-	rm -f $(TARGET) $(ODIR)/*.o
+	rm -rf -v $(TARGET) $(ODIR)/*

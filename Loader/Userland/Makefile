@@ -5,7 +5,7 @@ ODIR	:=	build
 SDIR	:=	source
 RDIR	:=  Resources
 IDIRS	:=  -Iinclude -I$(FREEBSD_INCLUDES)
-CFLAGS	:=	$(IDIRS) -Os -std=gnu11 -ffunction-sections -fdata-sections -fno-builtin -nostartfiles -nostdlib -Wall -masm=intel -march=btver2 -mtune=btver2 -m64 -mabi=sysv -mcmodel=small -fpie -DVERSION_$(VERSION)
+CFLAGS	:=	$(IDIRS) -O3 -s -w -std=gnu11 -fno-builtin -fno-exceptions -fno-asynchronous-unwind-tables -nostartfiles -nostdlib -Wall -masm=intel -march=btver2 -mtune=btver2 -m64 -mabi=sysv -mcmodel=small -fpie -DVERSION_$(VERSION)
 SFLAGS	:=	-nostartfiles -nostdlib -march=btver2 -mtune=btver2
 LFLAGS	:=	-Xlinker -T linkfile -Wl,--build-id=none -Wl,--gc-sections
 CFILES  :=  $(shell find $(SDIR) -name \*.c)
@@ -37,7 +37,5 @@ pack_resources:
 	ld -r -b binary -o $(ODIR)/Orbis_Toolbox.o '$(RDIR)/Orbis_Toolbox.bin'
 	ld -r -b binary -o $(ODIR)/Kernel.o '$(RDIR)/Kernel.bin'
 
-	
-
 clean:
-	rm -f $(TARGET) $(ODIR)/*.o
+	rm -rf -v $(TARGET) $(ODIR)/*

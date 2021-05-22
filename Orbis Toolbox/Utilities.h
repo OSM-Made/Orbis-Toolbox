@@ -67,6 +67,3 @@ void klog(const char* fmt, ...);
 void Notify(const char* MessageFMT, ...);
 
 void Get_Page_Table_Stats(int *cpuUsed, int *cpuTotal, int *gpuUsed, int *gpuTotal);
-
-//unsigned long Syscall(unsigned int n, ...);
-int mount_large_fs(const char* device, const char* mountpoint, const char* fstype, const char* mode, unsigned int flags);

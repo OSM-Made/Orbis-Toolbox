@@ -6,17 +6,19 @@ extern char _binary_Resources_Orbis_Toolbox_bin_end[];
 extern char _binary_Resources_Kernel_bin_start[];
 extern char _binary_Resources_Kernel_bin_end[];
 
+uint64_t gkbase;
 int install_elf(struct thread *td)
 {
+	//Get kernel Base.
     uint64_t KernelBase = (__readmsr(0xC0000082) - addr_Xfast_syscall);
 
     if(!KernelBase)
-		return 1;
+		return 0;
 
-    //Resolve Function Addresses.
+    //Resolve Function Addresses and install Patches.
 	Kern_Resolve(KernelBase);
+	//Install_Patches(KernelBase);
 
-	klog("Kern_Resolve() -> Sucess!");
 	klog("KernBase: 0x%llX", KernelBase);
 
 	//Jailbreak current Process.
@@ -64,12 +66,18 @@ int install_elf(struct thread *td)
 
 int _main(void) 
 {
+	syscall(601, 7, "Hello World.\n", 0);
+
     //Resolve userland Functions
 	Userland_Resolve();
 
-    //copy files
-	
+    //Copy Resources.
+	Install_Resources();
 
     //load kernel elf.
-    return syscall(11, install_elf);
+	int result = syscall(11, install_elf);
+
+	Log("Result: %i\n", result);
+
+    return result;
 }

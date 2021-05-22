@@ -9,6 +9,8 @@
 
 std::map<const char*, MenuOption>* Menu::Options;
 
+#define DAEMON_DIR "/system/vsh/app/"
+
 void Menu::Init()
 {
 	Options = new std::map<const char*, MenuOption>();
@@ -39,8 +41,34 @@ void Menu::Init()
 	//		 because of the fact its managed by the system.
 
 	// Daemon Manager
-	Add_Option("id_daemons");
-	(*Options)["id_daemons"].Visible = false;
+	Add_Option("id_daemons", []() -> void {
+		
+		int fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
+
+		if (fd)
+		{
+			OrbisKernelStat stats;
+			sceKernelFstat(fd, &stats);
+
+			char* Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
+
+			sceKernelGetdents(fd, Dent_Buffer, stats.st_blksize);
+
+			OrbisKernelDirents* File = (OrbisKernelDirents*)&Dent_Buffer[0];
+			int seek = 0;
+			while (seek < stats.st_blksize)
+			{
+				klog("%s\n", File->d_name);
+				File = (OrbisKernelDirents*)(&Dent_Buffer[0] + (seek + File->d_reclen));
+			}
+
+			sceKernelClose(fd);
+		}
+
+		UI::Utilities::ResetMenuItem("id_message");
+
+	});
+	//(*Options)["id_daemons"].Visible = false;
 
 	// ShellUI Plugin Manager
 	Add_Option("id_plugins");

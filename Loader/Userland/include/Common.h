@@ -29,6 +29,7 @@
 
 #include "../../Common/Settings.h"
 #include "Resolver/Resolver.h"
+#include "Resolver/Patches.h"
 #include "syscall.h"
 #include "ELF.h"
 #include "Util/Utils.h"

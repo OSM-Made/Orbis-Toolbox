@@ -23,7 +23,7 @@ void Jailbreak(struct proc* proc, struct Backup_Jail* jail)
             jail->fd_rdir = fd->fd_rdir;
         }
         
-        cred->cr_prison = *(struct prison**)prison0;
+        cred->cr_prison = *(struct prison**)kprison0;
 
         cred->cr_uid = 0;
         cred->cr_ruid = 0;
@@ -31,8 +31,8 @@ void Jailbreak(struct proc* proc, struct Backup_Jail* jail)
         cred->cr_groups[0] = 0;
 
     
-        fd->fd_jdir = *(struct vnode**)rootvnode;
-        fd->fd_rdir = *(struct vnode**)rootvnode;
+        fd->fd_jdir = *(struct vnode**)krootvnode;
+        fd->fd_rdir = *(struct vnode**)krootvnode;
     }
 }
 
@@ -62,11 +62,11 @@ int klog(char* fmt, ...)
     char buffer[0x400] = { 0 };
 	va_list args;
 	va_start(args, fmt);
-	vsprintf(buffer, fmt, args);
+	kvsprintf(buffer, fmt, args);
     va_end(args);
 
     char buffer2[0x400] = { 0 };
-    sprintf(buffer2, "[Orbis Toolbox] %s\n", buffer);
+    ksprintf(buffer2, "[Orbis Toolbox] %s\n", buffer);
 
     #if defined(SOFTWARE_VERSION_505) || defined(SOFTWARE_VERSION_NA)
     
@@ -78,7 +78,7 @@ int klog(char* fmt, ...)
 		uint64_t unk2;
 	};
 
-    struct sysent* sysents = sysvec->sv_table;
+    struct sysent* sysents = ksysvec->sv_table;
 
     int(*sys_read)(struct thread * td, struct sys_read_args * uap) = (void*)sysents[601].sy_call;
 
@@ -105,4 +105,21 @@ int klog(char* fmt, ...)
     return 0;
 
     #endif
+}
+
+void Log(char* fmt, ...)
+{
+    if(sceKernelDebugOutText)
+    {
+        char buffer[0x400] = { 0 };
+        va_list args;
+        va_start(args, fmt);
+        vsprintf(buffer, fmt, args);
+        va_end(args);
+
+        char buffer2[0x400] = { 0 };
+        sprintf(buffer2, "[Orbis Toolbox] %s\n", buffer);
+
+        sceKernelDebugOutText(0, buffer2);
+    }
 }

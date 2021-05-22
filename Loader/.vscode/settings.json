@@ -5,6 +5,7 @@
         "common.h": "c",
         "ptrace.h": "c",
         "utils.h": "c",
-        "resolver.h": "c"
+        "resolver.h": "c",
+        "patches.h": "c"
     }
 }

@@ -50,3 +50,4 @@ struct Backup_Jail
 void Jailbreak(struct proc* proc, struct Backup_Jail* jail);
 void RestoreJail(struct proc* proc, struct Backup_Jail jail);
 int klog(char* fmt, ...);
+void Log(char* fmt, ...);

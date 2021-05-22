@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "Settings_Menu.h"
 #include "CPU_Monitor.h"
+#include <orbis/GnmDriver.h>
 
 extern "C"
 {

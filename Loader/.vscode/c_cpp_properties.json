@@ -5,7 +5,6 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "E:\\Modding\\PS4\\Projects\\2020\\FreeBSD\\include/**",
-                "E:\\Modding\\PS4\\Projects\\FreeBSD\\include/**"
             ],
             "defines": [
                 "_DEBUG",
