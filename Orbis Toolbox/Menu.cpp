@@ -55,11 +55,12 @@ void Menu::Init()
 			sceKernelGetdents(fd, Dent_Buffer, stats.st_blksize);
 
 			OrbisKernelDirents* File = (OrbisKernelDirents*)&Dent_Buffer[0];
+			OrbisKernelDirents* File_End = (OrbisKernelDirents*)&Dent_Buffer[stats.st_blksize];
 			int seek = 0;
-			while (seek < stats.st_blksize)
+			while (File != File_End)
 			{
 				klog("%s\n", File->d_name);
-				File = (OrbisKernelDirents*)(&Dent_Buffer[0] + (seek + File->d_reclen));
+				File = (OrbisKernelDirents*)(((uint64_t)File + File->d_reclen));
 			}
 
 			sceKernelClose(fd);

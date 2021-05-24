@@ -1,9 +1,11 @@
 SHELL=/bin/bash
 
 none:
-	printf "\e[1m\e[31m[Please Choose a firmware!! EG. make 505 \033[37m\n"
+	printf "\e[1m\e[31m[Please Choose a firmware!! EG. \"make 505\" \033[37m\n"
 
 build:
+	+$(MAKE) -C ShellCode clean
+	+$(MAKE) -C ShellCode
 	+$(MAKE) -C Kernel clean
 	+$(MAKE) -C Kernel
 	+$(MAKE) -C Userland clean
@@ -35,5 +37,6 @@ all:
 	@/bin/echo -e "\e[1m\e[32m[All Build Sucess!]\033[37m"
 
 clean:
+	+$(MAKE) -C ShellCode clean
 	+$(MAKE) -C Kernel clean
 	+$(MAKE) -C Userland clean

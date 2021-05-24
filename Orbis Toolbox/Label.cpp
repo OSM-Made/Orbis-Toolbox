@@ -66,7 +66,7 @@ Label::Label(const char* Name)
 
 MonoObject* NewTextShadowSettings(float R, float G, float B)
 {
-	MonoClass* TextShadowSettings = Mono::Get_Class(Mono::UI_dll, "Sce.PlayStation.HighLevel.UI2", "TextShadowSettings");
+	MonoClass* TextShadowSettings = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "TextShadowSettings");
 
 	MonoObject* TextShadow_Instance = Mono::New_Object(TextShadowSettings);
 	mono_runtime_object_init(TextShadow_Instance);

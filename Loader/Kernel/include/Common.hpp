@@ -16,6 +16,8 @@
 #include <stdint.h>
 #include <stdarg.h>
 
+#include "../../Common/Settings.h"
+
 extern "C"
 {
     #include <sys/lock.h>
@@ -45,3 +47,8 @@ extern "C"
     #include <sys/stat.h>
     #include "sys/mount.h"
 }
+
+#include "Util/Util.hpp"
+#include "Resolver/Resolver.hpp"
+
+#define SPRX_PATH "/data/Orbis Toolbox/Orbis Toolbox.sprx"
