@@ -1,23 +1,21 @@
 #include "Common.h"
 #include "Settings_Menu.h"
 #include "CPU_Monitor.h"
-#include <orbis/GnmDriver.h>
 
 extern "C"
 {
 	int module_start()
 	{
-		//sceKernelSetProcessName
 		klog("!! Hello World !!\n");
 
-		Mono::Init();
+		//Mono::Init();
 
-		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
+		UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		CPU_Monitor::Init();
 		Settings_Menu::Init();
 		//Title_Menu::Init();
 
-		Notify("Orbis Toolbox: Loaded!");
+		Notify(ORBIS_TOOLBOX_NOTIFY);
 
 		return 0;
 	}

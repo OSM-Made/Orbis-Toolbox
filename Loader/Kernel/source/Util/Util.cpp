@@ -20,9 +20,9 @@ int MountNullFS(char* where, char* what, int flags)
 
 void MountDir(thread* td, char* Sandbox, char* what, int flags)
 {
-    if(!kproc_Main_Thread)
+    if(!td)
     {
-        klog("kproc Main Thread NULL...\n");
+        klog("Thread was NULL...\n");
         return;
     }
 
@@ -30,15 +30,15 @@ void MountDir(thread* td, char* Sandbox, char* what, int flags)
 	snprintf(s_fulldir, sizeof(s_fulldir), "%s%s", Sandbox, what);
 
 	klog("Mount: %s -> %s\n", s_fulldir, what);
-	kern_mkdir(kproc_Main_Thread, s_fulldir, 0, 0777);
+	kern_mkdir(td, s_fulldir, 0, 0777);
 	MountNullFS(s_fulldir, what, flags);
 }
 
 void UnMountDir(thread* td, char* Sandbox, char* what, int flags)
 {
-    if(!kproc_Main_Thread)
+    if(!td)
     {
-        klog("kproc Main Thread NULL...\n");
+        klog("Thread was NULL...\n");
         return;
     }
 
@@ -48,7 +48,7 @@ void UnMountDir(thread* td, char* Sandbox, char* what, int flags)
 	klog("Un-Mount: %s -> %s\n", s_fulldir, what);
 
 	sys_unmount(s_fulldir, flags);
-	kern_rmdir(kproc_Main_Thread, s_fulldir, 0);
+	kern_rmdir(td, s_fulldir, 0);
 }
 
 char* strrchr(const char *cp, int ch)

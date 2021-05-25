@@ -35,6 +35,7 @@ enum ShellCodeCommands
     CMD_sceKernelStopUnloadModule,
 };
 
+bool Loader_Init(proc* proc);
 bool Loader_Init(const char* Proc_Name);
 void Loader_Term();
 int Load_SPRX(const char* SPRX_Path);

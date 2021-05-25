@@ -25,3 +25,5 @@
 #include "Widget.h"
 #include "Label.h"
 #include "Panel.h"
+
+#define ORBIS_TOOLBOX_NOTIFY ("Orbis Toolbox Alpha: " stringify(ORBIS_TOOLBOX_MAJOR) "." stringify(ORBIS_TOOLBOX_MINOR) " Loaded!")

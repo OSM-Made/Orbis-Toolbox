@@ -1,12 +1,9 @@
 #include "Common.h"
 
-extern char _binary_Resources_Orbis_Toolbox_bin_start[];
-extern char _binary_Resources_Orbis_Toolbox_bin_end[];
-
 extern char _binary_Resources_Kernel_bin_start[];
 extern char _binary_Resources_Kernel_bin_end[];
+struct Backup_Jail bkJail;
 
-uint64_t gkbase;
 int install_elf(struct thread *td)
 {
 	//Get kernel Base.
@@ -14,18 +11,6 @@ int install_elf(struct thread *td)
 
     if(!KernelBase)
 		return 0;
-
-    //Resolve Function Addresses and install Patches.
-	Kern_Resolve(KernelBase);
-	//Install_Patches(KernelBase);
-
-	klog("KernBase: 0x%llX", KernelBase);
-
-	//Jailbreak current Process.
-	struct Backup_Jail bkJail;
-	Jailbreak(td->td_proc, &bkJail);
-
-	klog("Jailbreak() -> Sucess!");
 
     size_t msize = 0;
 	if (elf_mapped_size(_binary_Resources_Kernel_bin_start, &msize)) {
@@ -64,9 +49,34 @@ int install_elf(struct thread *td)
 	return 0;    
 }
 
+int jailbreak_proc(struct thread *td)
+{
+	//Get kernel Base.
+    uint64_t KernelBase = (__readmsr(0xC0000082) - addr_Xfast_syscall);
+
+    if(!KernelBase)
+		return 0;
+
+    //Resolve Function Addresses and install Patches.
+	Kern_Resolve(KernelBase);
+	//Install_Patches(KernelBase);
+
+	klog("KernBase: 0x%llX", KernelBase);
+
+	//Jailbreak current Process.
+	Jailbreak(td->td_proc, &bkJail);
+
+	klog("Jailbreak() -> Sucess!");
+
+	return 0;
+}
+
 int _main(void) 
 {
 	syscall(601, 7, "Hello World.\n", 0);
+
+	//Jailbreak the current proc to write to root.
+	syscall(11, jailbreak_proc);
 
     //Resolve userland Functions
 	Userland_Resolve();
@@ -75,9 +85,9 @@ int _main(void)
 	Install_Resources();
 
     //load kernel elf.
-	int result = syscall(11, install_elf);
+	syscall(11, install_elf);
 
-	Log("Result: %i\n", result);
+	Log("Loading Completed.");
 
-    return result;
+    return 0;
 }

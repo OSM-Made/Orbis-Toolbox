@@ -1,4 +1,6 @@
 SHELL=/bin/bash
+PDIR	:=	../Icons
+PFILES  :=  $(shell find $(PDIR) -name \*.png)
 
 none:
 	printf "\e[1m\e[31m[Please Choose a firmware!! EG. \"make 505\" \033[37m\n"

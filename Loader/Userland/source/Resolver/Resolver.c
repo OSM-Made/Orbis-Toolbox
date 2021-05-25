@@ -44,6 +44,10 @@ int sys_dynlib_load_prx(const char *name, int *idDestination) {
 
 //kernel
 int(*sceKernelDebugOutText)(int dbg_channel, const char* text);
+int(*sceKernelMkdir)(const char *path, mode_t mode);
+int(*sceKernelOpen)(const char* path, int flags, mode_t mode);
+int(*sceKernelWrite)(int fd, void *data, size_t len);
+int(*sceKernelClose)(int fd);
 
 //libc
 void *(*malloc)(size_t size);
@@ -83,6 +87,10 @@ void Userland_Resolve()
 			sys_dynlib_load_prx("libkernel_sys.sprx", &Libkernel_library);
 
     sys_dynlib_dlsym(Libkernel_library, "sceKernelDebugOutText", &sceKernelDebugOutText);
+	sys_dynlib_dlsym(Libkernel_library, "sceKernelMkdir", &sceKernelMkdir);
+	sys_dynlib_dlsym(Libkernel_library, "sceKernelOpen", &sceKernelOpen);
+	sys_dynlib_dlsym(Libkernel_library, "sceKernelWrite", &sceKernelWrite);
+	sys_dynlib_dlsym(Libkernel_library, "sceKernelClose", &sceKernelClose);
 
     int Libc_Library = 0;
 	sys_dynlib_load_prx("libSceLibcInternal.sprx", &Libc_Library);

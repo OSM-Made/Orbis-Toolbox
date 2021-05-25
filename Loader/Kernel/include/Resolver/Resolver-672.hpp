@@ -28,7 +28,7 @@
 #define addr_sscanf                             0x243810
 #define addr_strdup                             0x2504C0
 #define addr_realloc                            0xDAD0
-#define addr_kprintf                             0x123280
+#define addr_kprintf                            0x123280
 
 /* File IO */
 #define addr_vn_fullpath                        0x2F0C40
@@ -45,6 +45,7 @@
 
 /* Proc */
 #define addr_allproc						    0x22BBE80
+#define addr_proc_kill                          0x2DC80
 #define addr_proc_rwmem							0x10EE10
 #define addr_create_thread                      0x4A6FB0
 

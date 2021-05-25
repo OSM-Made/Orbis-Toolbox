@@ -22,6 +22,10 @@ void Kern_Resolve(uint64_t kernbase);
 
 //Kernel
 int(*sceKernelDebugOutText)(int dbg_channel, const char* text);
+int(*sceKernelMkdir)(const char *path, mode_t mode);
+int(*sceKernelOpen)(const char* path, int flags, mode_t mode);
+int(*sceKernelWrite)(int fd, void *data, size_t len);
+int(*sceKernelClose)(int fd);
 
 //libc
 void *(*malloc)(size_t size);

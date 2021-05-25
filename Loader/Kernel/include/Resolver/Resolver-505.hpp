@@ -45,6 +45,7 @@
 
 /* Proc */
 #define addr_allproc						    0x2382FF8
+#define addr_proc_kill                          0xD41C0
 #define addr_proc_rwmem							0x30D150
 #define addr_create_thread                      0x1BE1F0
 

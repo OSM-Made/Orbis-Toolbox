@@ -3,7 +3,7 @@
 <system_settings version="1.0" plugin="settings_root_plugin">
 
   <setting_list id="settings_root" title="msg_settings" initial_focus_to="orbis_toolbox">
-    <link id="orbis_toolbox" title="★Orbis Toolbox" icon="https://i.imgur.com/Ye49LWV.png" file="orbis_toolbox.xml" />
+    <link id="orbis_toolbox" title="★Orbis Toolbox" icon="file://data/Orbis Toolbox/Icons/icon_toolbox.png" file="orbis_toolbox.xml" />
     <link id="users_guide" title="msg_ug_helpful_info" icon="tex_users_guide" file="UsersGuide/data/users_guide.xml"/>
     <link id="statements" title="msg_health_safety_data_handling" icon="tex_health_safety" file="SettingsRoot/data/settings_root.xml" target_id="statements"/>
     <link id="accessibility" title="msg_accessibility" icon="tex_accessibility" file="Accessibility/data/accessibility.xml" />

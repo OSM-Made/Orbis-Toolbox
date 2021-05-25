@@ -69,7 +69,7 @@ void Menu::Init()
 		UI::Utilities::ResetMenuItem("id_message");
 
 	});
-	//(*Options)["id_daemons"].Visible = false;
+	(*Options)["id_daemons"].Visible = false;
 
 	// ShellUI Plugin Manager
 	Add_Option("id_plugins");

@@ -17,13 +17,17 @@ TARGET = $(shell basename "$(CURDIR)").elf
 
 $(TARGET): $(ODIR) $(OBJS)
 	$(CC) crt0.s $(OBJS) -o $(TARGET) $(CFLAGS) $(LFLAGS)
-	
+
 $(ODIR)/%.o: $(SDIR)/%.c
 	mkdir -p $(dir $@)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(ODIR)/%.o: $(SDIR)/%.s
 	$(AS) -c -o $@ $< $(SFLAGS)
+
+$(ODIR)/%.o: $(RDIR)/%.bin
+	ld -r -b binary -o $@ $<
+	objdump -t $@
 
 $(ODIR):
 	@mkdir $@
@@ -33,9 +37,6 @@ $(ODIR):
 pack_resources:
 	cp '../../Orbis Toolbox.sprx' '$(RDIR)/Orbis_Toolbox.bin'
 	cp '../Kernel/Kernel.ELF' '$(RDIR)/Kernel.bin'
-
-	ld -r -b binary -o $(ODIR)/Orbis_Toolbox.o '$(RDIR)/Orbis_Toolbox.bin'
-	ld -r -b binary -o $(ODIR)/Kernel.o '$(RDIR)/Kernel.bin'
 
 clean:
 	rm -rf -v $(TARGET) $(ODIR)/*
