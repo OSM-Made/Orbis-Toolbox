@@ -8,7 +8,7 @@ extern "C"
 	{
 		klog("!! Hello World !!\n");
 
-		//Mono::Init();
+		Mono::Init();
 
 		UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		CPU_Monitor::Init();

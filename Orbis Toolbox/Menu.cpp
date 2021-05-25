@@ -6,10 +6,10 @@
 #include "LncUtil.h"
 #include "Game_Overlay.h"
 #include "Build_Overlay.h"
+#include "Config.h"
 
 std::map<const char*, MenuOption>* Menu::Options;
-
-#define DAEMON_DIR "/system/vsh/app/"
+bool Menu::Auto_Load_Settings;
 
 void Menu::Init()
 {
@@ -83,7 +83,7 @@ void Menu::Init()
 	//		 because of the fact its managed by the system.
 
 	//Orbis Toolbox Settings
-	Add_Option("id_load_cfg_on_start");
+	Add_Option("id_load_cfg_on_start", &Auto_Load_Settings, Type_Boolean);
 	Add_Option("id_system_disp_titleid", &Debug_Feature::DebugTitleIdLabel::ShowLabels, Type_Boolean, Debug_Feature::DebugTitleIdLabel::Update);
 	Add_Option("id_system_disp_devkit_panel", &Debug_Feature::DevkitPanel::ShowPanel, Type_Boolean, Debug_Feature::DevkitPanel::Update);
 	Add_Option("id_system_disp_debug_settings_panel", &Debug_Feature::Custom_Content::Show_Debug_Settings, Type_Boolean, UI::Utilities::ReloadItemList);
@@ -92,7 +92,7 @@ void Menu::Init()
 	//Debug Overlay
 	Add_Option("id_overlay_dbg", &Build_Overlay::Draw, Type_Boolean, Build_Overlay::Update);
 
-	//Overlay
+	//Game Overlay
 	Add_Option("id_overlay_loc", &Game_Overlay::Location, Type_String, Game_Overlay::Update_Location);
 	Add_Option("id_overlay_cpu_usage", &Game_Overlay::Show_CPU_Usage, Type_Boolean, Game_Overlay::Update);
 	Add_Option("id_overlay_thr_count", &Game_Overlay::Show_Thread_Count, Type_Boolean, Game_Overlay::Update);
@@ -100,6 +100,27 @@ void Menu::Init()
 	Add_Option("id_overlay_vram", &Game_Overlay::Show_vram, Type_Boolean, Game_Overlay::Update);
 	Add_Option("id_overlay_cpu", &Game_Overlay::Show_CPU_Temp, Type_Boolean, Game_Overlay::Update);
 	Add_Option("id_overlay_soc", &Game_Overlay::Show_SOC_Temp, Type_Boolean, Game_Overlay::Update);
+	Add_Option("id_load_settings", []() -> void { 
+
+		if (Config::Parse(SETTIN_DIR))
+		{
+			UI::Utilities::ResetMenuItem("id_load_cfg_on_start");
+			UI::Utilities::ResetMenuItem("id_system_disp_titleid");
+			UI::Utilities::ResetMenuItem("id_system_disp_devkit_panel");
+			UI::Utilities::ResetMenuItem("id_system_disp_debug_settings_panel");
+			UI::Utilities::ResetMenuItem("id_system_disp_app_home_panel");
+			UI::Utilities::ResetMenuItem("id_overlay_dbg");
+
+			Game_Overlay::Update_Location();
+			Game_Overlay::Update();
+
+			Notify("Orbis Toolbox: Loaded Settings Sucessfully!");
+		}
+		else
+			Notify("Orbis Toolbox: Failed to Load Settings...");
+	});
+	Add_Option("id_save_settings", []() -> void { Config::Write(SETTIN_DIR) ? Notify("Orbis Toolbox: Saved Settings Sucessfully!") : Notify("Orbis Toolbox: Failed to Save Settings..."); });
+
 
 #ifdef ORBIS_TOOLBOX_DEBUG
 	Add_Option("id_test", []() -> void {});

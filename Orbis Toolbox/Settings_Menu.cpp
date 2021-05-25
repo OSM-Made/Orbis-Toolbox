@@ -5,6 +5,7 @@
 #include "Debug_Features.h"
 #include "Game_Overlay.h"
 #include "Build_Overlay.h"
+#include "Config.h"
 
 //Embedded xmls
 extern uint8_t settings_root[];
@@ -37,7 +38,7 @@ Patcher* Settings_Menu::Patch_MainThreadCheck;
 uint64_t Settings_Menu::GetManifestResourceStream_Hook(uint64_t inst, MonoString* FileName)
 {
 	char* str = mono_string_to_utf8(FileName);
-	klog("****\nFileName: %s\n****\n", str);
+	//klog("****\nFileName: %s\n****\n", str);
 
 	if (!strcmp(str, "Sce.Vsh.ShellUI.src.Sce.Vsh.ShellUI.Settings.Plugins.SettingsRoot.data.settings_root.xml"))
 		return (uint64_t)UI::Utilities::MemoryStream(settings_root, settings_root_Size);
@@ -74,8 +75,6 @@ void Settings_Menu::OnCheckVisible_Hook(MonoObject* Instance, MonoObject* elemen
 		{
 			if (!strcmp(Id, it->first))
 			{
-				Log("%s -> OnCheckVisible()", it->first);
-
 				//Show or hide Menu Options on the fly.
 				Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", it->second.Visible);
 
@@ -105,8 +104,6 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 		{
 			if (!strcmp(Id, it->first))
 			{
-				Log("%s -> OnPreCreate()", it->first);
-
 				MenuOption Cur = it->second;
 
 				//Update the shown value of the option.
@@ -149,14 +146,10 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 		{
 			if (!strcmp(Id, it->first) && it->second.OnPageActivating != nullptr)
 			{
-				Log("%s -> OnPageActivating()", it->first);
-
 				it->second.OnPageActivating();
 				break;
 			}
 		}
-
-		klog("OnPageActivating: %s\n", Id);
 
 		if (!strcmp(Id, "id_payloads"))
 		{
@@ -190,12 +183,8 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 
 		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
-			Log("OnPress() -> %s == %s", Id, it->first);
-
 			if (!strcmp(Id, it->first))
 			{
-				Log("%s -> OnPress()", it->first);
-
 				MenuOption Cur = it->second;
 
 				//Update the local value of the option.
@@ -231,8 +220,23 @@ void Settings_Menu::OnRender_Hook(MonoObject* Instance)
 		Log("Init Build Overlay");
 		Build_Overlay::Init();
 
-		Build_Overlay::Draw = true;
-		Build_Overlay::Update();
+		if (Config::Read(SETTIN_DIR) && Config::Data->Auto_Load_Settings) 
+		{
+			Config::Parse(SETTIN_DIR);
+
+			//Call functions to reflect update
+			Debug_Feature::DebugTitleIdLabel::Update();
+			Debug_Feature::DevkitPanel::Update();
+			UI::Utilities::ReloadItemList();
+			Build_Overlay::Update();
+			Game_Overlay::Update_Location();
+			Game_Overlay::Update();
+		}	
+		else
+		{
+			Build_Overlay::Draw = true;
+			Build_Overlay::Update();
+		}
 
 		Do_Once = true;
 	}
@@ -260,6 +264,8 @@ void Settings_Menu::Init()
 	Log("Init");
 
 	Log(ORBIS_TOOLBOX_BUILDSTRING);
+
+	Config::Init();
 
 	//Debug Settings Patch
 	Patch_IsDevkit = new Patcher();
@@ -293,13 +299,15 @@ void Settings_Menu::Init()
 	Detour_OnPreCreate->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPreCreate", 2, (void*)OnPreCreate_Hook);
 	Detour_OnPageActivating->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPageActivating", 2, (void*)OnPageActivating_Hook);
 	Detour_OnPress->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPress", 2, (void*)OnPress_Hook);
-	Detour_OnRender->DetourMethod(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook); //TODO: Fetch for 6.72
+	Detour_OnRender->DetourMethod(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook);
 
 	Log("Init Complete");
 }
 
 void Settings_Menu::Term()
 {
+	Config::Term();
+
 	Debug_Feature::DevkitPanel::Term();
 	Debug_Feature::DebugTitleIdLabel::Term();
 	Debug_Feature::Custom_Content::Term();

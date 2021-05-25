@@ -1,6 +1,13 @@
 #include "Common.h"
 #include "Config.h"
 
+#include "Settings_Menu.h"
+#include "Debug_Features.h"
+#include "LncUtil.h"
+#include "Game_Overlay.h"
+#include "Build_Overlay.h"
+#include "Config.h"
+
 /*bool Config::Parse(const char* File)
 {
 	//Clear the previous data.
@@ -145,3 +152,115 @@ std::string Config::Read_String(const char* Section, const char* Member)
 
 	return Config_Data[Section][Member];
 }*/
+
+Config::Data_s* Config::Data;
+#define CFG_VERSION 1
+
+bool Config::Read(const char* File)
+{
+	int fd = sceKernelOpen(File, SCE_KERNEL_O_RDONLY, 0511);
+
+	if (fd)
+	{
+		//Reade the data then close the file handle.
+		sceKernelRead(fd, (void*)Data, sizeof(Data_s));
+		sceKernelClose(fd);
+
+		//Make sure the version matches.
+		if (Data->Version != CFG_VERSION)
+		{
+			klog("[Config] CFG Version miss match (%i != %i)...\nConfig Could be corrupt...\n", CFG_VERSION, Data->Version);
+
+			return false;
+		}
+
+		//Could be a good idea to take a digest here to see if things have changed and compare with the digest at 0x4.
+
+
+		klog("[Config] Read Config Sucessfully.\n");
+
+		return true;
+	}
+	else
+	{
+		klog("[Config] File: %s Does not exist.\n", File);
+		return false;
+	}
+}
+
+bool Config::Parse(const char* File)
+{
+	if (Read(File))
+	{
+		//Parse data out.
+		Menu::Auto_Load_Settings = Data->Auto_Load_Settings;
+		Debug_Feature::DebugTitleIdLabel::ShowLabels = Data->Show_DebugTitleIdLabel;
+		Debug_Feature::DevkitPanel::ShowPanel = Data->Show_DevkitPanel;
+		Debug_Feature::Custom_Content::Show_Debug_Settings = Data->Show_Debug_Settings;
+		Debug_Feature::Custom_Content::Show_App_Home = Data->Show_App_Home;
+
+		Build_Overlay::Draw = Data->Show_Build_Overlay;
+
+		strcpy(Game_Overlay::Location, Data->Game_Overlay_Location);
+		Game_Overlay::Show_CPU_Usage = Data->Show_CPU_Usage;
+		Game_Overlay::Show_Thread_Count = Data->Show_Thread_Count;
+		Game_Overlay::Show_ram = Data->Show_ram;
+		Game_Overlay::Show_vram = Data->Show_vram;
+		Game_Overlay::Show_CPU_Temp = Data->Show_CPU_Temp;
+		Game_Overlay::Show_SOC_Temp = Data->Show_SOC_Temp;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Config::Write(const char* File)
+{
+	int fd = sceKernelOpen(File, SCE_KERNEL_O_CREAT | SCE_KERNEL_O_WRONLY, 0777);
+
+	if (fd)
+	{
+		//Build new cfg file.
+		Data->Version = CFG_VERSION;
+			
+		Data->Auto_Load_Settings = Menu::Auto_Load_Settings;
+		Data->Show_DebugTitleIdLabel = Debug_Feature::DebugTitleIdLabel::ShowLabels;
+		Data->Show_DevkitPanel = Debug_Feature::DevkitPanel::ShowPanel;
+		Data->Show_Debug_Settings = Debug_Feature::Custom_Content::Show_Debug_Settings;
+		Data->Show_App_Home = Debug_Feature::Custom_Content::Show_App_Home;
+			
+		Data->Show_Build_Overlay = Build_Overlay::Draw;
+			
+		strcpy(Data->Game_Overlay_Location, Game_Overlay::Location);
+		Data->Show_CPU_Usage = Game_Overlay::Show_CPU_Usage;
+		Data->Show_Thread_Count = Game_Overlay::Show_Thread_Count;
+		Data->Show_ram = Game_Overlay::Show_ram;
+		Data->Show_vram = Game_Overlay::Show_vram;
+		Data->Show_CPU_Temp = Game_Overlay::Show_CPU_Temp;
+		Data->Show_SOC_Temp = Game_Overlay::Show_SOC_Temp;
+
+		//Take digest and write it.
+
+		//Write Data
+		sceKernelWrite(fd, (void*)Data, sizeof(Data_s));
+		sceKernelClose(fd);
+
+		return true;
+	}
+	else
+	{
+		klog("[Config] File: %s Does not exist & Could not be created.\n", File);
+		return false;
+	}
+}
+
+void Config::Init()
+{
+	Data = new Data_s();
+}
+
+void Config::Term()
+{
+	delete Data;
+}

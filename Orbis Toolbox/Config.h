@@ -24,3 +24,39 @@ private:
 
 	bool Does_Member_Exist(const char* Section, const char* Member);
 };*/
+#pragma once
+
+class Config
+{
+private:
+	struct Data_s
+	{
+		int Version;
+		
+		bool Auto_Load_Settings;
+		bool Show_DebugTitleIdLabel;
+		bool Show_DevkitPanel;
+		bool Show_Debug_Settings;
+		bool Show_App_Home;
+
+		bool Show_Build_Overlay;
+
+		char Game_Overlay_Location[0x100];
+		bool Show_CPU_Usage;
+		bool Show_Thread_Count;
+		bool Show_ram;
+		bool Show_vram;
+		bool Show_CPU_Temp;
+		bool Show_SOC_Temp;
+	};
+
+public:
+	static Data_s* Data;
+
+	static bool Read(const char* File);
+	static bool Parse(const char* File);
+	static bool Write(const char* File);
+
+	static void Init();
+	static void Term();
+};

@@ -61,6 +61,7 @@ public:
 	}
 
 	static std::map<const char*, MenuOption>* Options;
+	static bool Auto_Load_Settings;
 
 	static void Init();
 	static void Term();
@@ -68,3 +69,7 @@ public:
 private:
 
 };
+
+#define DAEMON_DIR "/system/vsh/app/"
+#define PLUGIN_DIR "/data/Orbis Toolbox/Plugins"
+#define SETTIN_DIR "/data/Orbis Toolbox/Settings.cfg"
