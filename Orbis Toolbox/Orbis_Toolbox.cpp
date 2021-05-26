@@ -8,9 +8,11 @@ extern "C"
 	{
 		klog("!! Hello World !!\n");
 
+		//Test2();
+
 		Mono::Init();
 
-		UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
+		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		CPU_Monitor::Init();
 		Settings_Menu::Init();
 		//Title_Menu::Init();

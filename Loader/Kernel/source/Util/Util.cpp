@@ -110,9 +110,17 @@ void Jailbreak(proc* proc, Backup_Jail* jail)
         cred->cr_rgid = 0;
         cred->cr_groups[0] = 0;
 
+        thread* Cur = proc->p_threads.tqh_first;
+        while(Cur != nullptr)
+        {
+            Cur->td_ucred->cr_sceAuthID = 0x3801000000000013;
+            Cur->td_ucred->cr_sceCaps[0] = 0xffffffffffffffff;
+            Cur->td_ucred->cr_sceCaps[1] = 0xffffffffffffffff;
+            Cur = Cur->td_plist.tqe_next;
+        }
     
-        fd->fd_jdir = *(vnode**)rootvnode;
-        fd->fd_rdir = *(vnode**)rootvnode;
+        //fd->fd_jdir = *(vnode**)rootvnode;
+        //fd->fd_rdir = *(vnode**)rootvnode;
     }
 }
 

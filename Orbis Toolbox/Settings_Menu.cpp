@@ -100,6 +100,13 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
 
+		klog("OnPreCreate: %s\n", Id);
+
+		if (!strcmp(Id, "id_ORBS30000"))
+		{
+			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Stopped"));
+		}
+
 		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
 			if (!strcmp(Id, it->first))

@@ -117,7 +117,7 @@ void* CPU_Monitor::Monitor_Thread(void* args)
 				Usage[4], Usage[5], Usage[6], Usage[7]);*/
 		}
 
-		sceKernelSleep(3);
+		sceKernelSleep(2);
 	}
 
 	Should_Run_Thread = true;

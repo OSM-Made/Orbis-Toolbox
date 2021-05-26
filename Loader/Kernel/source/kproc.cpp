@@ -77,9 +77,9 @@ void OnProcessStart(void *arg, struct proc *p)
         //Restore previous jail.
         RestoreJail(p, bkJail);
 
-        proc* kernel = proc_find_by_name("kernel");
-        if(kernel)
-            kproc_kthread_add(test_thread, p, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
+        //proc* kernel = proc_find_by_name("kernel");
+        //if(kernel)
+        //    kproc_kthread_add(test_thread, p, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
     }
 }
 

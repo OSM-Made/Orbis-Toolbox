@@ -109,6 +109,21 @@ void UI::Utilities::AddMenuItem(MonoObject* ElementData)
 	Mono::Invoke<void>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "AddMenuItem", ElementData, Mono::New_String(""));
 }
 
+MonoObject* UI::Utilities::GetElement(const char* Id)
+{
+	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");
+	return Mono::Invoke<MonoObject*>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "GetElement", Mono::New_String(Id));
+}
+
+void UI::Utilities::Set_Value(const char* Id, const char* Value)
+{
+	MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
+
+	MonoObject* Elem = GetElement(Id);
+	if(Elem)
+		Mono::Set_Property(SettingElement, Elem, "Value", Mono::New_String(Value));
+}
+
 MonoObject* UI::Utilities::ElementData(const char* Id, const char* Title, const char* Title2, const char* Icon)
 {
 	MonoClass* ButtonElementData = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "ButtonElementData");
@@ -164,4 +179,35 @@ float UI::Utilities::ScreenWidth()
 {
 	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UISystem");
 	return Mono::Get_Property<int>(UISystem, nullptr, "ScreenWidth");
+}
+
+//Sce.Vsh.ShellUI.Library OptionMenuFactory IsAppRunning
+bool UI::Utilities::IsAppRunning(const char* TitleId)
+{
+	MonoClass* ApplicationMonitor = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "ApplicationMonitor");
+
+	if (ApplicationMonitor == nullptr)
+	{
+		klog("IsAppRunning: ApplicationMonitor was null.");
+		return false;
+	}
+
+	MonoMethod* Method = mono_class_get_method_from_name(ApplicationMonitor, "GetAppEvent", 1);
+
+	if (!Method)
+	{
+		klog("Get_Address_of_Method: failed to find method \"%s\" in class \"%s\"", "GetAppEvent", "ApplicationMonitor");
+		return false;
+	}
+
+	void* Args[] = { Mono::New_String(TitleId) };
+
+	uint64_t obj = (uint64_t)mono_runtime_invoke(Method, nullptr, Args, NULL);
+
+	//MonoObject* Res = Mono::Invoke<MonoObject*>(Mono::App_exe, ApplicationMonitor, nullptr, "GetAppEvent", Mono::New_String(TitleId));
+
+	klog("obj = %llX\n", obj);
+	return (obj != NULL);
+
+	return true;
 }

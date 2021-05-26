@@ -46,10 +46,10 @@ public:
 	{
 		int appId;
 		int launchRequestAppId;
-		AppType appType;
+		char appType;
 	};
 
-	static int GetAppStatus(AppStatus* status);
+	static int GetAppStatus(AppStatus* Status);
 	static int SuspendApp(int appId, Flag flag = Flag_None);
 	static int ResumeApp(int appId, Flag flag = Flag_None);
 
@@ -57,7 +57,7 @@ public:
 	static int SetAppFocus(int appId, Flag flag = Flag_None);
 	
 	static int GetAppId(const char* titleId);
-	static int LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppParam param);
+	static int LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppParam* param);
 	static int KillApp(int appId, int userId = -1);
 	static int ForceKillApp(int appId, int userId = -1);
 	static int KillLocalProcess(int appId, int appLocalPid);

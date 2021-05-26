@@ -10,6 +10,7 @@
 
 std::map<const char*, MenuOption>* Menu::Options;
 bool Menu::Auto_Load_Settings;
+char Test[0x100] = { "Stopped" };
 
 void Menu::Init()
 {
@@ -39,33 +40,92 @@ void Menu::Init()
 	 
 	// Note: Package Installer does not need to be done here
 	//		 because of the fact its managed by the system.
+	Add_Option("id_message");
+
+	Add_Option("id_ORBS30000", &Test, Type_String, []() -> void { Notify("Test");  }, []() -> void { Notify("Test");  });
+	Add_Option("id_OFTP00001", []() -> void { 
+
+		int AppId = LncUtil::GetAppId("OFTP00001");
+		if (AppId > 0)
+		{
+			LncUtil::KillApp(AppId);
+
+			AppId = LncUtil::GetAppId("OFTP00001");
+			if (AppId < 0)
+			{
+				UI::Utilities::Set_Value("id_OFTP00001", "Stopped");
+				UI::Utilities::ResetMenuItem("id_OFTP00001");
+			}
+		}
+		else
+		{
+			char Args;
+			LncUtil::LaunchAppParam p = { sizeof(LncUtil::LaunchAppParam), -1, 0, 0, LncUtil::Flag_None };
+			LncUtil::LaunchApp("OFTP00001", &Args, 0, &p);
+
+			//LaunchAppParam p = { sizeof(LaunchAppParam), -1, 0, 0, LncUtilFlag::LncUtilFlagNone };
+			//sceLncUtilLaunchApp("OFTP00001", 0, &p);
+
+			AppId = LncUtil::GetAppId("OFTP00001");
+			if (AppId > 0)
+			{
+				UI::Utilities::Set_Value("id_OFTP00001", "Running");
+				UI::Utilities::ResetMenuItem("id_OFTP00001");
+			}
+		}
+		Notify("Test");  
+
+	});
 
 	// Daemon Manager
-	Add_Option("id_daemons", []() -> void {
+	Add_Option("id_daemons", nullptr, nullptr, []() -> void {
 		
-		int fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
+		/*int fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
 
 		if (fd)
 		{
-			OrbisKernelStat stats;
-			sceKernelFstat(fd, &stats);
+			//OrbisKernelStat stats;
+			//sceKernelFstat(fd, &stats);
 
-			char* Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
+			//char* Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
 
-			sceKernelGetdents(fd, Dent_Buffer, stats.st_blksize);
+			char buf[1024];
+			OrbisKernelDirents *dent;
+			int bpos;
 
-			OrbisKernelDirents* File = (OrbisKernelDirents*)&Dent_Buffer[0];
-			OrbisKernelDirents* File_End = (OrbisKernelDirents*)&Dent_Buffer[stats.st_blksize];
-			int seek = 0;
-			while (File != File_End)
+			int nread = sceKernelGetdents(fd, buf, 1024);
+
+			if (nread <= 0)
+				return;
+
+			for (bpos = 0; bpos < nread;) 
 			{
-				klog("%s\n", File->d_name);
-				File = (OrbisKernelDirents*)(((uint64_t)File + File->d_reclen));
+				dent = (OrbisKernelDirents*) (buf + bpos);
+
+				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
+				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, "."))
+				{
+					klog("%s\n", dent->d_name);
+					if (!strcmp(dent->d_name, "OFTP00001")) 
+					{*/
+						UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_OFTP00001", "Orbis FTP", "A simple FTP Daemon that has read write privlage to anywhere.", "file://system/vsh/app/OFTP00001/sce_sys/icon0.png"));
+
+						int AppId = LncUtil::GetAppId("OFTP00001");
+						klog("%i\n", AppId);
+
+						if(AppId > 0)
+							UI::Utilities::Set_Value("id_OFTP00001", "Running");
+						else
+							UI::Utilities::Set_Value("id_OFTP00001", "Stopped");
+					/*}
+				}
+
+				bpos += dent->d_reclen;
 			}
 
 			sceKernelClose(fd);
-		}
-
+		}*/
+		(*Options)["id_message"].Visible = false;
 		UI::Utilities::ResetMenuItem("id_message");
 
 	});

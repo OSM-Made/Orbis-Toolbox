@@ -17,16 +17,13 @@ extern "C" void _main(uint64_t arg)
   klog("!!! HELLO HELLO FROM KERNEL !!!");
 
   //Init kernel process.
-  //kproc_Init();
+  kproc_Init();
 
-  /*klog("Restarting UI...");
+  klog("Restarting UI...");
   proc* ShellUI = proc_find_by_name("SceShellUI");
   if(ShellUI)
   {
-    proc_kill(ShellUI, "Orbis Toolbox");
-  }*/
-
-  proc* test = proc_find_by_name("default.elf");
-  Backup_Jail bk;
-  Jailbreak(test, &bk);
+    Jailbreak(ShellUI, nullptr);
+    //proc_kill(ShellUI, "Orbis Toolbox");
+  }
 }
