@@ -18,7 +18,7 @@ int (*ksprintf)(char* dst, const char *fmt, ...);
 int (*kvsprintf)(char* dst, const char* fmt, va_list ap);
 void(*kprintf)(const char* fmt, ...);
 
-void Kern_Resolve(uint64_t kernbase);
+void Kern_Resolve();
 
 //Kernel
 int(*sceKernelDebugOutText)(int dbg_channel, const char* text);

@@ -1,11 +1,23 @@
 #pragma once
 #include "Common.h"
 
-class CPU_Monitor
+class System_Monitor
 {
 public:
+	struct Memory
+	{
+		int Used;
+		int Free;
+		int Total;
+		float Percentage;
+	};
+
 	static int Thread_Count;
 	static float Usage[8];
+	static int CPU_Temp;
+	static int SOC_Temp;
+	static Memory RAM;
+	static Memory VRAM;
 
 	static void Init();
 	static void Term();

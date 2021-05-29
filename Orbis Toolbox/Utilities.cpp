@@ -75,31 +75,34 @@ void build_iovec(Myiovec** iov, int* iovlen, const char* name, const void* val, 
 	*iovlen = ++i;
 }
 
-void Get_Page_Table_Stats(int *cpuUsed, int *cpuTotal, int *gpuUsed, int *gpuTotal)
+
+/*
+
+vm:
+1 - Seems to be system
+2 - seems to be app specific.
+
+type:
+1 - RAM
+2 - VRAM
+
+*/
+
+void Get_Page_Table_Stats(int vm, int type, int* Used, int* Free, int* Total)
 {
-	int vm0_cpu_total = 0;
-	int vm0_cpu_free = 0;
-	int vm0_gpu_total = 0;
-	int vm0_gpu_free = 0;
+	int _Total = 0, _Free = 0;
 
-	if (get_page_table_stats(0, 1, &vm0_cpu_total, &vm0_cpu_free) == -1 || get_page_table_stats(0, 2, &vm0_gpu_total, &vm0_gpu_free) == -1) {
+	if (get_page_table_stats(vm, type, &_Total, &_Free) == -1) {
 		klog("get_page_table_stats() Failed.\n");
 		return;
 	}
 
-	int vm1_cpu_total = 0;
-	int vm1_cpu_free = 0;
-	int vm1_gpu_total = 0;
-	int vm1_gpu_free = 0;
+	if (Used)
+		*Used = (_Total - _Free);
 
-	if (get_page_table_stats(1, 1, &vm1_cpu_total, &vm1_cpu_free) == -1 || get_page_table_stats(1, 2, &vm1_gpu_total, &vm1_gpu_free) == -1) {
-		klog("get_page_table_stats() Failed.\n");
-		return;
-	}
+	if (Free)
+		*Free = _Free;
 
-	*cpuUsed = (vm0_cpu_total - vm0_cpu_free) + (vm1_cpu_total - vm1_cpu_free);
-	*cpuTotal = vm0_cpu_total;
-
-	*gpuUsed = (vm0_gpu_total - vm0_gpu_free) + (vm1_gpu_total - vm1_gpu_free);
-	*gpuTotal = vm0_gpu_total;
+	if (Total)
+		*Total = _Total;
 }

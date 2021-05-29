@@ -66,4 +66,4 @@ typedef unsigned char vm_prot_t;	/* protection codes */
 void klog(const char* fmt, ...);
 void Notify(const char* MessageFMT, ...);
 
-void Get_Page_Table_Stats(int *cpuUsed, int *cpuTotal, int *gpuUsed, int *gpuTotal);
+void Get_Page_Table_Stats(int vm, int type, int* Used, int* Free, int* Total);

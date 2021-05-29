@@ -3,11 +3,12 @@
 extern char _binary_Resources_Kernel_bin_start[];
 extern char _binary_Resources_Kernel_bin_end[];
 struct Backup_Jail bkJail;
+uint8_t* gKernelBase;
 
 int install_elf(struct thread *td)
 {
 	//Get kernel Base.
-    uint64_t KernelBase = (__readmsr(0xC0000082) - addr_Xfast_syscall);
+    uint8_t* KernelBase = (uint8_t*)(__readmsr(0xC0000082) - addr_Xfast_syscall);
 
     if(!KernelBase)
 		return 0;
@@ -52,16 +53,17 @@ int install_elf(struct thread *td)
 int jailbreak_proc(struct thread *td)
 {
 	//Get kernel Base.
-    uint64_t KernelBase = (__readmsr(0xC0000082) - addr_Xfast_syscall);
+    gKernelBase = (uint8_t*)(__readmsr(0xC0000082) - addr_Xfast_syscall);
 
-    if(!KernelBase)
+    if(!gKernelBase)
 		return 0;
 
     //Resolve Function Addresses and install Patches.
-	Kern_Resolve(KernelBase);
-	//Install_Patches(KernelBase);
+	Kern_Resolve();
 
-	klog("KernBase: 0x%llX", KernelBase);
+	klog("KernBase: 0x%llX", gKernelBase);
+
+	Install_Patches();
 
 	//Jailbreak current Process.
 	Jailbreak(td->td_proc, &bkJail);

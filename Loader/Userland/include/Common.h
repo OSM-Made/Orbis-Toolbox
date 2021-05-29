@@ -33,3 +33,5 @@
 #include "syscall.h"
 #include "ELF.h"
 #include "Util/Utils.h"
+
+extern uint8_t* gKernelBase;

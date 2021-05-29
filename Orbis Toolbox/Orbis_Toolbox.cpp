@@ -1,6 +1,6 @@
 #include "Common.h"
 #include "Settings_Menu.h"
-#include "CPU_Monitor.h"
+#include "System_Monitor.h"
 
 extern "C"
 {
@@ -8,14 +8,12 @@ extern "C"
 	{
 		klog("!! Hello World !!\n");
 
-		//Test2();
-
 		Mono::Init();
 
 		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
-		CPU_Monitor::Init();
+		System_Monitor::Init();
 		Settings_Menu::Init();
-		//Title_Menu::Init();
+		//Title_Menu::Init();	
 
 		Notify(ORBIS_TOOLBOX_NOTIFY);
 
@@ -29,7 +27,7 @@ extern "C"
 		Notify("Orbis Toolbox: Unloading...");
 
 		Settings_Menu::Term();
-		CPU_Monitor::Term();
+		System_Monitor::Term();
 		//Title_Menu::Term();
 
 		return 0;

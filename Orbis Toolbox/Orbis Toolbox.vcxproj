@@ -65,7 +65,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
   <ItemGroup>
     <ClCompile Include="Build_Overlay.cpp" />
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="CPU_Monitor.cpp" />
+    <ClCompile Include="System_Monitor.cpp" />
     <ClCompile Include="Custom_Content.cpp" />
     <ClCompile Include="DebugTitleIdLabel.cpp" />
     <ClCompile Include="Detour.cpp" />
@@ -88,7 +88,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClInclude Include="Build_Overlay.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="CPU_Monitor.h" />
+    <ClInclude Include="System_Monitor.h" />
     <ClInclude Include="Debug_Features.h" />
     <ClInclude Include="Detour.h" />
     <ClInclude Include="Game_Overlay.h" />

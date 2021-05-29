@@ -120,7 +120,7 @@
     <ClCompile Include="Build_Overlay.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="CPU_Monitor.cpp">
+    <ClCompile Include="System_Monitor.cpp">
       <Filter>Source Files\Utilites</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,7 +185,7 @@
     <ClInclude Include="UI.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="CPU_Monitor.h">
+    <ClInclude Include="System_Monitor.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>

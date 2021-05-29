@@ -23,7 +23,6 @@ extern "C" void _main(uint64_t arg)
   proc* ShellUI = proc_find_by_name("SceShellUI");
   if(ShellUI)
   {
-    Jailbreak(ShellUI, nullptr);
     //proc_kill(ShellUI, "Orbis Toolbox");
   }
 }

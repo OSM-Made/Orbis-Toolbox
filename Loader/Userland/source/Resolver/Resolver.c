@@ -14,22 +14,22 @@ int (*ksprintf)(char* dst, const char *fmt, ...) = 0;
 int (*kvsprintf)(char* dst, const char* fmt, va_list ap) = 0;
 void(*kprintf)(const char* fmt, ...) = 0;
 
-#define NATIVE_RESOLVE(kernbase, _Ty) _Ty = (void*)(kernbase + addr_ ## _Ty);
+#define NATIVE_RESOLVE(_Ty) _Ty = (void*)((uint8_t *)&gKernelBase[addr_ ## _Ty]);
 
-void Kern_Resolve(uint64_t kernbase)
+void Kern_Resolve()
 {
     /* Util */
-    NATIVE_RESOLVE(kernbase, ksysvec);
-    NATIVE_RESOLVE(kernbase, kprison0);
-    NATIVE_RESOLVE(kernbase, krootvnode);
+    NATIVE_RESOLVE(ksysvec);
+    NATIVE_RESOLVE(kprison0);
+    NATIVE_RESOLVE(krootvnode);
 
     /* STD Lib */
-    NATIVE_RESOLVE(kernbase, kmemcpy);
-    NATIVE_RESOLVE(kernbase, kmemset);
-    NATIVE_RESOLVE(kernbase, kmemcmp);
-    NATIVE_RESOLVE(kernbase, ksprintf);
-    NATIVE_RESOLVE(kernbase, kvsprintf);
-    NATIVE_RESOLVE(kernbase, kprintf);
+    NATIVE_RESOLVE(kmemcpy);
+    NATIVE_RESOLVE(kmemset);
+    NATIVE_RESOLVE(kmemcmp);
+    NATIVE_RESOLVE(ksprintf);
+    NATIVE_RESOLVE(kvsprintf);
+    NATIVE_RESOLVE(kprintf);
 
     klog("Kern_Resolve() -> Sucess!");
 }

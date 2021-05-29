@@ -35,6 +35,27 @@ static inline __attribute__((always_inline)) uint64_t __readmsr(uint32_t __regis
 	return (((uint64_t)__edx) << 32) | (uint64_t)__eax;
 }
 
+#define CR0_WP (1 << 16) // write protect
+
+static inline __attribute__((always_inline)) uint64_t __readcr0(void) {
+	uint64_t cr0;
+
+	__asm__ volatile (
+	    "movq %0, %%cr0"
+	    : "=r" (cr0)
+	    : : "memory"
+	);
+
+	return cr0;
+}
+static inline __attribute__((always_inline)) void __writecr0(uint64_t cr0) {
+	__asm__ volatile (
+	    "movq %%cr0, %0"
+	    : : "r" (cr0)
+	    : "memory"
+	);
+}
+
 struct Backup_Jail
 {
     struct prison* cr_prison;

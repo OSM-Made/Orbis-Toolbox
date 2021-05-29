@@ -1,6 +1,6 @@
 #include "Common.h"
 #include "Game_Overlay.h"
-#include "CPU_Monitor.h"
+#include "System_Monitor.h"
 
 float Game_Overlay::X, Game_Overlay::Y;
 bool Game_Overlay::Show_CPU_Usage = false;
@@ -89,8 +89,6 @@ void Game_Overlay::OnRender()
 	if (!Game_Widget || Shutdown)
 		return;
 
-	// Static but allows us to decide the order while retaining labels
-	// are pushed up depending on which ones are enabled.
 	static int Waiter = 0;
 
 	if (Waiter <= 0)
@@ -101,7 +99,7 @@ void Game_Overlay::OnRender()
 			it->second(Instance);
 		}
 
-		Waiter = 20;
+		Waiter = 500;
 	}
 	else
 		Waiter--;
@@ -112,12 +110,6 @@ void inline Game_Overlay::Update_Label(int* Location, const char* Name)
 	Label* Instance = (Label*)Game_Widget->Get_Child(Name);
 	if ((*Updater)[Name](Instance))
 	{
-		/*if (!strcmp(Game_Overlay::Location, "Left"))
-			Instance->Set_Location(X, Y + (*Location * 25.0f));
-		else if (!strcmp(Game_Overlay::Location, "Right"))
-			Instance->Set_Location(X - Instance->Get_Text_Width(), Y + (*Location * 25.0f));
-		else if (!strcmp(Game_Overlay::Location, "Center"))
-			Instance->Set_Location(X - (Instance->Get_Text_Width() / 2), Y + (*Location * 25.0f));*/
 		Instance->Set_Location(X, Y + (*Location * 25.0f));
 		Instance->Set_Colour(1.0f, 1.0f, 1.0f, 1.0f);
 		*Location += 1;
@@ -162,9 +154,7 @@ void Game_Overlay::Init()
 
 		if (Show_CPU_Temp)
 		{
-			int Temp = 0;
-			sceKernelGetCpuTemperature(&Temp);
-			Instance->Set_Text("CPU Temp: %i C", Temp);
+			Instance->Set_Text("CPU Temp: %i C", System_Monitor::CPU_Temp);
 
 			return true;
 		}
@@ -177,9 +167,7 @@ void Game_Overlay::Init()
 
 		if (Show_SOC_Temp)
 		{
-			int Temp = 0;
-			sceKernelGetSocSensorTemperature(0, &Temp);
-			Instance->Set_Text("SOC Temp: %i C", Temp);
+			Instance->Set_Text("SOC Temp: %i C", System_Monitor::SOC_Temp);
 
 			return true;
 		}
@@ -192,7 +180,7 @@ void Game_Overlay::Init()
 
 		if (Show_Thread_Count)
 		{
-			Instance->Set_Text("Thread Count: %i", CPU_Monitor::Thread_Count);
+			Instance->Set_Text("Thread Count: %i", System_Monitor::Thread_Count);
 		
 			return true;
 		}
@@ -206,8 +194,8 @@ void Game_Overlay::Init()
 		if (Show_CPU_Usage)
 		{
 			Instance->Set_Text("CPU Usage: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%", 
-				CPU_Monitor::Usage[0], CPU_Monitor::Usage[1], CPU_Monitor::Usage[2], CPU_Monitor::Usage[3], 
-				CPU_Monitor::Usage[4], CPU_Monitor::Usage[5], CPU_Monitor::Usage[6], CPU_Monitor::Usage[7]);
+				System_Monitor::Usage[0], System_Monitor::Usage[1], System_Monitor::Usage[2], System_Monitor::Usage[3],
+				System_Monitor::Usage[4], System_Monitor::Usage[5], System_Monitor::Usage[6], System_Monitor::Usage[7]);
 
 			return true;
 		}
@@ -219,9 +207,7 @@ void Game_Overlay::Init()
 
 		if (Show_ram)
 		{
-			int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
-			Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
-			Instance->Set_Text("RAM: %u MB / %u MB", cpuUsed, cpuTotal);
+			Instance->Set_Text("RAM: %2.0f%% %u MB / %u MB", System_Monitor::RAM.Percentage, System_Monitor::RAM.Used, System_Monitor::RAM.Total);
 
 			return true;
 		}
@@ -234,9 +220,7 @@ void Game_Overlay::Init()
 
 		if (Show_vram)
 		{
-			int cpuUsed, cpuTotal, gpuUsed, gpuTotal;
-			Get_Page_Table_Stats(&cpuUsed, &cpuTotal, &gpuUsed, &gpuTotal);
-			Instance->Set_Text("VRAM:  %u MB / %u MB", gpuUsed, gpuTotal);
+			Instance->Set_Text("VRAM:  %2.0f%% %u MB / %u MB", System_Monitor::VRAM.Percentage, System_Monitor::VRAM.Used, System_Monitor::VRAM.Total);
 
 			return true;
 		}

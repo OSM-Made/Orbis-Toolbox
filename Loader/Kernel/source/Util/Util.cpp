@@ -22,30 +22,31 @@ void MountDir(thread* td, char* Sandbox, char* what, int flags)
 {
     if(!td)
     {
-        klog("Thread was NULL...\n");
+        klog("Thread was NULL...");
         return;
     }
 
 	char s_fulldir[0x200];
 	snprintf(s_fulldir, sizeof(s_fulldir), "%s%s", Sandbox, what);
 
-	klog("Mount: %s -> %s\n", s_fulldir, what);
+	klog("Mount: %s -> %s", s_fulldir, what);
 	kern_mkdir(td, s_fulldir, 0, 0777);
-	MountNullFS(s_fulldir, what, flags);
+	int res = MountNullFS(s_fulldir, what, flags);
+    klog("Mount Result: 0x%llX\n", res);
 }
 
 void UnMountDir(thread* td, char* Sandbox, char* what, int flags)
 {
     if(!td)
     {
-        klog("Thread was NULL...\n");
+        klog("Thread was NULL...");
         return;
     }
 
 	char s_fulldir[0x200];
 	snprintf(s_fulldir, sizeof(s_fulldir), "%s%s", Sandbox, what);
 
-	klog("Un-Mount: %s -> %s\n", s_fulldir, what);
+	klog("Un-Mount: %s -> %s", s_fulldir, what);
 
 	sys_unmount(s_fulldir, flags);
 	kern_rmdir(td, s_fulldir, 0);
@@ -110,17 +111,17 @@ void Jailbreak(proc* proc, Backup_Jail* jail)
         cred->cr_rgid = 0;
         cred->cr_groups[0] = 0;
 
-        thread* Cur = proc->p_threads.tqh_first;
+        /*thread* Cur = proc->p_threads.tqh_first;
         while(Cur != nullptr)
         {
             Cur->td_ucred->cr_sceAuthID = 0x3801000000000013;
             Cur->td_ucred->cr_sceCaps[0] = 0xffffffffffffffff;
             Cur->td_ucred->cr_sceCaps[1] = 0xffffffffffffffff;
             Cur = Cur->td_plist.tqe_next;
-        }
+        }*/
     
-        //fd->fd_jdir = *(vnode**)rootvnode;
-        //fd->fd_rdir = *(vnode**)rootvnode;
+        fd->fd_jdir = *(vnode**)rootvnode;
+        fd->fd_rdir = *(vnode**)rootvnode;
     }
 }
 
