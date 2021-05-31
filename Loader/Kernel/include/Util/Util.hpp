@@ -45,8 +45,9 @@ static inline __attribute__((always_inline)) void __writecr0(uint64_t cr0) {
 	);
 }
 
-void MountDir(thread* td, char* Sandbox, char* what, int flags);
-void UnMountDir(thread* td, char* Sandbox, char* what, int flags);
+bool MountDir(thread* td, char* Sandbox, char* what, int flags);
+bool UnMountDir(thread* td, char* Sandbox, char* what, int flags);
+bool Mount_Dirs(proc* p, vnode* jdir, bool Mount);
 
 char* strrchr(const char *cp, int ch);
 char* strchr(const char *s, int c);

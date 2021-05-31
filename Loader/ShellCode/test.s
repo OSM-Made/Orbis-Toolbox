@@ -6,20 +6,35 @@ entry: dq shellcode
 
 thr_initial: dq 0
 ShellCodeComplete: db 0
+CommandIndex: db 0
+ShouldExit: db 0
 
 ;sceKernelLoadStartModule Variables
 ModulePath: db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+argc: dd 0
+argv: dq 0
+pflags: dd 0
+pOpt: dd 0
+pRes: dd 0
 ModuleHandle: dq 0 
+
+;sceKernelStopUnloadModule Variables
+args: dq 0
+argp: dq 0
+handle: dd 0
+Result: dq 0
 
 ;Addresses
 sceKernelUsleep: dq 0
 asceKernelLoadStartModule: dq 0
+asceKernelStopUnloadModule: dq 0
 libkernel: dq 0
 str_libkernel: db 'libkernel.sprx', 0
 str_libkernelweb: db 'libkernel_web.sprx', 0
 str_libkernelsys: db 'libkernel_sys.sprx', 0
 str_sceKernelSleep: db 'sceKernelUsleep', 0
 str_sceKernelLoadStartModule: db 'sceKernelLoadStartModule', 0
+str_sceKernelStopUnloadModule: db 'sceKernelStopUnloadModule', 0
 
 str_scePthreadCreate: db 'scePthreadCreate', 0
 scePthreadCreate: dq 0
@@ -30,11 +45,17 @@ scePthreadAttrInit: dq 0
 
 hthread: dq 0
 scePthreadAttr: dq 0
-str_threadName: db 'Orbis Toolbox SPRX Loader', 0
+str_threadName: db 'Orbis SPRX Loader', 0
+
+hthreadstop: dq 0
+scePthreadAttrstop: dq 0
+str_threadNamestop: db 'Orbis SPRX UnLoader', 0
 
 ; Work around for oosdk
 amodule_start: dq 0
 str_module_start: db 'module_start', 0
+amodule_stop: dq 0
+str_module_stop: db 'module_stop', 0
 
 shellcode:
 	; load thread into fs
@@ -79,6 +100,12 @@ resolve:
 	mov rdi, qword [libkernel]
 	call sys_dynlib_dlsym
 
+	; resolve sceKernelStopUnloadModule
+	lea rdx, [asceKernelStopUnloadModule]
+	lea rsi, [str_sceKernelStopUnloadModule]
+	mov rdi, qword [libkernel]
+	call sys_dynlib_dlsym
+
 	; resolve scePthreadCreate
 	lea rdx, [scePthreadCreate]
 	lea rsi, [str_scePthreadCreate]
@@ -96,20 +123,65 @@ resolve:
 	lea rsi, [str_scePthreadAttrInit]
 	mov rdi, qword [libkernel]
 	call sys_dynlib_dlsym
+
+LoopStart:
+	cmp byte[ShouldExit], 1
+	je LoopExit
+	
+FirstCall:
+	cmp byte[CommandIndex], 1
+	jne SecondCall
 	
 	call sceKernelLoadStartModule
 
 	; Check if the module loaded and if it did call the entry.
 	cmp dword[ModuleHandle], 0
-	jle didntload
+	je didntload
 
 	call module_start
 
 didntload:
-    mov byte [ShellCodeComplete], 1
 
+    mov byte [ShellCodeComplete], 1
+	mov byte[CommandIndex], 0
+
+	jmp EndofCase
+SecondCall:
+	cmp byte[CommandIndex], 2
+	jne EndofCase
+	
+	;safety make sure the handle is correct before calling the unload.
+	cmp dword[handle], 0
+	je notloaded
+
+	call module_stop
+	call sceKernelStopUnloadModule
+
+notloaded:
+
+    mov byte [ShellCodeComplete], 1
+	mov byte[CommandIndex], 0
+
+EndofCase:
+	mov rdi, 100000
+	mov r12, qword [sceKernelUsleep]
+	call r12
+	jmp LoopStart
+
+LoopExit:
 	mov rdi, 0
 	call sys_thr_exit
+	retn
+
+module_stop:
+	lea rdx, [amodule_stop]
+	lea rsi, [str_module_stop]
+	mov rdi, qword [handle]
+	call sys_dynlib_dlsym
+
+	mov r12, qword [amodule_stop]
+	call r12
+	xor eax, eax
 	retn
 
 module_start:
@@ -117,13 +189,7 @@ module_start:
 	lea rsi, [str_module_start]
 	mov rdi, qword [ModuleHandle]
 	call sys_dynlib_dlsym
-	
-	cmp dword[amodule_start], 0
-	ja found_start
-	xor eax, eax
-	retn
 
-found_start:
 	; create attr
 	lea rdi, [scePthreadAttr]
 	mov r12, qword [scePthreadAttrInit]
@@ -147,12 +213,25 @@ found_start:
 	xor eax, eax
 	retn
 
+sceKernelStopUnloadModule:
+	mov r9, [pRes]
+	mov r8, [pOpt]
+	mov rcx, [pflags]
+	mov rdx, [argp]
+	mov rsi, [args]
+	mov rdi, [handle]
+	mov r12, qword [asceKernelStopUnloadModule]
+	call r12
+	mov qword [Result], rax
+	xor eax, eax
+	retn
+
 sceKernelLoadStartModule:
-	xor r9, r9
-    xor r8, r8
-    xor rcx, rcx
-    xor rdx, rdx
-    xor rsi, rsi
+	mov r9, [pRes]
+    mov r8, [pOpt]
+    mov rcx, [pflags]
+    mov rdx, [argv]
+    mov rsi, [argc]
     lea rdi, [ModulePath]
     mov r12, qword [asceKernelLoadStartModule]
 	call r12

@@ -18,29 +18,34 @@ int MountNullFS(char* where, char* what, int flags)
     return kern_mount(ma, flags);
 }
 
-void MountDir(thread* td, char* Sandbox, char* what, int flags)
+bool MountDir(thread* td, char* Sandbox, char* what, int flags)
 {
     if(!td)
     {
         klog("Thread was NULL...");
-        return;
+        return false;
     }
 
 	char s_fulldir[0x200];
 	snprintf(s_fulldir, sizeof(s_fulldir), "%s%s", Sandbox, what);
 
 	klog("Mount: %s -> %s", s_fulldir, what);
-	kern_mkdir(td, s_fulldir, 0, 0777);
-	int res = MountNullFS(s_fulldir, what, flags);
-    klog("Mount Result: 0x%llX\n", res);
+
+	if(kern_mkdir(td, s_fulldir, 0, 0777) != 0)
+        return false;
+
+	if(MountNullFS(s_fulldir, what, flags) != 0)
+        return false;
+    
+    return true;
 }
 
-void UnMountDir(thread* td, char* Sandbox, char* what, int flags)
+bool UnMountDir(thread* td, char* Sandbox, char* what, int flags)
 {
     if(!td)
     {
         klog("Thread was NULL...");
-        return;
+        return false;
     }
 
 	char s_fulldir[0x200];
@@ -48,8 +53,78 @@ void UnMountDir(thread* td, char* Sandbox, char* what, int flags)
 
 	klog("Un-Mount: %s -> %s", s_fulldir, what);
 
-	sys_unmount(s_fulldir, flags);
-	kern_rmdir(td, s_fulldir, 0);
+	if(sys_unmount(s_fulldir, flags) != 0)
+        return false;
+
+	if(kern_rmdir(td, s_fulldir, 0) != 0)
+        return false;
+
+    return true;
+}
+
+bool Mount_Dirs(proc* p, vnode* jdir, bool Mount)
+{
+    klog("%s dirs { system, data, host, hostapp } on process %s", Mount ? "Mounting" : "Un-Mounting", p->p_comm);
+
+    //Get first thread in proc.
+    thread* td = curthread();//p->p_threads.tqh_first;
+
+    //Get the sandbox path.
+    char* s_SandboxPath = nullptr;
+    char* s_Freepath = nullptr;
+    vn_fullpath(td, jdir, &s_SandboxPath, &s_Freepath);
+    klog("%s -> %s\n", p->p_comm, s_SandboxPath);
+
+    if(Mount)
+    {
+        if(!MountDir(td, s_SandboxPath, "/system", MNT_SYNCHRONOUS))
+        {
+            klog("Failed to Mount /System.");
+            return false;
+        }
+        if(!MountDir(td, s_SandboxPath, "/data", MNT_SYNCHRONOUS))
+        {
+            klog("Failed to Mount /data.");
+            return false;
+        }
+        if(!MountDir(td, s_SandboxPath, "/host", MNT_SYNCHRONOUS))
+        {
+            klog("Failed to Mount /host.");
+            return false;
+        }
+        if(!MountDir(td, s_SandboxPath, "/hostapp", MNT_SYNCHRONOUS))
+        {
+            klog("Failed to Mount /hostapp.");
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        if(!UnMountDir(td, s_SandboxPath, "/system", MNT_FORCE))
+        {
+            klog("Failed to Un-Mount /system.");
+            return false;
+        }
+        if(!UnMountDir(td, s_SandboxPath, "/data", MNT_FORCE))
+        {
+            klog("Failed to Un-Mount /data.");
+            return false;
+        }
+        if(!UnMountDir(td, s_SandboxPath, "/host", MNT_FORCE))
+        {
+            klog("Failed to Un-Mount /host.");
+            return false;
+        }
+        if(!UnMountDir(td, s_SandboxPath, "/hostapp", MNT_FORCE))
+        {
+            klog("Failed to Un-Mount /hostapp.");
+            return false;
+        }
+
+        return true;
+    }
 }
 
 char* strrchr(const char *cp, int ch)

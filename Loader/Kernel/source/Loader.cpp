@@ -12,70 +12,43 @@ char ProcName[0x20] = { };
 extern uint8_t LoaderShellCode[];
 extern int32_t LoaderShellCodeSize;
 
-bool Loader_Init(proc* proc)
+bool Load_SPRX(proc* proc, const char* File)
 {
-    klog("Loader Init");
+    klog("Load_SPRX(): \"%s\"", File);
+
+    
+
     size_t n;
     int err = 0;
     uint64_t thr_initial = 0;
+    uint8_t ShellCodeComplete = 0;
+    uint64_t ModuleHandle = 0;
 
     if(!proc) 
 	{
-        klog("proc pointer was null.");
-        return false;
-    }
-
-    //store for use later
-    strcpy(ProcName, (char*)proc->p_comm);
-
-    gShellCodeSize = LoaderShellCodeSize;
-	gShellCodeSize += (PAGE_SIZE - (gShellCodeSize % PAGE_SIZE));
-	if(proc_allocate(proc, &gShellCodePtr, gShellCodeSize)) 
-    {
-        klog("Failed to allocate ShellCode Memory.");
-        return false;
-    }
-
-    size_t StackSize = 0x80000;
-	if(proc_allocate(proc, &gStackPtr, StackSize)) {
-        klog("Failed to allocate Stack Memory.");
-
-        if (gShellCodePtr)
-			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
-
-        return false;
-    }
-
-    err = proc_rw_mem(proc, gShellCodePtr, LoaderShellCodeSize, (void *)LoaderShellCode, &n, 1);
-    if(err)
-    {
-        klog("Failed to write Shellcode to Memory. Error: %d.", err);
-
-        if (gShellCodePtr)
-			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
-
-		if (gStackPtr)
-			proc_deallocate(proc, gStackPtr, 0x80000);
-
+        klog("Load_SPRX(): proc pointer was null.");
         return false;
     }
 
     if(proc->p_dynlibptr == NULL) 
     {
-        klog("p_dynlibptr is NULL.");
-
-        if (gShellCodePtr)
-			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
-
-		if (gStackPtr)
-			proc_deallocate(proc, gStackPtr, 0x80000);
-
+        klog("Load_SPRX(): p_dynlibptr is NULL.");
         return false;
     }
+
+    /*
+        Gets the Thread Initial for the shellcore thread. Also checking to make sure were not trying to load a prx already loaded.
+    */
 
     dynlib* m_library = proc->p_dynlibptr->p_dynlib;
     while(m_library != 0)
 	{
+        if(!strcmp(basename(m_library->ModulePath), basename(File)))
+        {
+            klog("Load_SPRX(): Module %s is already loaded on proc %s...", basename(File), proc->p_comm);
+            return false;
+        }
+
         if(!strcmp(basename(m_library->ModulePath), "libkernel.sprx"))
 			thr_initial = (uint64_t)m_library->codeBase + addr_thr_initial_libkernel;
 
@@ -90,31 +63,65 @@ bool Loader_Init(proc* proc)
 
     if(thr_initial == 0) 
     {
-		klog("Failed to resolve thr_initial.");
-
-        if (gShellCodePtr)
-			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
-
-		if (gStackPtr)
-			proc_deallocate(proc, gStackPtr, 0x80000);
+		klog("Load_SPRX(): Failed to resolve thr_initial.");
 
         return false;
     }
 
-    m_library = proc->p_dynlibptr->p_dynlib;
-    while(m_library != 0)
-	{ 
-        proc_mprotect(proc, (void *)m_library->codeBase, (void*)m_library->codeSize, VM_PROT_ALL);
-        m_library = m_library->dynlib_next;
+    /*
+        Allocate some memory on the heap to temporarily store the shellcode while we set our data.
+    */
+    char* Loader_Temp = (char*)malloc(LoaderShellCodeSize, M_TEMP, 2);
+    if(!Loader_Temp)
+    {
+        klog("Load_SPRX(): Failed to allocate heap space to store temp shellcode data...");
+
+        return false;
     }
 
-    klog("thr_initial = %llX", thr_initial);
-    klog("gShellCodePtr = %llX", gShellCodePtr);
+    //Setting the shellcode instructions
+    memcpy(Loader_Temp, LoaderShellCode, LoaderShellCodeSize);
 
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, thr_initial), sizeof(thr_initial), (void *)&thr_initial, &n, 1);
+    //Setting thread initial and sprx path.
+    *(uint64_t*)(Loader_Temp + offsetof(OrbisLoader_header, thr_initial)) = thr_initial;
+    strcpy(Loader_Temp + offsetof(OrbisLoader_header, SPRXPath), (char*)File);
+
+    /*
+        Allocate space on the process for the shellcode and its threads stack.
+    */
+    gShellCodeSize = LoaderShellCodeSize;
+	gShellCodeSize += (PAGE_SIZE - (gShellCodeSize % PAGE_SIZE));
+	if(proc_allocate(proc, &gShellCodePtr, gShellCodeSize)) 
+    {
+        klog("Load_SPRX(): Failed to allocate ShellCode Memory.");
+
+        free(Loader_Temp, M_TEMP);
+
+        return false;
+    }
+
+    klog("Load_SPRX(): thr_initial = %llX", thr_initial);
+    klog("Load_SPRX(): gShellCodePtr = %llX", gShellCodePtr);
+
+    size_t StackSize = 0x80000;
+	if(proc_allocate(proc, &gStackPtr, StackSize)) {
+        klog("Load_SPRX(): Failed to allocate Stack Memory.");
+
+        if (gShellCodePtr)
+			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
+
+        free(Loader_Temp, M_TEMP);
+
+        return false;
+    }
+
+    /*
+        Write the shellcode to the allocated memory on the process.
+    */
+    err = proc_rw_mem(proc, gShellCodePtr, LoaderShellCodeSize, (void *)Loader_Temp, &n, 1);
     if(err)
     {
-        klog("Failed to write thr_initial to ShellCode. Error: %d.", err);
+        klog("Load_SPRX(): Failed to write Shellcode to Memory. Error: %d.", err);
 
         if (gShellCodePtr)
 			proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
@@ -122,67 +129,56 @@ bool Loader_Init(proc* proc)
 		if (gStackPtr)
 			proc_deallocate(proc, gStackPtr, 0x80000);
 
+        free(Loader_Temp, M_TEMP);
+
         return false;
     }
 
-    klog("Starting Shellcode Thread...");
+    /*
+        Free up the heap space for the temp shellcode as we dont need it anymore.
+    */
+    free(Loader_Temp, M_TEMP);
+
+    /*
+        Start a thread with the entry pointing to +0x4 in our shellcode because that holds the offset to the starting instructions.
+    */
+    klog("Load_SPRX(): Starting Shellcode Thread...");
     struct thread *thr = TAILQ_FIRST(&proc->p_threads);
 	uint64_t ShellCodeEntry = (uint64_t)gShellCodePtr + *(uint64_t *)(LoaderShellCode + 4);
 	create_thread(thr, NULL, (void*)ShellCodeEntry, NULL, (char*)gStackPtr, StackSize, NULL, NULL, NULL, 0, NULL);
 
-    klog("!! Shellcode Loaded Success !!");
-    return ShellCodeLoaded = true;
-}
+    klog("Load_SPRX(): Thread Started!! Waiting for shellcode to complete...");
 
-bool Loader_Init(const char* Proc_Name)
-{
-    proc* proc = proc_find_by_name(Proc_Name);
-
-    if(!proc) 
+    /*
+        Wait for the shellcode to complete by reading the byte that will be set to 1 on completion.
+    */
+    while (!ShellCodeComplete) 
 	{
-        klog("Could not find Proc \"%s\".", Proc_Name);
+        err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisLoader_header, ShellCodeComplete), sizeof(ShellCodeComplete), (void *)&ShellCodeComplete, &n, 0);
+        if(err)
+        {
+            klog("Load_SPRX(): Failed to read ShellCodeComplete.");
+            return false;
+        }
+
+        //klog("Waiting for ShellCode to compelete!\n");
+        pause("", 100);
+	}
+
+    /*
+        Grab the Module handle from the shellcode to see if the loading was a sucess or not.
+    */
+    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisLoader_header, ModuleHandle), sizeof(ModuleHandle), (void *)&ModuleHandle, &n, 0);
+    if(err)
+    {
+        klog("Load_SPRX(): Failed to read ModuleHandle.");
         return false;
     }
 
-    return Loader_Init(proc);
-}
-
-void Loader_Term()
-{
-    klog("Loader Term");
-
-    proc* proc = proc_find_by_name(ProcName);
-    int err = 0;
-    uint8_t ShouldExit = 1;
-    size_t n;
-
-    if(!ShellCodeLoaded)
-    {
-        klog("ShellCode not loaded.");
-
-        return;
-    }
-
-    if(!proc)
-    {
-        klog("Could not find Proc \"%s\".", ProcName);
-
-        gShellCodePtr = NULL;
-	    gStackPtr = NULL;
-        ShellCodeLoaded = false;
-
-        return;
-    }
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, ShouldExit), sizeof(ShouldExit), (void *)&ShouldExit, &n, 1);
-	if(err)
-    {
-        klog("Failed to set ShouldExit to 1.");
-        return;
-    }
-
-    pause("", 500);
-
+    /*
+        Clean up.
+    */
+    klog("Load_SPRX(): Freeing Shellcode Memory...");
     if (gShellCodePtr)
         proc_deallocate(proc, gShellCodePtr, gShellCodeSize);
 
@@ -191,98 +187,15 @@ void Loader_Term()
 
     gShellCodePtr = NULL;
     gStackPtr = NULL;
-    ShellCodeLoaded = false;
-}
 
-int Load_SPRX(const char* SPRX_Path)
-{
-    klog("Load SPRX \"%s\"", SPRX_Path);
-
-    if(!ShellCodeLoaded)
+    if(ModuleHandle > 0 && ModuleHandle < 0x80000000)
     {
-        klog("Loader not initialized.");
-        return 0;
-    }
-
-    proc* proc = proc_find_by_name(ProcName);
-    
-    if(!proc) 
-	{
-        klog("Could not find Proc \"%s\".", ProcName);
-        return 0;
-    }
-
-    klog("gShellCodePtr = %llX", gShellCodePtr);
-
-    Backup_Jail bkjail;
-    Jailbreak(proc, &bkjail);
-
-    size_t n = 0;
-    int err = 0;
-	uint8_t CommandIndex = CMD_sceKernelLoadStartModule;
-    uint8_t ShellCodeComplete = 0;
-    uint64_t ModuleHandle = 0;
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, SPRXPath), strlen(SPRX_Path), (void *)SPRX_Path, &n, 1);
-    if(err)
-    {
-        klog("Failed to write params to ShellCode.");
-        return 0;
-    }
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, ModuleHandle), sizeof(ModuleHandle), (void *)&ModuleHandle, &n, 1);
-	if(err)
-    {
-        klog("Failed to reset ModuleHandle to zero.");
-        return 0;
-    }
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, ShellCodeComplete), sizeof(ShellCodeComplete), (void *)&ShellCodeComplete, &n, 1);
-	if(err)
-    {
-        klog("Failed to set ShellCodeComplete to zero.");
-        return 0;
-    }
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, CommandIndex), sizeof(CommandIndex), (void *)&CommandIndex, &n, 1);
-	if(err)
-    {
-        klog("Failed to set CommandIndex.");
-        return 0;
-    }
-
-    while (!ShellCodeComplete) 
-	{
-        err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, ShellCodeComplete), sizeof(ShellCodeComplete), (void *)&ShellCodeComplete, &n, 0);
-        if(err)
-        {
-            klog("Failed to read ShellCodeComplete.");
-            return 0;
-        }
-
-        //klog("Waiting for ShellCode to compelete!\n");
-        pause("", 100);
-	}
-
-    err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisProcHelper_header, ModuleHandle), sizeof(ModuleHandle), (void *)&ModuleHandle, &n, 0);
-    if(err)
-    {
-        klog("Failed to read ModuleHandle.");
-        return 0;
-    }
-
-    RestoreJail(proc, bkjail);
-
-    klog("Module Handle = %i", ModuleHandle);
-
-    if(ModuleHandle > 0)
-    {
-        klog("Module Loaded Sucessfully -> %i", ModuleHandle);
-        return (int)(ModuleHandle);
+        klog("Load_SPRX(): Completed! Module Loaded with handle 0x%llX", ModuleHandle);
+        return true;
     }
     else
     {
-        klog("Module Failed to load -> 0x%llX", ModuleHandle);
-        return -1;
+        klog("Load_SPRX(): Failed with error 0x%llX", ModuleHandle);
+        return false;
     }
 }

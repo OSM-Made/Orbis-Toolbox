@@ -70,11 +70,14 @@ void Install_Resources()
     MakeDir("/data/Orbis Toolbox");
     MakeDir("/data/Orbis Toolbox/Plugins");
     MakeDir("/data/Orbis Toolbox/Icons");
-    //sceKernelMkdir
+    MakeDir("/data/Orbis Toolbox/Payloads");
 
     Log("Writing Files...");
+
+    //Main Toolbox Module
     _Write_File("/data/Orbis Toolbox/Orbis Toolbox.sprx", _binary_Resources_Orbis_Toolbox_bin_start, _binary_Resources_Orbis_Toolbox_bin_end);
 
+    //Toolbox Supporting Assets.
     _Write_File("/data/Orbis Toolbox/Icons/icon_daemon.png", _binary_Resources_icon_daemon_bin_start, _binary_Resources_icon_daemon_bin_end);
     _Write_File("/data/Orbis Toolbox/Icons/icon_payload.png", _binary_Resources_icon_payload_bin_start, _binary_Resources_icon_payload_bin_end);
     _Write_File("/data/Orbis Toolbox/Icons/icon_pkg.png", _binary_Resources_icon_pkg_bin_start, _binary_Resources_icon_pkg_bin_end);
@@ -85,6 +88,9 @@ void Install_Resources()
     _Write_File("/data/Orbis Toolbox/Icons/icon_suspend.png", _binary_Resources_icon_suspend_bin_start, _binary_Resources_icon_suspend_bin_end);
     _Write_File("/data/Orbis Toolbox/Icons/icon_system_settings.png", _binary_Resources_icon_system_settings_bin_start, _binary_Resources_icon_system_settings_bin_end);
     _Write_File("/data/Orbis Toolbox/Icons/icon_toolbox.png", _binary_Resources_icon_toolbox_bin_start, _binary_Resources_icon_toolbox_bin_end);
+
+    //Included Daemons
+    //Install payload loader daemon
 
     Log("Install_Resources() -> Sucess!");
 }

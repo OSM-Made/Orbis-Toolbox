@@ -4,6 +4,7 @@
 
 int System_Monitor::Thread_Count = 0;
 float System_Monitor::Usage[8] = { 0 };
+float System_Monitor::Average_Usage;
 int System_Monitor::CPU_Temp;
 int System_Monitor::SOC_Temp;
 System_Monitor::Memory System_Monitor::RAM;
@@ -121,6 +122,8 @@ void* System_Monitor::Monitor_Thread(void* args)
 				/*klog("CPU Utilization: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%\n",
 					Usage[0], Usage[1], Usage[2], Usage[3],
 					Usage[4], Usage[5], Usage[6], Usage[7]);*/
+
+				System_Monitor::Average_Usage = ((Usage[0] + Usage[1] + Usage[2] + Usage[3] + Usage[4] + Usage[5] + Usage[6] + Usage[7]) / 8.0f);
 			}
 		}
 

@@ -99,7 +99,7 @@ void Game_Overlay::OnRender()
 			it->second(Instance);
 		}
 
-		Waiter = 500;
+		Waiter = 100;
 	}
 	else
 		Waiter--;
@@ -124,6 +124,7 @@ void Game_Overlay::Update()
 
 	int Count = 0;
 	Update_Label(&Count, "CPUUSAGE");
+	Update_Label(&Count, "CPUUSAGEAVG");
 	Update_Label(&Count, "THREADCOUNT");
 	Update_Label(&Count, "RAMUSAGE");
 	Update_Label(&Count, "VRAMUSAGE");
@@ -202,6 +203,20 @@ void Game_Overlay::Init()
 		else
 			return false;
 	});
+
+	Init_Overlay("CPUUSAGEAVG", [](Label* Instance) -> bool {
+
+		if (Show_CPU_Usage)
+		{
+			Instance->Set_Text("CPU Usage Average: %2.0f%%", System_Monitor::Average_Usage);
+
+			return true;
+		}
+		else
+			return false;
+	});
+
+	
 
 	Init_Overlay("RAMUSAGE", [](Label* Instance) -> bool {
 

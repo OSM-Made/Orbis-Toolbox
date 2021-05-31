@@ -14,6 +14,7 @@ public:
 
 	static int Thread_Count;
 	static float Usage[8];
+	static float Average_Usage;
 	static int CPU_Temp;
 	static int SOC_Temp;
 	static Memory RAM;
