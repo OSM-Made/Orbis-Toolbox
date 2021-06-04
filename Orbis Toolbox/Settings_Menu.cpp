@@ -71,12 +71,12 @@ void Settings_Menu::OnCheckVisible_Hook(MonoObject* Instance, MonoObject* elemen
 	{
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Id"));
 
-		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
 			if (!strcmp(Id, it->first))
 			{
 				//Show or hide Menu Options on the fly.
-				Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", it->second.Visible);
+				Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", it->second->Visible);
 
 				break;
 			}
@@ -102,30 +102,25 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 
 		klog("OnPreCreate: %s\n", Id);
 
-		if (!strcmp(Id, "id_ORBS30000"))
-		{
-			Mono::Set_Property(SettingElement, element, "Value", Mono::New_String("Stopped"));
-		}
-
-		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
 			if (!strcmp(Id, it->first))
 			{
-				MenuOption Cur = it->second;
+				MenuOption* Cur = it->second;
 
 				//Update the shown value of the option.
-				if (Cur.Type == Type_Boolean)
-					Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur.Data) ? Mono::New_String("1") : Mono::New_String("0"));
+				if (Cur->Type == Type_Boolean)
+					Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur->Data) ? Mono::New_String("1") : Mono::New_String("0"));
 				/*else if (Cur.Type == Type_Integer)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Integer).c_str()));
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Integer).c_str()));
 				else if (Cur.Type == Type_Float)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur.Data.Float).c_str()));*/
-				else if (Cur.Type == Type_String)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur.Data));
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Float).c_str()));*/
+				else if (Cur->Type == Type_String)
+					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur->Data));
 
 				//Call the OnPreCreate call back.
-				if (Cur.OnPreCreate != nullptr)
-					Cur.OnPreCreate();
+				if (Cur->OnPreCreate != nullptr)
+					Cur->OnPreCreate();
 
 				break;
 			}
@@ -149,26 +144,13 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingPage", page, "Id"));
 
-		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
-			if (!strcmp(Id, it->first) && it->second.OnPageActivating != nullptr)
+			if (!strcmp(Id, it->first) && it->second->OnPageActivating != nullptr)
 			{
-				it->second.OnPageActivating();
+				it->second->OnPageActivating();
 				break;
 			}
-		}
-
-		if (!strcmp(Id, "id_payloads"))
-		{
-			//Load payloads from Hdd
-			//Or maybe from webapi?
-			//Disable loading.
-			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Custom_Loader", "★Custom Payload", "Click here to start listening for payload on port 9020.", ""));
-			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_GoldHEN_Loader", "GoldHEN", "New homebrew enabler developed by SiSTRo.", ""));
-			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_HEN_Loader", "HEN", "Enables launching of homebrew apps.", ""));
-			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Updates_Loader", "Disable Updates", "Disables the consoles ability to download updates.", ""));
-			UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_Kernel_Loader", "Kernel Dumper", "Dumps your consoles Kernel from memory to a USB.", ""));
-			UI::Utilities::ResetMenuItem("id_message");
 		}
 	}
 	Detour_OnPageActivating->Stub<void>(Instance, page, e);
@@ -188,25 +170,26 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
 		char* Value = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Value"));
 
-		for (std::map<const char*, MenuOption>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
 		{
+			klog("%s\n", it->first);
 			if (!strcmp(Id, it->first))
 			{
-				MenuOption Cur = it->second;
+				MenuOption* Cur = it->second;
 
 				//Update the local value of the option.
-				if (Cur.Type == Type_Boolean)
-					*(bool*)Cur.Data = (atoi(Value) >= 1);
-				else if (Cur.Type == Type_Integer)
-					*Cur.Data = atoi(Value);
-				else if (Cur.Type == Type_Float)
-					*Cur.Data = atof(Value);
-				else if (Cur.Type == Type_String)
-					strcpy((char*)Cur.Data, Value);
+				if (Cur->Type == Type_Boolean)
+					*(bool*)Cur->Data = (atoi(Value) >= 1);
+				else if (Cur->Type == Type_Integer)
+					*Cur->Data = atoi(Value);
+				else if (Cur->Type == Type_Float)
+					*Cur->Data = atof(Value);
+				else if (Cur->Type == Type_String)
+					strcpy((char*)Cur->Data, Value);
 
 				//Call the OnPress call back.
-				if (Cur.OnPress != nullptr)
-					Cur.OnPress();
+				if (Cur->OnPress != nullptr)
+					Cur->OnPress();
 
 				break;
 			}

@@ -44,13 +44,14 @@ int LncUtil::LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppP
 
 	MonoObject* LaunchAppParam_Instance = Mono::New_Object(LaunchAppParam_class);
 	MonoObject* LaunchAppParam_Instance_real = (MonoObject*)mono_object_unbox(LaunchAppParam_Instance);
-	mono_runtime_object_init(LaunchAppParam_Instance_real);
+	//mono_runtime_object_init(LaunchAppParam_Instance_real);
+	//Mono::Invoke<void>(Mono::platform_dll, LaunchAppParam_class, LaunchAppParam_Instance_real, ".ctor");
 
-	Mono::Set_Field(LaunchAppParam_Instance_real, "size", param->size);
-	Mono::Set_Field(LaunchAppParam_Instance_real, "userId", param->userId);
-	Mono::Set_Field(LaunchAppParam_Instance_real, "appAttr", param->appAttr);
-	Mono::Set_Field(LaunchAppParam_Instance_real, "enableCrashReport", param->enableCrashReport);
-	Mono::Set_Field(LaunchAppParam_Instance_real, "checkFlag", param->checkFlag);
+	Mono::Set_Field(LaunchAppParam_Instance, "size", param->size);
+	Mono::Set_Field(LaunchAppParam_Instance, "userId", param->userId);
+	Mono::Set_Field(LaunchAppParam_Instance, "appAttr", param->appAttr);
+	Mono::Set_Field(LaunchAppParam_Instance, "enableCrashReport", param->enableCrashReport);
+	Mono::Set_Field(LaunchAppParam_Instance, "checkFlag", param->checkFlag);
 
 	//LaunchAppParam* p = (LaunchAppParam*)mono_object_unbox(LaunchAppParam_Instance);
 	//memcpy(p, param, sizeof(LaunchAppParam));
@@ -59,10 +60,14 @@ int LncUtil::LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppP
 	// Init Byte Class.
 	//
 	MonoArray* Array = Mono::New_Array(mono_get_byte_class(), argsSize);
-	//char* Array_addr = mono_array_addr_with_size(Array, sizeof(char), 0);
-	//memcpy(Array_addr, args, argsSize);
+	char* Array_addr = mono_array_addr_with_size(Array, sizeof(char), 0);
 
-	return Mono::Invoke<int>(Mono::platform_dll, LncUtil_Class, nullptr, "LaunchApp", Mono::New_String(titleId), Array, argsSize, LaunchAppParam_Instance);
+	if(args && argsSize > 0)
+		memcpy(Array_addr, args, argsSize);
+
+	klog("Calling Launch...\n");
+	//return 0;
+	return Mono::Invoke<int>(Mono::platform_dll, LncUtil_Class, nullptr, "LaunchApp", Mono::New_String(titleId), Array, argsSize, LaunchAppParam_Instance_real);
 }
 
 int LncUtil::KillApp(int appId, int userId)

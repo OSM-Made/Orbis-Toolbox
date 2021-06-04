@@ -10,6 +10,7 @@ MonoImage* Mono::KernelSysWrapper;
 MonoImage* Mono::mscorlib;
 MonoImage* Mono::Accessor_Db;
 MonoImage* Mono::Vsh_Lx;
+MonoImage* Mono::SysfileUtilWrapper;
 
 bool Mono::PUI2 = true;
 
@@ -46,7 +47,7 @@ bool Mono::Init()
 	mscorlib = Get_Image("/%s/common/lib/mscorlib.dll", sceKernelGetFsSandboxRandomWord());
 	Accessor_Db = Get_Image("/%s/common/lib/Sce.Vsh.Accessor.Db.dll", sceKernelGetFsSandboxRandomWord());
 	Vsh_Lx = Get_Image("/%s/common/lib/Sce.Vsh.Lx.dll", sceKernelGetFsSandboxRandomWord());
-
+	SysfileUtilWrapper = Get_Image("/%s/common/lib/Sce.Vsh.SysfileUtilWrapper.dll", sceKernelGetFsSandboxRandomWord()); 
 	MonoLog("Init Complete");
 
 	return true;

@@ -13,12 +13,13 @@ enum Data_Type
 class MenuOption
 {
 public:
+	char Id[0x100];
 	Data_Type Type;
 	uint64_t* Data;
 	bool Visible;
-	void(*OnPreCreate)();
-	void(*OnPageActivating)();
-	void(*OnPress)();
+	std::function<void()> OnPreCreate;
+	std::function<void()> OnPageActivating;
+	std::function<void()> OnPress;
 
 	MenuOption() { } 
 	~MenuOption() { } 
@@ -31,36 +32,55 @@ class Menu
 {
 public:
 	template<typename Value>
-	static MenuOption Add_Option(const char* Option_Id, Value* Data, Data_Type Type, void(*OnPress)() = nullptr, void(*OnPreCreate)() = nullptr, void(*OnPageActivating)() = nullptr)
+	static MenuOption* Add_Option(const char* Option_Id, Value* Data, Data_Type Type, std::function<void()> OnPress = nullptr, std::function<void()> OnPreCreate = nullptr, std::function<void()> OnPageActivating = nullptr)
 	{
-		MenuOption Temp;
-		Temp.Data = (uint64_t*)Data;
-		Temp.Type = Type;
-		Temp.Visible = true;
-		Temp.OnPreCreate = OnPreCreate;
-		Temp.OnPageActivating = OnPageActivating;
-		Temp.OnPress = OnPress;
+		klog("Add_Option\n");
+		MenuOption* Temp = new MenuOption();
+		strcpy(Temp->Id, Option_Id);
+		Temp->Data = (uint64_t*)Data;
+		Temp->Type = Type;
+		Temp->Visible = true;
+		Temp->OnPreCreate = OnPreCreate;
+		Temp->OnPageActivating = OnPageActivating;
+		Temp->OnPress = OnPress;
 
-		Options->insert(std::pair<const char*, MenuOption>(Option_Id, Temp));
+		Options->insert(std::pair<char*, MenuOption*>(Temp->Id, Temp));
 
 		return Temp;
 	}
 
-	static MenuOption Add_Option(const char* Option_Id, void(*OnPress)() = nullptr, void(*OnPreCreate)() = nullptr, void(*OnPageActivating)() = nullptr)
+	static MenuOption* Add_Option(const char* Option_Id, std::function<void()> OnPress = nullptr, std::function<void()> OnPreCreate = nullptr, std::function<void()> OnPageActivating = nullptr)
 	{
-		MenuOption Temp;
-		Temp.Type = Type_None;
-		Temp.Visible = true;
-		Temp.OnPreCreate = OnPreCreate;
-		Temp.OnPageActivating = OnPageActivating;
-		Temp.OnPress = OnPress;
+		klog("Add_Option\n");
+		MenuOption* Temp = new MenuOption();
+		strcpy(Temp->Id, Option_Id);
+		Temp->Type = Type_None;
+		Temp->Visible = true;
+		Temp->OnPreCreate = OnPreCreate;
+		Temp->OnPageActivating = OnPageActivating;
+		Temp->OnPress = OnPress;
 
-		Options->insert(std::pair<const char*, MenuOption>(Option_Id, Temp));
+		Options->insert(std::pair<char*, MenuOption*>(Temp->Id, Temp));
 		
 		return Temp;
 	}
 
-	static std::map<const char*, MenuOption>* Options;
+	/*static bool Has_Option(const char* Option_Id)
+	{
+
+	}
+
+	static MenuOption* Get_Option(const char* Option_Id)
+	{
+
+	}
+
+	static void Remove_Option(const char* Option_Id)
+	{
+
+	}*/
+
+	static std::map<char*, MenuOption*>* Options;
 	static bool Auto_Load_Settings;
 
 	static void Init();

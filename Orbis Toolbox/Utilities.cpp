@@ -83,9 +83,13 @@ vm:
 2 - seems to be app specific.
 
 type:
-1 - RAM
+1 - System,
 2 - VRAM
 
+	System,
+	Video,
+	SharedVideoSystemAsset,
+	SharedVideoHighResoAsset
 */
 
 void Get_Page_Table_Stats(int vm, int type, int* Used, int* Free, int* Total)

@@ -14,6 +14,7 @@ public:
 	static MonoImage* mscorlib;
 	static MonoImage* Accessor_Db;
 	static MonoImage* Vsh_Lx;
+	static MonoImage* SysfileUtilWrapper;
 
 	static bool PUI2;
 

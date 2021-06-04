@@ -60,10 +60,9 @@ int jailbreak_proc(struct thread *td)
 
     //Resolve Function Addresses and install Patches.
 	Kern_Resolve();
+	Install_Patches();
 
 	klog("KernBase: 0x%llX", gKernelBase);
-
-	Install_Patches();
 
 	//Jailbreak current Process.
 	Jailbreak(td->td_proc, &bkJail);

@@ -7,14 +7,95 @@
 #include "Game_Overlay.h"
 #include "Build_Overlay.h"
 #include "Config.h"
+#include "SysfileUtilWrapper.h"
 
-std::map<const char*, MenuOption>* Menu::Options;
+typedef enum LncUtilFlag : ulong
+{
+	LncUtilFlagNone = 0,
+	SkipLaunchCheck = 1,
+	SkipResumeCheck = 1,
+	SkipSystemUpdateCheck = 2,
+	RebootPatchInstall = 4,
+	VRMode = 8,
+	NonVRMode = 16
+} LncUtilFlag;
+
+typedef struct LaunchAppParam
+{
+	uint size;
+	int userId;
+	int appAttr;
+	int enableCrashReport;
+	LncUtilFlag checkFlag;
+} LaunchAppParam;
+
+typedef enum KillReason
+{
+	KillReasonNone = 0,
+	VshctlStopGame,
+	SaveDataManagement
+} KillReason;
+
+std::map<char*, MenuOption*>* Menu::Options;
 bool Menu::Auto_Load_Settings;
-char Test[0x100] = { "Stopped" };
+
+void Add_Daemon(char* dent)
+{
+	char TitleId[10];
+	strcpy(TitleId, dent);
+
+	char Id_Name[0x100];
+	sprintf(Id_Name, "id_%s", TitleId);
+	klog("%s\n", Id_Name);
+
+	char Icon_Path[PATH_MAX];
+	sprintf(Icon_Path, "file://system/vsh/app/%s/sce_sys/icon0.png", TitleId);
+	klog("%s\n", Icon_Path);
+
+	char SFO_Path[PATH_MAX];
+	sprintf(SFO_Path, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
+	klog("%s\n", SFO_Path);
+
+	UI::Utilities::AddMenuItem(UI::Utilities::ElementData(Id_Name, SysfileUtilWrapper::GetTitle(SFO_Path), SysfileUtilWrapper::GetDescription(SFO_Path), Icon_Path));
+
+	Menu::Add_Option(Id_Name, [TitleId, Id_Name]() -> void {
+		
+		int AppId = LncUtil::GetAppId(TitleId);
+		if (AppId > 0) //App is Currently Running.
+		{
+			UI::Utilities::Set_Value(Id_Name, "Stopping");
+			UI::Utilities::ResetMenuItem(Id_Name);
+
+			//Kill the app.
+			LncUtil::KillApp(AppId);
+
+			//Check to see if it worked.
+			UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
+			UI::Utilities::ResetMenuItem(Id_Name);
+		}
+		else
+		{
+			UI::Utilities::Set_Value(Id_Name, "Starting");
+			UI::Utilities::ResetMenuItem(Id_Name);
+
+			LncUtil::LaunchAppParam p = { sizeof(LncUtil::LaunchAppParam), -1, 0, 0, LncUtil::Flag_None };
+			LncUtil::LaunchApp(TitleId, 0, 0, &p);
+
+			//Check to see if it worked.
+			UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
+			UI::Utilities::ResetMenuItem(Id_Name);
+		}
+
+	});
+
+	UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
+	UI::Utilities::ResetMenuItem(Id_Name);
+}
 
 void Menu::Init()
 {
-	Options = new std::map<const char*, MenuOption>();
+	Options = new std::map<char*, MenuOption*>();
+	klog("Options**\n");
 
 	/*
 		★Orbis Toolbox
@@ -40,104 +121,61 @@ void Menu::Init()
 	 
 	// Note: Package Installer does not need to be done here
 	//		 because of the fact its managed by the system.
-	Add_Option("id_message");
-
-	Add_Option("id_ORBS30000", &Test, Type_String, []() -> void { Notify("Test");  }, []() -> void { Notify("Test");  });
-	Add_Option("id_OFTP00001", []() -> void { 
-
-		int AppId = LncUtil::GetAppId("OFTP00001");
-		if (AppId > 0)
-		{
-			LncUtil::KillApp(AppId);
-
-			AppId = LncUtil::GetAppId("OFTP00001");
-			if (AppId < 0)
-			{
-				UI::Utilities::Set_Value("id_OFTP00001", "Stopped");
-				UI::Utilities::ResetMenuItem("id_OFTP00001");
-			}
-		}
-		else
-		{
-			char Args;
-			LncUtil::LaunchAppParam p = { sizeof(LncUtil::LaunchAppParam), -1, 0, 0, LncUtil::Flag_None };
-			LncUtil::LaunchApp("OFTP00001", &Args, 0, &p);
-
-			//LaunchAppParam p = { sizeof(LaunchAppParam), -1, 0, 0, LncUtilFlag::LncUtilFlagNone };
-			//sceLncUtilLaunchApp("OFTP00001", 0, &p);
-
-			AppId = LncUtil::GetAppId("OFTP00001");
-			if (AppId > 0)
-			{
-				UI::Utilities::Set_Value("id_OFTP00001", "Running");
-				UI::Utilities::ResetMenuItem("id_OFTP00001");
-			}
-		}
-		Notify("Test");  
-
-	});
 
 	// Daemon Manager
 	Add_Option("id_daemons", nullptr, nullptr, []() -> void {
 		
-		/*int fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
+		int fd;
+		OrbisKernelStat stats;
+		char* Dent_Buffer;
+		OrbisKernelDirents *dent;
+		int bpos;
 
+		//Open a file descriptor on the directory where daemons are stored.
+		fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
 		if (fd)
 		{
-			//OrbisKernelStat stats;
-			//sceKernelFstat(fd, &stats);
+			//Get the size of the directory and allocate space to read the contents.
+			sceKernelFstat(fd, &stats);
+			Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
 
-			//char* Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
-
-			char buf[1024];
-			OrbisKernelDirents *dent;
-			int bpos;
-
-			int nread = sceKernelGetdents(fd, buf, 1024);
-
+			
+			//Read the directory contents and if the number of byte sread returned less than or equal to zero return.
+			int nread = sceKernelGetdents(fd, Dent_Buffer, (size_t)stats.st_blksize);
 			if (nread <= 0)
-				return;
+				goto End;
 
+			//Loop through all the directory contents by position in the buffer insuring we dont go over the number of read bytes.
 			for (bpos = 0; bpos < nread;) 
 			{
-				dent = (OrbisKernelDirents*) (buf + bpos);
+				//dent is our curent directory.
+				dent = (OrbisKernelDirents*) (Dent_Buffer + bpos);
 
 				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
 				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, "."))
-				{
-					klog("%s\n", dent->d_name);
-					if (!strcmp(dent->d_name, "OFTP00001")) 
-					{*/
-						UI::Utilities::AddMenuItem(UI::Utilities::ElementData("id_OFTP00001", "Orbis FTP", "A simple FTP Daemon that has read write privlage to anywhere.", "file://system/vsh/app/OFTP00001/sce_sys/icon0.png"));
+					Add_Daemon(dent->d_name);
 
-						int AppId = LncUtil::GetAppId("OFTP00001");
-						klog("%i\n", AppId);
-
-						if(AppId > 0)
-							UI::Utilities::Set_Value("id_OFTP00001", "Running");
-						else
-							UI::Utilities::Set_Value("id_OFTP00001", "Stopped");
-					/*}
-				}
-
+				//Increase the position we are going to read by the size of the current directory entry.
 				bpos += dent->d_reclen;
 			}
 
+			//make sure to close file descriptor when we are done.
 			sceKernelClose(fd);
-		}*/
-		(*Options)["id_message"].Visible = false;
-		UI::Utilities::ResetMenuItem("id_message");
+		}
 
+	End:
+		free(Dent_Buffer);
 	});
-	(*Options)["id_daemons"].Visible = false;
 
 	// ShellUI Plugin Manager
-	Add_Option("id_plugins");
-	(*Options)["id_plugins"].Visible = false;
+	Add_Option("id_plugins")->Visible = false;
 
 	// Payload Loader
-	Add_Option("id_payloads");
-	(*Options)["id_payloads"].Visible = false;
+	Add_Option("id_payloads", []() -> void { 
+		
+
+
+	});
 
 	// Note: System settings does not need to be done here
 	//		 because of the fact its managed by the system.
@@ -185,12 +223,11 @@ void Menu::Init()
 #ifdef ORBIS_TOOLBOX_DEBUG
 	Add_Option("id_test", []() -> void {});
 #else
-	Add_Option("id_test", []() -> void { });
-	(*Options)["id_test"].Visible = false;
+	Add_Option("id_test", []() -> void { })->Visible = false;
 #endif
 }
 
 void Menu::Term()
 {
-
+	//TODO: clear menu map
 }

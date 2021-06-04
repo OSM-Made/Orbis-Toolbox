@@ -37,11 +37,11 @@ void test_thread(void* arg)
     //Mount the dirs for ShellUI
     Mount_Dirs(p, bkJail.fd_jdir, true);
 
-    klog("****Launching Toolbox...****");
+    /*klog("****Launching Toolbox...****");
     if(Load_SPRX(p, SPRX_PATH))
         klog("Launched Toolbox...");
     else
-        klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
+        klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");*/
 
     //Restore previous jail.
     RestoreJail(p, bkJail);
@@ -120,7 +120,7 @@ void test2_thread(void* arg)
     Mount_Dirs(p, bkJail.fd_jdir, true);
 
     klog("****Launching Toolbox...****");
-    if(Load_SPRX(p, SPRX_PATH))
+    //if(Load_SPRX(p, SPRX_PATH))
     {
         klog("Launched Toolbox Sucessfully.");
 
@@ -131,10 +131,9 @@ void test2_thread(void* arg)
         ProcessStartEvent = EVENTHANDLER_REGISTER(process_exec_end, (void*)OnProcessStart, nullptr, EVENTHANDLER_PRI_LAST);
         ProcessExitEvent = EVENTHANDLER_REGISTER(process_exit, (void*)OnProcessExit, nullptr, EVENTHANDLER_PRI_ANY);
         klog("Events Registered Sucessfully.");  
-    }
-        
-    else
-        klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
+    }    
+    //else
+        //klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
 
     //Restore previous jail.
     RestoreJail(p, bkJail);
@@ -144,11 +143,9 @@ void test2_thread(void* arg)
 
 void kproc_Init()
 {
-    
-
     proc* kernel = proc_find_by_name("kernel");
-        if(kernel)
-            kproc_kthread_add(test2_thread, nullptr, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
+    if(kernel)
+        kproc_kthread_add(test2_thread, nullptr, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
 
     klog("kproc_Init() -> Sucess!"); 
 }

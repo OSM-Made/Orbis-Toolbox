@@ -4,6 +4,14 @@
 
 #include <orbis/LncUtil.h>
 
+bool ResolveAddr(int Handle, const char* Function_Name, uint64_t* Function_Address)
+{
+	uint64_t Address = 0;
+	int result = sceKernelDlsym(Handle, Function_Name, Function_Address);
+	klog("ResolveAddr(%i, \"%s\") -> 0x%llX, 0x%llX\n", Handle, Function_Name, result, *Function_Address);
+	return (result == 0);
+}
+
 extern "C"
 {
 	int module_start()
@@ -12,26 +20,8 @@ extern "C"
 
 		Mono::Init();
 
-		char Buffer[PATH_MAX];
-		sprintf(Buffer, "/%s/common/lib/libSceSystemService.sprx", sceKernelGetFsSandboxRandomWord());
-		int SystemServiceHandle = sceKernelLoadStartModule(Buffer, NULL, nullptr, NULL, nullptr, nullptr);
-
-		klog("SystemServiceHandle: %i\n", SystemServiceHandle);
-
-		int (*_sceLncUtilInitialize)();
-		sceKernelDlsym(SystemServiceHandle, "sceLncUtilInitialize", (void*)&_sceLncUtilInitialize);
-
-		int(*_sceLncUtilLaunchApp)();
-		sceKernelDlsym(SystemServiceHandle, "sceLncUtilLaunchApp", (void*)&_sceLncUtilLaunchApp);
-
-		int(*_sceLncUtilGetAppId)();
-		sceKernelDlsym(SystemServiceHandle, "sceLncUtilGetAppId", (void*)&_sceLncUtilGetAppId);
-
-		int(*_sceLncUtilKillAppWithReason)();
-		sceKernelDlsym(SystemServiceHandle, "sceLncUtilKillAppWithReason", (void*)&_sceLncUtilKillAppWithReason);
-
-		klog("sceLncUtilInitialize: 0x%llX\nsceLncUtilLaunchApp: 0x%llX\nsceLncUtilGetAppId: 0x%llX\nsceLncUtilKillAppWithReason: 0x%llX\n", 
-			_sceLncUtilInitialize, _sceLncUtilLaunchApp, _sceLncUtilGetAppId, _sceLncUtilKillAppWithReason);
+		//Sce.PlayStation.Core.Runtime DiagnosticsNative GetGraphicsMemoryStatistics 
+		//TODO: Get Address and offset take a look in IDA see if it calls imports.
 
 		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		System_Monitor::Init();

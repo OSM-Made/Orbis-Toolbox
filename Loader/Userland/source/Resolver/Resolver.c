@@ -31,7 +31,7 @@ void Kern_Resolve()
     NATIVE_RESOLVE(kvsprintf);
     NATIVE_RESOLVE(kprintf);
 
-    klog("Kern_Resolve() -> Sucess!");
+    //klog("Kern_Resolve() -> Sucess!");
 }
 
 int sys_dynlib_dlsym(int loadedModuleID, const char *name, void *destination) {

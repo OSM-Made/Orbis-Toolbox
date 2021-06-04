@@ -27,7 +27,6 @@
 
     <!-- Daemon Manager -->
     <setting_list id="id_daemons" title="Daemon Manager" icon="file://data/Orbis Toolbox/Icons/icon_daemon.png" restorable="false">
-      <message id="id_message" title="msg_wait" busyindicator="true"/>
 
       <!-- Help message -->
       <label id="daemon_info" title="Daemons are background applications that can be run on your system. Here you can see the status of your Daemons and Manage them.&#xa;Daemons are loaded from &quot;/system/vsh/app/&quot;." style="left" border="true"/>
@@ -44,7 +43,6 @@
 
     <!-- ShellUI Plugin Manager -->
     <setting_list id="id_plugins" title="ShellUI Plugin Manager" icon="file://data/Orbis Toolbox/Icons/icon_plugin.png" restorable="false">
-      <message id="id_plugins_loading" title="msg_wait" busyindicator="true"/>
 
       <!-- Help message -->
       <label id="plugin_info" title="ShellUI Plugins are plugins that dont need their own process or are needing to modify the UI.&#xa;ShellUI Plugins are loaded from &quot;/data/Orbis Toolbox/Plugins/&quot;." style="left" border="true"/>
@@ -54,14 +52,21 @@
 
       <!-- Here is where the plugins will be shown. -->
       <!-- Lib Icon | Name | Status ? Loaded : Not Loaded -->
-      <!-- Will parse from /user/temp/ShellUI Plugins/*.sprx -->
+      <!-- Will parse from /user/temp/Plugins/*.sprx -->
       <!-- These could have a custom icon just have the icon in the same path with same name. -->
       
     </setting_list>
 
     <!-- Payload Loader -->
     <setting_list id="id_payloads" title="Payload Loader" icon="file://data/Orbis Toolbox/Icons/icon_payload.png" restorable="false">
-      <message id="id_message" title="msg_wait" busyindicator="true"/>
+
+      <button id="id_Custom_Loader" title="★Custom Payload" second_title="Click here to start listening for payload on port 9020." />
+      
+      <!-- Here is where the payloads will be shown. -->
+      <!-- Default Icon / Could have custom icons later -->
+      <!-- Could have descriptions parsed from a .txt of the same name as the payload. 90 Char MAX-->
+      <!-- Will parse from /user/temp/Payloads/*.bin -->
+
     </setting_list>
 
     <!-- System Settings -->

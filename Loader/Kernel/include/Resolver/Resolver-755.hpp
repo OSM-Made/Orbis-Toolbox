@@ -58,9 +58,9 @@
 #define addr_pause                              0x86E80
 
 /* Module Offsets */
-#define addr_thr_initial_libkernel              0x
-#define addr_thr_initial_libkernel_web          0x
-#define addr_thr_initial_libkernel_sys          0x
+#define addr_thr_initial_libkernel              0x8D420
+#define addr_thr_initial_libkernel_web          0x8D420
+#define addr_thr_initial_libkernel_sys          0x8D830
 
 /* Virtual Memory */
 #define addr_vmspace_acquire_ref				0x2FC290

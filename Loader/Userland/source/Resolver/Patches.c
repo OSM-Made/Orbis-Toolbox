@@ -2,6 +2,10 @@
 #include "Resolver/Patches.h"
 #include "../../Common/Settings.h"
 
+//
+// Credits to Mira for the patches. Was just easier to slap them in :P
+//
+
 void Install_Patches()
 {
     if(!gKernelBase)

@@ -123,6 +123,9 @@
     <ClCompile Include="System_Monitor.cpp">
       <Filter>Source Files\Utilites</Filter>
     </ClCompile>
+    <ClCompile Include="SysfileUtilWrapper.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -186,6 +189,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="System_Monitor.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="SysfileUtilWrapper.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
