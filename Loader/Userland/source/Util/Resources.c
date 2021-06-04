@@ -58,10 +58,38 @@ int Write_File(const char* File, char* Data, size_t size)
     }
 }
 
-int MakeDir(const char* Dir)
+int MakeDir(char* Dir, ...)
 {
-    Log("Creating Directory \"%s\"...", Dir);
-    return sceKernelMkdir(Dir, 0777);
+    char buffer[0x400] = { 0 };
+    va_list args;
+    va_start(args, Dir);
+    vsprintf(buffer, Dir, args);
+    va_end(args);
+
+    Log("Creating Directory \"%s\"...", buffer);
+    return sceKernelMkdir(buffer, 0777);
+}
+
+void Install_Daemon(const char* TitleId, char* Eboot_start, char* Eboot_end, char* Param_sfo_start, char* Param_sfo_end, char* Icon_start, char* Icon_end)
+{
+    Log("Installing Daemon %s", TitleId);
+
+    Log("Creating Directories...");
+    MakeDir("/system/vsh/app/%s", TitleId);
+    MakeDir("/system/vsh/app/%s/sce_module", TitleId);
+    MakeDir("/system/vsh/app/%s/sce_sys", TitleId);
+
+    Log("Writing Files...");
+    char Eboot_Dir[PATH_MAX], Param_sfo_Dir[PATH_MAX], Icon_Dir[PATH_MAX];
+    sprintf(Eboot_Dir, "/system/vsh/app/%s/eboot.bin", TitleId);
+    sprintf(Param_sfo_Dir, "/system/vsh/app/%s/sce_sys/icon0.png", TitleId);
+    sprintf(Icon_Dir, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
+
+    _Write_File("/data/Orbis Toolbox/Icons/icon_daemon.png", Eboot_start, Eboot_end);
+    _Write_File("/data/Orbis Toolbox/Icons/icon_payload.png", Param_sfo_start, Param_sfo_end);
+    _Write_File("/data/Orbis Toolbox/Icons/icon_pkg.png", Icon_start, Icon_end);
+
+    Log("Installing Daemon %s Complete!", TitleId);
 }
 
 void Install_Resources()
@@ -89,8 +117,8 @@ void Install_Resources()
     _Write_File("/data/Orbis Toolbox/Icons/icon_system_settings.png", _binary_Resources_icon_system_settings_bin_start, _binary_Resources_icon_system_settings_bin_end);
     _Write_File("/data/Orbis Toolbox/Icons/icon_toolbox.png", _binary_Resources_icon_toolbox_bin_start, _binary_Resources_icon_toolbox_bin_end);
 
-    //Included Daemons
-    //Install payload loader daemon
+    Log("Installing Daemons...");
+    //Install_Daemon("PLDR00000", ); //Install payload loader daemon
 
     Log("Install_Resources() -> Sucess!");
 }

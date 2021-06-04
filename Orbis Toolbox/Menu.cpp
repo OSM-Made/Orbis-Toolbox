@@ -3,121 +3,28 @@
 
 #include "Settings_Menu.h"
 #include "Debug_Features.h"
-#include "LncUtil.h"
 #include "Game_Overlay.h"
 #include "Build_Overlay.h"
 #include "Config.h"
-#include "SysfileUtilWrapper.h"
-
-typedef enum LncUtilFlag : ulong
-{
-	LncUtilFlagNone = 0,
-	SkipLaunchCheck = 1,
-	SkipResumeCheck = 1,
-	SkipSystemUpdateCheck = 2,
-	RebootPatchInstall = 4,
-	VRMode = 8,
-	NonVRMode = 16
-} LncUtilFlag;
-
-typedef struct LaunchAppParam
-{
-	uint size;
-	int userId;
-	int appAttr;
-	int enableCrashReport;
-	LncUtilFlag checkFlag;
-} LaunchAppParam;
-
-typedef enum KillReason
-{
-	KillReasonNone = 0,
-	VshctlStopGame,
-	SaveDataManagement
-} KillReason;
+#include "LncUtil.h"
+#include "Daemons.h"
 
 std::map<char*, MenuOption*>* Menu::Options;
 bool Menu::Auto_Load_Settings;
 
-void Add_Daemon(char* dent)
-{
-	char TitleId[10];
-	strcpy(TitleId, dent);
-
-	char Id_Name[0x100];
-	sprintf(Id_Name, "id_%s", TitleId);
-	klog("%s\n", Id_Name);
-
-	char Icon_Path[PATH_MAX];
-	sprintf(Icon_Path, "file://system/vsh/app/%s/sce_sys/icon0.png", TitleId);
-	klog("%s\n", Icon_Path);
-
-	char SFO_Path[PATH_MAX];
-	sprintf(SFO_Path, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
-	klog("%s\n", SFO_Path);
-
-	UI::Utilities::AddMenuItem(UI::Utilities::ElementData(Id_Name, SysfileUtilWrapper::GetTitle(SFO_Path), SysfileUtilWrapper::GetDescription(SFO_Path), Icon_Path));
-
-	Menu::Add_Option(Id_Name, [TitleId, Id_Name]() -> void {
-		
-		int AppId = LncUtil::GetAppId(TitleId);
-		if (AppId > 0) //App is Currently Running.
-		{
-			UI::Utilities::Set_Value(Id_Name, "Stopping");
-			UI::Utilities::ResetMenuItem(Id_Name);
-
-			//Kill the app.
-			LncUtil::KillApp(AppId);
-
-			//Check to see if it worked.
-			UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
-			UI::Utilities::ResetMenuItem(Id_Name);
-		}
-		else
-		{
-			UI::Utilities::Set_Value(Id_Name, "Starting");
-			UI::Utilities::ResetMenuItem(Id_Name);
-
-			LncUtil::LaunchAppParam p = { sizeof(LncUtil::LaunchAppParam), -1, 0, 0, LncUtil::Flag_None };
-			LncUtil::LaunchApp(TitleId, 0, 0, &p);
-
-			//Check to see if it worked.
-			UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
-			UI::Utilities::ResetMenuItem(Id_Name);
-		}
-
-	});
-
-	UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
-	UI::Utilities::ResetMenuItem(Id_Name);
-}
-
 void Menu::Init()
 {
 	Options = new std::map<char*, MenuOption*>();
-	klog("Options**\n");
 
 	/*
 		★Orbis Toolbox
 	*/
 
-	// Power Options PowerManager.CreateMaskScene will show the shutdown screen
+	// Power Options
 	Add_Option("id_reload_shellui", []() -> void { Notify("%s", __FUNCTION__); });
-	Add_Option("id_reboot", []() -> void { 
-		//MonoClass* PowerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppMain", "PowerManager");
-		//Mono::Invoke<void>(Mono::App_exe, PowerManager, nullptr, "CreateMaskScene", 1, 0);
-		LncUtil::SystemReboot(); 
-	});
-	Add_Option("id_shutdown", []() -> void {
-		//MonoClass* PowerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppMain", "PowerManager");
-		//Mono::Invoke<void>(Mono::App_exe, PowerManager, nullptr, "CreateMaskScene", 2, 0);
-		LncUtil::SystemShutdown(LncUtil::None); 
-	});
-	Add_Option("id_suspend", []() -> void { 
-		//MonoClass* PowerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppMain", "PowerManager");
-		//Mono::Invoke<void>(Mono::App_exe, PowerManager, nullptr, "CreateMaskScene", 3, 0);
-		LncUtil::SystemShutdown(LncUtil::Eap); 
-	});
+	Add_Option("id_reboot", []() -> void { LncUtil::SystemReboot(); });
+	Add_Option("id_shutdown", []() -> void { LncUtil::SystemShutdown(LncUtil::None); });
+	Add_Option("id_suspend", []() -> void { LncUtil::SystemShutdown(LncUtil::Eap); });
 	 
 	// Note: Package Installer does not need to be done here
 	//		 because of the fact its managed by the system.
@@ -152,7 +59,7 @@ void Menu::Init()
 				dent = (OrbisKernelDirents*) (Dent_Buffer + bpos);
 
 				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
-				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, "."))
+				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") /*&& !strstr(dent->d_name, PAYLOAD_DAEMON)*/)
 					Add_Daemon(dent->d_name);
 
 				//Increase the position we are going to read by the size of the current directory entry.
@@ -171,7 +78,26 @@ void Menu::Init()
 	Add_Option("id_plugins")->Visible = false;
 
 	// Payload Loader
-	Add_Option("id_payloads", []() -> void { 
+	Add_Option("id_Custom_Loader", []() -> void {
+
+		if (Is_Daemon_Running(PAYLOAD_DAEMON))
+		{
+			if (Stop_Daemon(PAYLOAD_DAEMON) && Start_Daemon(PAYLOAD_DAEMON))
+				Notify("Payload Loader: Listening for Payload on port 9020.");
+			else
+				Notify("Payload Loader: Failed to start Payload Daemon.");
+		}
+		else
+		{
+			if(Start_Daemon(PAYLOAD_DAEMON))
+				Notify("Payload Loader: Listening for Payload on port 9020.");
+			else
+				Notify("Payload Loader: Failed to start Payload Daemon.");
+		}
+
+	});
+
+	Add_Option("id_payloads", nullptr, nullptr, []() -> void {
 		
 
 
@@ -219,12 +145,6 @@ void Menu::Init()
 	});
 	Add_Option("id_save_settings", []() -> void { Config::Write(SETTIN_DIR) ? Notify("Orbis Toolbox: Saved Settings Sucessfully!") : Notify("Orbis Toolbox: Failed to Save Settings..."); });
 
-
-#ifdef ORBIS_TOOLBOX_DEBUG
-	Add_Option("id_test", []() -> void {});
-#else
-	Add_Option("id_test", []() -> void { })->Visible = false;
-#endif
 }
 
 void Menu::Term()

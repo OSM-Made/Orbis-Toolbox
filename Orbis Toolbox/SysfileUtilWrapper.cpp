@@ -20,30 +20,15 @@ int SysfileUtilWrapper::GetAttribute(const char* FilePath)
 	return Mono::Invoke<int>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetAttribute", Mono::New_String(FilePath));
 }
 
+//TODO: Make sure Intput "FilePath" file exists before calling.
+
 char* SysfileUtilWrapper::GetTitleId(const char* FilePath)
 {
-	/*MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
-
-	MonoString* str = Mono::Invoke<MonoString*>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetTitleId", Mono::New_String(FilePath));
-
-	if (str)
-		return mono_string_to_utf8(str);
-	else
-		return NULL;*/
 	return GetString(FilePath, "TITLE_ID", 12U);
 }
 
 char* SysfileUtilWrapper::GetContentId(const char* FilePath)
 {
-	/*MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
-
-	MonoString* str = Mono::Invoke<MonoString*>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetContentId", Mono::New_String(FilePath));
-
-	if (str)
-		return mono_string_to_utf8(str);
-	else
-		return NULL;*/
-
 	return GetString(FilePath, "CONTENT_ID", 48U);
 }
 

@@ -12,6 +12,8 @@ void Widget::Remove_Child(const char* Child_Name)
 		{
 			MonoObject* ChildWidget = Mono::Invoke<MonoObject*>(Mono::App_exe, Widget_Class, Instance, "FindWidgetByName", Mono::New_String(Child_Name));
 			Mono::Invoke<void>(Mono::App_exe, Widget_Class, ChildWidget, "RemoveFromParent");
+
+			Children.erase(Children.find(Child_Name));
 		}
 		else
 			klog("[Widget] %s(): Child \"%s\" does not exist in Family.\n", __FUNCTION__, Child_Name);

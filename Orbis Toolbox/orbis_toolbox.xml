@@ -34,10 +34,17 @@
       <!-- Creates blank space -->
       <spacer id="daemon_spacer" height="30"/>
 
-      <!-- Here is where the plugins will be shown. -->
-      <!-- Deamon Icon | Name from .sfo | Status ? Running : Stopped or when clicked Stopping/Starting -->
-      <!-- Idealy the icons and a description could be loaded from the /system/vsh/app/ folder -->
-      <!-- Dir/Icon.png and Dir/Desc.txt. Current Issue is UI doesnt have file perm for /system/ -->
+      <!-- 
+        Here is where the plugins will be shown.
+        
+            Deamon Icon | Name from .sfo | Status ? Running : Stopped or when clicked Stopping/Starting
+            
+            Icons and a description are be loaded from the /system/vsh/app/{TitleId}/sce_sys/ folder
+              - icon0.png is the name of the Icon that is searched for.
+              - param.sfo is the name of the file where the title and desc is parsed from. 
+                - TITLE is the element that holds the name of the Daemon.
+                - PROVIDER is the element that holds the description of the daemon.
+      -->
       
     </setting_list>
 
@@ -155,44 +162,6 @@
       <button id="id_save_settings" title="Save Settings"/>
 
     </setting_list>
-
-    <button id="id_test" title="Test Game Scene" value="0"/>
-    
-    <!-- Enable Debug Settings -->
-    <!-- <toggle_switch id="id_enable_debug_settings" title="Enable ★Debug Settings" value="0"/> -->
-
-    <!-- <button id="id_Test" title="Test Button" value="0"/>
-        <list id="id_Test_Bool" title="Test Bool">
-            <list_item id="id_Test_Bool_off" title="Off" value="0"/>
-            <list_item id="id_Test_Bool_on" title="On" value="1"/>
-        </list>
-        <list id="id_Test_List" title="Test List" value="Something" >
-            <list_item id="id_Test_List_1" title="Something" value="Something"/>
-            <list_item id="id_Test_List_2" title="Something else" value="Something else"/>
-            <list_item id="id_Test_List_3" title="another thing" value="another thing"/>
-        </list>
-
-        <toggle_switch id="id_Test_Switch" title="Test Switch"/>
-
-        
-		<spacer id="-1-" height="20"/>
-		<label id="name" title="Title" raw_title="false" border="true"/>
-		<spacer id="-2-" height="20"/>
-        <label id="info1" title="label" style="left"/>
-        <toggle_switch id="id_Test_Switch_1" title="Test Switch 2"/>
-
-        <text_field id="id_Test_Text_Field" title="Test Text Field"
-                keyboard_type="default" max_length="511" value_max_width="750"/>
-
-        <text_field id="id_Test_Text_Field_Status" title="Test Text Field Status"
-                keyboard_type="default" max_length="511" value_max_width="750" style="status_display"/>
-        
-        <label id="label_status" title="Status Display" style="status_display"/>
-
-        <navi id="_navi">
-			<navi_button id="cancel" title="cancel" layout="negative"/>
-			<navi_button id="confirm" title="confirm" layout="positive"/>
-		</navi>-->
 
   </setting_list>
 

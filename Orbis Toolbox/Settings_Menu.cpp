@@ -70,16 +70,12 @@ void Settings_Menu::OnCheckVisible_Hook(MonoObject* Instance, MonoObject* elemen
 	if (Instance && element)
 	{
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Id"));
+		MenuOption* Cur = Menu::Get_Option(Id);
 
-		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		if (Cur)
 		{
-			if (!strcmp(Id, it->first))
-			{
-				//Show or hide Menu Options on the fly.
-				Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", it->second->Visible);
-
-				break;
-			}
+			//Show or hide Menu Options on the fly.
+			Mono::Set_Property(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement", element, "Visible", Cur->Visible);
 		}
 	}
 	Detour_OnCheckVisible->Stub<void>(Instance, element, e);
@@ -99,32 +95,24 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 	{
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
+		MenuOption* Cur = Menu::Get_Option(Id);
 
-		klog("OnPreCreate: %s\n", Id);
-
-		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		if (Cur)
 		{
-			if (!strcmp(Id, it->first))
-			{
-				MenuOption* Cur = it->second;
+			//Update the shown value of the option.
+			if (Cur->Type == Type_Boolean)
+				Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur->Data) ? Mono::New_String("1") : Mono::New_String("0"));
+			/*else if (Cur.Type == Type_Integer)
+				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Integer).c_str()));
+			else if (Cur.Type == Type_Float)
+				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Float).c_str()));*/
+			else if (Cur->Type == Type_String)
+				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur->Data));
 
-				//Update the shown value of the option.
-				if (Cur->Type == Type_Boolean)
-					Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur->Data) ? Mono::New_String("1") : Mono::New_String("0"));
-				/*else if (Cur.Type == Type_Integer)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Integer).c_str()));
-				else if (Cur.Type == Type_Float)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Float).c_str()));*/
-				else if (Cur->Type == Type_String)
-					Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur->Data));
-
-				//Call the OnPreCreate call back.
-				if (Cur->OnPreCreate != nullptr)
-					Cur->OnPreCreate();
-
-				break;
-			}
-		}	
+			//Call the OnPreCreate call back.
+			if (Cur->OnPreCreate != nullptr)
+				Cur->OnPreCreate();
+		}
 	}
 	Detour_OnPreCreate->Stub<void>(Instance, element, e);
 }
@@ -144,13 +132,12 @@ void Settings_Menu::OnPageActivating_Hook(MonoObject* Instance, MonoObject* page
 		MonoClass* SettingElement = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingElement");
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "SettingPage", page, "Id"));
 
-		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		MenuOption* Cur = Menu::Get_Option(Id);
+
+		if (Cur)
 		{
-			if (!strcmp(Id, it->first) && it->second->OnPageActivating != nullptr)
-			{
-				it->second->OnPageActivating();
-				break;
-			}
+			if(Cur->OnPageActivating != nullptr)
+				Cur->OnPageActivating();
 		}
 	}
 	Detour_OnPageActivating->Stub<void>(Instance, page, e);
@@ -170,29 +157,23 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
 		char* Value = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Value"));
 
-		for (std::map<char*, MenuOption*>::iterator it = Menu::Options->begin(); it != Menu::Options->end(); it++)
+		MenuOption* Cur = Menu::Get_Option(Id);
+		
+		if (Cur)
 		{
-			klog("%s\n", it->first);
-			if (!strcmp(Id, it->first))
-			{
-				MenuOption* Cur = it->second;
+			//Update the local value of the option.
+			if (Cur->Type == Type_Boolean)
+				*(bool*)Cur->Data = (atoi(Value) >= 1);
+			else if (Cur->Type == Type_Integer)
+				*Cur->Data = atoi(Value);
+			else if (Cur->Type == Type_Float)
+				*Cur->Data = atof(Value);
+			else if (Cur->Type == Type_String)
+				strcpy((char*)Cur->Data, Value);
 
-				//Update the local value of the option.
-				if (Cur->Type == Type_Boolean)
-					*(bool*)Cur->Data = (atoi(Value) >= 1);
-				else if (Cur->Type == Type_Integer)
-					*Cur->Data = atoi(Value);
-				else if (Cur->Type == Type_Float)
-					*Cur->Data = atof(Value);
-				else if (Cur->Type == Type_String)
-					strcpy((char*)Cur->Data, Value);
-
-				//Call the OnPress call back.
-				if (Cur->OnPress != nullptr)
-					Cur->OnPress();
-
-				break;
-			}
+			//Call the OnPress call back.
+			if (Cur->OnPress != nullptr)
+				Cur->OnPress();
 		}
 	}
 

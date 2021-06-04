@@ -3,8 +3,8 @@
 
 #include "Resolver-505.hpp"
 #include "Resolver-672.hpp"
-//#include "Resolver-702.hpp"
-//#include "Resolver-755.hpp"
+#include "Resolver-702.hpp"
+#include "Resolver-755.hpp"
 
 /* Util */
 extern struct sysentvec* sysvec;

@@ -14,7 +14,7 @@ build:
 	+$(MAKE) -C Userland pack_resources
 	+$(MAKE) -C Userland
 
-	objcopy -O binary Userland/Userland.elf ../Orbis-Toolbox-$(VERSION).bin
+	objcopy -O binary Userland/Userland.elf ../Build/Orbis-Toolbox-$(VERSION).bin
 
 	printf "\e[1m\e[32m[%0.2f Build Sucess!]\033[37m\n" "$$(($(VERSION) * 1))e-2"
 

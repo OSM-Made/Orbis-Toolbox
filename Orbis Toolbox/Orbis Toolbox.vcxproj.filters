@@ -126,6 +126,9 @@
     <ClCompile Include="SysfileUtilWrapper.cpp">
       <Filter>Source Files\Utilites</Filter>
     </ClCompile>
+    <ClCompile Include="Daemons.cpp">
+      <Filter>Source Files\Menu\Sub Menus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -193,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="SysfileUtilWrapper.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Daemons.h">
+      <Filter>Header Files\Menu\Sub Menus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
