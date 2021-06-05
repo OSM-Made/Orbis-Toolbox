@@ -50,33 +50,32 @@ bool Mono::Init()
 	Vsh_Lx = Get_Image("/%s/common/lib/Sce.Vsh.Lx.dll", sceKernelGetFsSandboxRandomWord());
 	SysfileUtilWrapper = Get_Image("/%s/common/lib/Sce.Vsh.SysfileUtilWrapper.dll", sceKernelGetFsSandboxRandomWord());
 
-	char* Version = UI::Utilities::Get_Version_String();
-	if (Version)
+	SceKernelSystemSwVersion Version;
+	Version.Size = sizeof(SceKernelSystemSwVersion);
+	sceKernelGetSystemSwVersion(&Version);
+	char Version_Short[] = { Version.info[1], Version.info[3], Version.info[4] };
+	int Software_Version = atoi(Version_Short);
+	klog("Software Version: %s %i\n", Version.info, Software_Version);
+
+	switch (Software_Version)
 	{
-		char Version_Short[] = { Version[0], Version[2], Version[3] };
-		int Software_Version = atoi(Version_Short);
-		klog("Software Version: %s %i\n", Version, Software_Version);
+	default:
+		klog("Unsuported Software Version!! \"%s\"(%i)\n", Version.info, Software_Version);
+		break;
 
-		switch (Software_Version)
-		{
-		default:
-			Notify("Unsuported Software Version!! \"%s\"(%i)", Version, Software_Version);
-			break;
+	case 505:
+		PUI = "Sce.PlayStation.HighLevel.UI2";
+		PUI_UI2 = "Sce.PlayStation.HighLevel.UI2";
+		PUI_UI3 = "Sce.PlayStation.HighLevel.UI2";
+		break;
 
-		case 505:
-			PUI = "Sce.PlayStation.HighLevel.UI2";
-			PUI_UI2 = "Sce.PlayStation.HighLevel.UI2";
-			PUI_UI3 = "Sce.PlayStation.HighLevel.UI2";
-			break;
-
-		case 672:
-		case 702:
-		case 755:
-			PUI = "Sce.PlayStation.PUI";
-			PUI_UI2 = "Sce.PlayStation.PUI.UI2";
-			PUI_UI3 = "Sce.PlayStation.PUI.UI3";
-			break;
-		}
+	case 672:
+	case 702:
+	case 755:
+		PUI = "Sce.PlayStation.PUI";
+		PUI_UI2 = "Sce.PlayStation.PUI.UI2";
+		PUI_UI3 = "Sce.PlayStation.PUI.UI3";
+		break;
 	}
 
 	MonoLog("Init Complete");

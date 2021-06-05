@@ -20,10 +20,10 @@ extern "C"
 
 		Mono::Init();
 
+		//TODO: Add buton combo that if detected here will cancel loading.
 		//Sce.PlayStation.Core.Runtime DiagnosticsNative GetGraphicsMemoryStatistics 
 		//TODO: Get Address and offset take a look in IDA see if it calls imports.
 
-		//UI::Utilities::SetVersionString("5.05 OSM's Cool Firmware");
 		System_Monitor::Init();
 		Settings_Menu::Init();
 		//Title_Menu::Init();	
@@ -36,8 +36,6 @@ extern "C"
 	int module_stop()
 	{
 		klog("!! BYE !!\n");
-
-		Notify("Orbis Toolbox: Unloading...");
 
 		Settings_Menu::Term();
 		System_Monitor::Term();
