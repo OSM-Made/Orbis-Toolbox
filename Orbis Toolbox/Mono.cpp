@@ -12,7 +12,10 @@ MonoImage* Mono::Accessor_Db;
 MonoImage* Mono::Vsh_Lx;
 MonoImage* Mono::SysfileUtilWrapper;
 
-bool Mono::PUI2 = true;
+int Mono::Software_Version;
+const char* Mono::PUI;
+const char* Mono::PUI_UI2;
+const char* Mono::PUI_UI3;
 
 bool Mono::Init()
 {
@@ -29,13 +32,11 @@ bool Mono::Init()
 
 	MonoLog("Get Images");
 
-	PUI2 = true;
 	UI_dll = Get_Image("/%s/common/lib/Sce.PlayStation.PUI.dll", sceKernelGetFsSandboxRandomWord());
 	if (!UI_dll)
 	{
 		klog("Using Highlevel.UI2...\n");
 		UI_dll = Get_Image("/%s/common/lib/Sce.PlayStation.HighLevel.UI2.dll", sceKernelGetFsSandboxRandomWord());
-		PUI2 = false;
 	}
 	else
 		klog("Using PUI...\n");
@@ -47,7 +48,37 @@ bool Mono::Init()
 	mscorlib = Get_Image("/%s/common/lib/mscorlib.dll", sceKernelGetFsSandboxRandomWord());
 	Accessor_Db = Get_Image("/%s/common/lib/Sce.Vsh.Accessor.Db.dll", sceKernelGetFsSandboxRandomWord());
 	Vsh_Lx = Get_Image("/%s/common/lib/Sce.Vsh.Lx.dll", sceKernelGetFsSandboxRandomWord());
-	SysfileUtilWrapper = Get_Image("/%s/common/lib/Sce.Vsh.SysfileUtilWrapper.dll", sceKernelGetFsSandboxRandomWord()); 
+	SysfileUtilWrapper = Get_Image("/%s/common/lib/Sce.Vsh.SysfileUtilWrapper.dll", sceKernelGetFsSandboxRandomWord());
+
+	char* Version = UI::Utilities::Get_Version_String();
+	if (Version)
+	{
+		char Version_Short[] = { Version[0], Version[2], Version[3] };
+		int Software_Version = atoi(Version_Short);
+		klog("Software Version: %s %i\n", Version, Software_Version);
+
+		switch (Software_Version)
+		{
+		default:
+			Notify("Unsuported Software Version!! \"%s\"(%i)", Version, Software_Version);
+			break;
+
+		case 505:
+			PUI = "Sce.PlayStation.HighLevel.UI2";
+			PUI_UI2 = "Sce.PlayStation.HighLevel.UI2";
+			PUI_UI3 = "Sce.PlayStation.HighLevel.UI2";
+			break;
+
+		case 672:
+		case 702:
+		case 755:
+			PUI = "Sce.PlayStation.PUI";
+			PUI_UI2 = "Sce.PlayStation.PUI.UI2";
+			PUI_UI3 = "Sce.PlayStation.PUI.UI3";
+			break;
+		}
+	}
+
 	MonoLog("Init Complete");
 
 	return true;

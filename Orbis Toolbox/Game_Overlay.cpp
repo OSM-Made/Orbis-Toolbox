@@ -136,12 +136,12 @@ void Game_Overlay::Init()
 {
 	//Get Relevent Classes.
 	MonoClass* LayerManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "LayerManager");
-	MonoClass* ContainerScene = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ContainerScene");
+	MonoClass* ContainerScene = Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "ContainerScene");
 
 	//Initialize Game Scene widget
 	Game_Widget = new Widget();
 	MonoObject* Game = Mono::Invoke<MonoObject*>(Mono::App_exe, LayerManager, nullptr, "FindContainerSceneByPath", Mono::New_String("Game"));
-	Game_Widget->Instance = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene", Game, "RootWidget");
+	Game_Widget->Instance = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI_UI2, "Scene", Game, "RootWidget");
 
 	//Set location to left.
 	strcpy(Location, "Left");

@@ -102,10 +102,10 @@ void Settings_Menu::OnPreCreate_Hook(MonoObject* Instance, MonoObject* element, 
 			//Update the shown value of the option.
 			if (Cur->Type == Type_Boolean)
 				Mono::Set_Property(SettingElement, element, "Value", (*(bool*)Cur->Data) ? Mono::New_String("1") : Mono::New_String("0"));
-			/*else if (Cur.Type == Type_Integer)
-				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Integer).c_str()));
-			else if (Cur.Type == Type_Float)
-				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*Cur->Data.Float).c_str()));*/
+			/*else if (Cur->Type == Type_Integer)
+				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*(int*)Cur->Data).c_str()));
+			else if (Cur->Type == Type_Float)
+				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String(std::to_string(*(float*)Cur->Data).c_str()));*/
 			else if (Cur->Type == Type_String)
 				Mono::Set_Property(SettingElement, element, "Value", Mono::New_String((const char*)Cur->Data));
 
@@ -270,7 +270,7 @@ void Settings_Menu::Init()
 	Detour_OnPreCreate->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPreCreate", 2, (void*)OnPreCreate_Hook);
 	Detour_OnPageActivating->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPageActivating", 2, (void*)OnPageActivating_Hook);
 	Detour_OnPress->DetourMethod(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.SettingsRoot", "SettingsRootHandler", "OnPress", 2, (void*)OnPress_Hook);
-	Detour_OnRender->DetourMethod(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "Application", "Update", 0, (void*)OnRender_Hook);
+	Detour_OnRender->DetourMethod(Mono::UI_dll, Mono::PUI, "Application", "Update", 0, (void*)OnRender_Hook);
 
 	Log("Init Complete");
 }

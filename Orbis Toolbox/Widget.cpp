@@ -49,7 +49,7 @@ void Widget::Set_Clip_Children(bool Value)
 
 Widget::Widget()
 {
-	this->Widget_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Widget");
+	this->Widget_Class = Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "Widget");
 }
 
 Widget::~Widget()

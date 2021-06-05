@@ -16,7 +16,10 @@ public:
 	static MonoImage* Vsh_Lx;
 	static MonoImage* SysfileUtilWrapper;
 
-	static bool PUI2;
+	static int Software_Version;
+	static const char* PUI;
+	static const char* PUI_UI2;
+	static const char* PUI_UI3;
 
 	static bool Init();
 	static void MonoLog(const char* fmt, ...);

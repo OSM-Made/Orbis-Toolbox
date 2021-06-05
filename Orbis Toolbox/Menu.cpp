@@ -21,7 +21,7 @@ void Menu::Init()
 	*/
 
 	// Power Options
-	Add_Option("id_reload_shellui", []() -> void { Notify("%s", __FUNCTION__); });
+	Add_Option("id_reload_shellui", []() -> void { Notify("%s", __FUNCTION__); })->Visible = false;
 	Add_Option("id_reboot", []() -> void { LncUtil::SystemReboot(); });
 	Add_Option("id_shutdown", []() -> void { LncUtil::SystemShutdown(LncUtil::None); });
 	Add_Option("id_suspend", []() -> void { LncUtil::SystemShutdown(LncUtil::Eap); });
@@ -72,7 +72,7 @@ void Menu::Init()
 
 	End:
 		free(Dent_Buffer);
-	});
+	})->Visible = false;
 
 	// ShellUI Plugin Manager
 	Add_Option("id_plugins")->Visible = false;
@@ -101,7 +101,7 @@ void Menu::Init()
 		
 
 
-	});
+	})->Visible = false;
 
 	// Note: System settings does not need to be done here
 	//		 because of the fact its managed by the system.

@@ -5,6 +5,7 @@ namespace UI
 	class Utilities
 	{
 	public:
+		static char* Get_Version_String();
 		static void SetVersionString(const char* str);
 		static void ReloadItemList();
 		static MonoObject* AppBrowseItem(const char* TitleId, const char* TitleName);

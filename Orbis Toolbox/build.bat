@@ -48,8 +48,8 @@ copy "%outputPrx%" "%outputPath%\%targetname%.sprx"
 del "%outputPrx%"
 
 REM Generate the script. Will overwrite any existing temp.txt
-REM echo open 192.168.0.54 6904> temp.txt
-echo open 192.168.0.54 1337> temp.txt
+echo open 192.168.0.54 6904> temp.txt
+REM echo open 192.168.0.54 1337> temp.txt
 echo anonymous>> temp.txt
 echo anonymous>> temp.txt
 echo cd /mnt/usb0/>> temp.txt

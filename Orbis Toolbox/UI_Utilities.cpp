@@ -1,6 +1,12 @@
 #include "Common.h"
 #include "UI_Utilities.h"
 
+char* UI::Utilities::Get_Version_String()
+{
+	MonoClass* SystemSoftwareVersionInfo = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "SystemSoftwareVersionInfo");
+ 	return mono_string_to_utf8(Mono::Get_Property<MonoString*>(SystemSoftwareVersionInfo, Mono::Get_Instance(SystemSoftwareVersionInfo, "Instance"), "DisplayVersion"));
+}
+
 void UI::Utilities::SetVersionString(const char* str)
 {
 	MonoClass* SystemSoftwareVersionInfo = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.AppSystem", "SystemSoftwareVersionInfo");
@@ -40,12 +46,12 @@ MonoObject* UI::Utilities::Get_Top_Scene()
 
 MonoObject* UI::Utilities::Get_root_Widget()
 {
-	return Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Scene", Get_Top_Scene(), "RootWidget");
+	return Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI_UI2, "Scene", Get_Top_Scene(), "RootWidget");
 }
 
 MonoObject* UI::Utilities::Adjust_Content(int AlignOrientation, float PaddingLeft, float PaddingRight, float PaddingTop, float PaddingBottom)
 {
-	MonoClass* AdjustContent = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "AdjustContent");
+	MonoClass* AdjustContent = Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "AdjustContent");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* AdjustContent_Instance = Mono::New_Object(AdjustContent);
@@ -65,7 +71,7 @@ MonoObject* UI::Utilities::Adjust_Content(int AlignOrientation, float PaddingLef
 
 MonoObject* UI::Utilities::Fit_To_Children()
 {
-	MonoClass* FitToChildren = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "FitToChildren");
+	MonoClass* FitToChildren = Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "FitToChildren");
 
 	MonoObject* FitToChildren_Instance = Mono::New_Object(FitToChildren);
 	mono_runtime_object_init(FitToChildren_Instance);
@@ -75,7 +81,8 @@ MonoObject* UI::Utilities::Fit_To_Children()
 
 MonoObject* UI::Utilities::IUFont(int size, int style, int weight)
 {
-	MonoClass* UIFont = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIFont");
+	//Somewhere between 6.72 and 7.02 UIFont was moved to UI2.
+	MonoClass* UIFont = Mono::Get_Class(Mono::UI_dll, (Mono::Software_Version <= 672) ? Mono::PUI : Mono::PUI_UI2, "UIFont");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIFont_Instance = Mono::New_Object(UIFont);
@@ -141,7 +148,7 @@ MonoObject* UI::Utilities::ElementData(const char* Id, const char* Title, const 
 
 MonoObject* UI::Utilities::UIColor(float R, float G, float B, float A)
 {
-	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIColor");
+	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UIColor");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
@@ -156,7 +163,7 @@ MonoObject* UI::Utilities::UIColor(float R, float G, float B, float A)
 
 MonoObject* UI::Utilities::UIColor(float R, float G, float B)
 {
-	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UIColor");
+	MonoClass* UIColor = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UIColor");
 
 	//Allocates memory for our new instance of a class.
 	MonoObject* UIColor_Instance = Mono::New_Object(UIColor);
@@ -171,13 +178,13 @@ MonoObject* UI::Utilities::UIColor(float R, float G, float B)
 
 float UI::Utilities::ScreenHeight()
 {
-	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UISystem");
+	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UISystem");
 	return Mono::Get_Property<int>(UISystem, nullptr, "ScreenHeight");
 }
 
 float UI::Utilities::ScreenWidth()
 {
-	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UISystem");
+	MonoClass* UISystem = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UISystem");
 	return Mono::Get_Property<int>(UISystem, nullptr, "ScreenWidth");
 }
 

@@ -16,8 +16,6 @@ bool Load_SPRX(proc* proc, const char* File)
 {
     klog("Load_SPRX(): \"%s\"", File);
 
-    
-
     size_t n;
     int err = 0;
     uint64_t thr_initial = 0;

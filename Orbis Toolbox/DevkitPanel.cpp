@@ -26,7 +26,7 @@ void Debug_Feature::DevkitPanel::Show()
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
 	MonoObject* AreaManager_Instance = Mono::Get_Instance(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "Instance");
 	MonoObject* m_devKitPanel = Mono::Get_Field<MonoObject*>(AreaManager, AreaManager_Instance, "m_devKitPanel");
-	MonoClass* Widget = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Widget");
+	MonoClass* Widget = Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "Widget");
 
 	// AreaManager.Instance.m_devKitPanel
 	// If m_devKitPanel is null we must create the panel first.
@@ -36,7 +36,7 @@ void Debug_Feature::DevkitPanel::Show()
 	}
 	else
 	{
-		MonoClass* UITimer = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UITimer");
+		MonoClass* UITimer = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UITimer");
 		MonoObject* m_updatePanelTimer = Mono::Get_Field<MonoObject*>(AreaManager, AreaManager_Instance, "m_updatePanelTimer");
 
 		// AreaManager.Instance.m_updatePanelTimer.Start()
@@ -46,7 +46,7 @@ void Debug_Feature::DevkitPanel::Show()
 
 		// AreaManager.Instance.m_devKitPanel.Show()
 		// Show the panel.
-		MonoClass* UINode = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UINode");
+		MonoClass* UINode = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UINode");
 		Mono::Invoke<void>(Mono::UI_dll, UINode, m_devKitPanel, "Show");
 	}
 
@@ -58,7 +58,7 @@ void Debug_Feature::DevkitPanel::Hide()
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
 	MonoObject* AreaManager_Instance = Mono::Get_Instance(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "Instance");
 
-	MonoClass* UITimer = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UITimer");
+	MonoClass* UITimer = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UITimer");
 	MonoObject* m_updatePanelTimer = Mono::Get_Field<MonoObject*>(AreaManager, AreaManager_Instance, "m_updatePanelTimer");
 
 	// AreaManager.Instance.m_updatePanelTimer.Stop()
@@ -71,7 +71,7 @@ void Debug_Feature::DevkitPanel::Hide()
 	MonoObject* m_devKitPanel = Mono::Get_Field<MonoObject*>(AreaManager, AreaManager_Instance, "m_devKitPanel");
 	if (m_devKitPanel)
 	{
-		MonoClass* UINode = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "UINode");
+		MonoClass* UINode = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "UINode");
 		Mono::Invoke<void>(Mono::UI_dll, UINode, m_devKitPanel, "Hide");
 	}
 
@@ -80,7 +80,7 @@ void Debug_Feature::DevkitPanel::Hide()
 
 bool Debug_Feature::DevkitPanel::GetState()
 {
-	MonoClass* FrameTask = Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI" : "Sce.PlayStation.HighLevel.UI2", "FrameTask");
+	MonoClass* FrameTask = Mono::Get_Class(Mono::UI_dll, Mono::PUI, "FrameTask");
 	MonoClass* AreaManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager");
 	MonoObject* AreaManager_Instance = Mono::Get_Instance(Mono::App_exe, "Sce.Vsh.ShellUI.TopMenu", "AreaManager", "Instance");
 	MonoObject* m_devKitPanel = Mono::Get_Field<MonoObject*>(AreaManager, AreaManager_Instance, "m_devKitPanel");

@@ -24,7 +24,7 @@ void Debug_Feature::DebugTitleIdLabel::AddTitleId(MonoObject* m_contentsGridList
 
 	if (m_contentsGridList)
 	{
-		MonoObject* ActiveItems = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ListPanelBase", m_contentsGridList, "ActiveItems");
+		MonoObject* ActiveItems = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI_UI2, "ListPanelBase", m_contentsGridList, "ActiveItems");
 
 		for (int i = 0; i < Mono::Get_Property<int>(ReadOnlyCollection, ActiveItems, "Count"); i++)
 		{
@@ -42,7 +42,7 @@ void Debug_Feature::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridL
 
 	if (m_contentsGridList)
 	{
-		MonoObject* ActiveItems = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "ListPanelBase", m_contentsGridList, "ActiveItems");
+		MonoObject* ActiveItems = Mono::Get_Property<MonoObject*>(Mono::UI_dll, Mono::PUI_UI2, "ListPanelBase", m_contentsGridList, "ActiveItems");
 
 		for (int i = 0; i < Mono::Get_Property<int>(ReadOnlyCollection, ActiveItems, "Count"); i++)
 		{
@@ -53,7 +53,7 @@ void Debug_Feature::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridL
 
 			if (m_iconImageBox)
 			{
-				MonoArray* Children = Mono::Invoke<MonoArray*>(Mono::App_exe, Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Node`1"), m_iconImageBox, "GetChildrenArray");
+				MonoArray* Children = Mono::Invoke<MonoArray*>(Mono::App_exe, Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "Node`1"), m_iconImageBox, "GetChildrenArray");
 
 				for (int i = 0; i < mono_array_length(Children); i++)
 				{
@@ -71,7 +71,7 @@ void Debug_Feature::DebugTitleIdLabel::RemoveTitleId(MonoObject* m_contentsGridL
 					if (strcmp(Instance->vtable->klass->name, "Label"))
 						continue;
 
-					Mono::Invoke<void>(Mono::App_exe, Mono::Get_Class(Mono::UI_dll, Mono::PUI2 ? "Sce.PlayStation.PUI.UI2" : "Sce.PlayStation.HighLevel.UI2", "Widget"), Instance, "RemoveFromParent");
+					Mono::Invoke<void>(Mono::App_exe, Mono::Get_Class(Mono::UI_dll, Mono::PUI_UI2, "Widget"), Instance, "RemoveFromParent");
 				}
 			}
 		}
