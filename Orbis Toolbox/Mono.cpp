@@ -54,7 +54,7 @@ bool Mono::Init()
 	Version.Size = sizeof(SceKernelSystemSwVersion);
 	sceKernelGetSystemSwVersion(&Version);
 	char Version_Short[] = { Version.info[1], Version.info[3], Version.info[4] };
-	int Software_Version = atoi(Version_Short);
+	Software_Version = atoi(Version_Short);
 	klog("Software Version: %s %i\n", Version.info, Software_Version);
 
 	switch (Software_Version)

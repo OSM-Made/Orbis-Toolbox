@@ -3,7 +3,7 @@
 #include "Loader.hpp"
 #include "Util/Proc.hpp"
 
-//#define SHOULD_LOAD
+#define SHOULD_LOAD
 #define RESUME_WAIT 17000
 bool IsSystemResuming = false;
 
