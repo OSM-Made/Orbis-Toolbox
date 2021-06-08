@@ -16,6 +16,7 @@ namespace UI
 		static MonoObject* IUFont(int size, int style, int weight);
 		static MonoObject* MemoryStream(void* Buffer, int Buffer_Size);
 		static void ResetMenuItem(const char* Menu);
+		static void RemoveMenuItem(const char* Menu);
 		static MonoObject* GetElement(const char* Id);
 		static void Set_Value(const char* Id, const char* Value);
 		static void AddMenuItem(MonoObject* ElementData);

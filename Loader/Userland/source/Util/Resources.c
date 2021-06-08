@@ -36,6 +36,21 @@ extern char _binary_Resources_icon_system_settings_bin_end[];
 extern char _binary_Resources_icon_toolbox_bin_start[];
 extern char _binary_Resources_icon_toolbox_bin_end[];
 
+/*
+    PLDR00000
+*/
+extern char _binary_Resources_PLDR00000_eboot_bin_start[];
+extern char _binary_Resources_PLDR00000_eboot_bin_end[];
+
+extern char _binary_Resources_PLDR00000_param_bin_start[];
+extern char _binary_Resources_PLDR00000_param_bin_end[];
+
+extern char _binary_Resources_PLDR00000_icon0_bin_start[];
+extern char _binary_Resources_PLDR00000_icon0_bin_end[];
+
+extern char _binary_Resources_PLDR00000_libjbc_bin_start[];
+extern char _binary_Resources_PLDR00000_libjbc_bin_end[];
+
 #define _Write_File(File, Start, End) Write_File(File, Start, (size_t)(End - Start))
 
 int Write_File(const char* File, char* Data, size_t size)
@@ -85,9 +100,9 @@ void Install_Daemon(const char* TitleId, char* Eboot_start, char* Eboot_end, cha
     sprintf(Param_sfo_Dir, "/system/vsh/app/%s/sce_sys/icon0.png", TitleId);
     sprintf(Icon_Dir, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
 
-    _Write_File("/data/Orbis Toolbox/Icons/icon_daemon.png", Eboot_start, Eboot_end);
-    _Write_File("/data/Orbis Toolbox/Icons/icon_payload.png", Param_sfo_start, Param_sfo_end);
-    _Write_File("/data/Orbis Toolbox/Icons/icon_pkg.png", Icon_start, Icon_end);
+    _Write_File(Eboot_Dir, Eboot_start, Eboot_end);
+    _Write_File(Param_sfo_Dir, Param_sfo_start, Param_sfo_end);
+    _Write_File(Icon_Dir, Icon_start, Icon_end);
 
     Log("Installing Daemon %s Complete!", TitleId);
 }
@@ -118,7 +133,11 @@ void Install_Resources()
     _Write_File("/data/Orbis Toolbox/Icons/icon_toolbox.png", _binary_Resources_icon_toolbox_bin_start, _binary_Resources_icon_toolbox_bin_end);
 
     Log("Installing Daemons...");
-    //Install_Daemon("PLDR00000", ); //Install payload loader daemon
+    Install_Daemon("PLDR00000", //Payload Loacer Daemon
+    _binary_Resources_PLDR00000_eboot_bin_start, _binary_Resources_PLDR00000_eboot_bin_end,
+    _binary_Resources_PLDR00000_param_bin_start, _binary_Resources_PLDR00000_param_bin_end,
+    _binary_Resources_PLDR00000_icon0_bin_start, _binary_Resources_PLDR00000_param_bin_end);
+    _Write_File("/system/vsh/app/PLDR00000/libjbc.sprx", _binary_Resources_PLDR00000_libjbc_bin_start, _binary_Resources_PLDR00000_libjbc_bin_end);
 
     Log("Install_Resources() -> Sucess!");
 }

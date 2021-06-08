@@ -157,6 +157,9 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 		char* Id = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Id"));
 		char* Value = mono_string_to_utf8(Mono::Get_Property<MonoString*>(SettingElement, element, "Value"));
 
+		if (!strcmp(Id, "_option"))
+			Id = Value;
+
 		MenuOption* Cur = Menu::Get_Option(Id);
 		
 		if (Cur)

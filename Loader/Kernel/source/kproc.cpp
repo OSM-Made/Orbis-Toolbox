@@ -3,6 +3,7 @@
 #include "Loader.hpp"
 #include "Util/Proc.hpp"
 
+//#define SHOULD_LOAD
 #define RESUME_WAIT 17000
 bool IsSystemResuming = false;
 
@@ -37,11 +38,13 @@ void test_thread(void* arg)
     //Mount the dirs for ShellUI
     Mount_Dirs(p, bkJail.fd_jdir, true);
 
+    #if defined(SHOULD_LOAD)
     klog("****Launching Toolbox...****");
     if(Load_SPRX(p, SPRX_PATH))
         klog("Launched Toolbox...");
     else
         klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
+    #endif
 
     //Restore previous jail.
     RestoreJail(p, bkJail);
@@ -119,10 +122,12 @@ void test2_thread(void* arg)
     //Mount the dirs for ShellUI
     Mount_Dirs(p, bkJail.fd_jdir, true);
 
+    #if defined(SHOULD_LOAD)
     klog("****Launching Toolbox...****");
     if(Load_SPRX(p, SPRX_PATH))
     {
         klog("Launched Toolbox Sucessfully.");
+    #endif
 
         klog("Registering Events...");
         //Register Events
@@ -130,10 +135,13 @@ void test2_thread(void* arg)
         SystemResumeEvent = EVENTHANDLER_REGISTER(system_resume_phase1, (void*)OnSystemResume, nullptr, EVENTHANDLER_PRI_FIRST);
         ProcessStartEvent = EVENTHANDLER_REGISTER(process_exec_end, (void*)OnProcessStart, nullptr, EVENTHANDLER_PRI_LAST);
         ProcessExitEvent = EVENTHANDLER_REGISTER(process_exit, (void*)OnProcessExit, nullptr, EVENTHANDLER_PRI_ANY);
-        klog("Events Registered Sucessfully.");  
+        klog("Events Registered Sucessfully.");
+
+    #if defined(SHOULD_LOAD)  
     }    
     else
         klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
+    #endif
 
     //Restore previous jail.
     RestoreJail(p, bkJail);
@@ -143,10 +151,14 @@ void test2_thread(void* arg)
 
 void kproc_Init()
 {
+    klog("kproc_Init()"); 
     proc* kernel = proc_find_by_name("kernel");
     if(kernel)
+    {
+        klog("Found Kernel Process...\n");
         kproc_kthread_add(test2_thread, nullptr, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
-
+    }
+    
     klog("kproc_Init() -> Sucess!"); 
 }
 

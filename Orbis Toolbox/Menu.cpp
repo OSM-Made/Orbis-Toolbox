@@ -59,8 +59,58 @@ void Menu::Init()
 				dent = (OrbisKernelDirents*) (Dent_Buffer + bpos);
 
 				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
-				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") /*&& !strstr(dent->d_name, PAYLOAD_DAEMON)*/)
+				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") && !strstr(dent->d_name, PAYLOAD_DAEMON))
 					Add_Daemon(dent->d_name);
+					
+				//Increase the position we are going to read by the size of the current directory entry.
+				bpos += dent->d_reclen;
+			}
+
+			//make sure to close file descriptor when we are done.
+			sceKernelClose(fd);
+		}
+
+	End:
+		free(Dent_Buffer);
+
+	});
+
+	Add_Option("id_option_daemon_refresh", []() -> void {
+
+		klog("id_option_daemon_refresh\n");
+
+		int fd;
+		OrbisKernelStat stats;
+		char* Dent_Buffer;
+		OrbisKernelDirents *dent;
+		int bpos;
+
+		//Open a file descriptor on the directory where daemons are stored.
+		fd = sceKernelOpen(DAEMON_DIR, 0, 0511);
+		if (fd)
+		{
+			//Get the size of the directory and allocate space to read the contents.
+			sceKernelFstat(fd, &stats);
+			Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
+
+
+			//Read the directory contents and if the number of byte sread returned less than or equal to zero return.
+			int nread = sceKernelGetdents(fd, Dent_Buffer, (size_t)stats.st_blksize);
+			if (nread <= 0)
+				goto End;
+
+			//Loop through all the directory contents by position in the buffer insuring we dont go over the number of read bytes.
+			for (bpos = 0; bpos < nread;)
+			{
+				//dent is our curent directory.
+				dent = (OrbisKernelDirents*)(Dent_Buffer + bpos);
+
+				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
+				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") && !strstr(dent->d_name, PAYLOAD_DAEMON)) 
+				{
+					Remove_Daemon(dent->d_name);
+					Add_Daemon(dent->d_name);
+				}
 
 				//Increase the position we are going to read by the size of the current directory entry.
 				bpos += dent->d_reclen;
@@ -72,36 +122,33 @@ void Menu::Init()
 
 	End:
 		free(Dent_Buffer);
-	})->Visible = false;
+
+	});
 
 	// ShellUI Plugin Manager
 	Add_Option("id_plugins")->Visible = false;
 
 	// Payload Loader
-	Add_Option("id_Custom_Loader", []() -> void {
-
-		if (Is_Daemon_Running(PAYLOAD_DAEMON))
-		{
-			if (Stop_Daemon(PAYLOAD_DAEMON) && Start_Daemon(PAYLOAD_DAEMON))
-				Notify("Payload Loader: Listening for Payload on port 9020.");
-			else
-				Notify("Payload Loader: Failed to start Payload Daemon.");
-		}
-		else
-		{
-			if(Start_Daemon(PAYLOAD_DAEMON))
-				Notify("Payload Loader: Listening for Payload on port 9020.");
-			else
-				Notify("Payload Loader: Failed to start Payload Daemon.");
-		}
-
-	});
-
 	Add_Option("id_payloads", nullptr, nullptr, []() -> void {
 		
 
 
-	})->Visible = false;
+	});
+
+	Add_Option("id_Custom_Loader", []() -> void {
+
+		if (Is_Daemon_Running(PAYLOAD_DAEMON))
+		{
+			if (!Stop_Daemon(PAYLOAD_DAEMON) && !Start_Daemon(PAYLOAD_DAEMON))
+				Notify("Payload Loader: Failed to start Payload Daemon.");
+		}
+		else
+		{
+			if (!Start_Daemon(PAYLOAD_DAEMON))
+				Notify("Payload Loader: Failed to start Payload Daemon.");
+		}
+
+	});
 
 	// Note: System settings does not need to be done here
 	//		 because of the fact its managed by the system.

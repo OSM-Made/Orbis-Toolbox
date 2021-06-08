@@ -110,6 +110,12 @@ void UI::Utilities::ResetMenuItem(const char* Menu)
 	Mono::Invoke<void>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "ResetMenuItem", Mono::New_String(Menu));
 }
 
+void UI::Utilities::RemoveMenuItem(const char* Menu)
+{
+	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");
+	Mono::Invoke<void>(Mono::App_exe, UIManager, Mono::Get_Instance(UIManager, "Instance"), "RemoveMenuItem", Mono::New_String(Menu));
+}
+
 void UI::Utilities::AddMenuItem(MonoObject* ElementData)
 {
 	MonoClass* UIManager = Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.Settings.Core", "UIManager");

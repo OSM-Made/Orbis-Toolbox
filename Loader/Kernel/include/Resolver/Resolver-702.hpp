@@ -52,7 +52,7 @@
 /* Kproc */
 #define addr_kproc_create					    0xC4170
 #define addr_kproc_exit                         0xC43E0
-#define addr_kproc_kthread_add				    0xC46D0
+#define addr_kproc_kthread_add				    0xC4EE0
 #define addr_kthread_exit						0xC49C0
 #define addr_kthread_suspend_check				0xC4DD0
 #define addr_pause                              0x16EEE0

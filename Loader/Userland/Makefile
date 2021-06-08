@@ -26,8 +26,9 @@ $(ODIR)/%.o: $(SDIR)/%.s
 	$(AS) -c -o $@ $< $(SFLAGS)
 
 $(ODIR)/%.o: $(RDIR)/%.bin
+	mkdir -p $(dir $@)
 	ld -r -b binary -o $@ $<
-	objdump -t $@
+#	objdump -t $@
 
 $(ODIR):
 	@mkdir $@

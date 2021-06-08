@@ -69,22 +69,23 @@ bool Start_Stop_Daemon(char* TitleId, bool Restart)
 void Add_Daemon(char* dent)
 {
 	char TitleId[10];
-	strcpy(TitleId, dent);
-
 	char Id_Name[0x100];
-	sprintf(Id_Name, "id_%s", TitleId);
-	klog("%s\n", Id_Name);
-
 	char Icon_Path[PATH_MAX];
-	sprintf(Icon_Path, "file://system/vsh/app/%s/sce_sys/icon0.png", TitleId);
-	klog("%s\n", Icon_Path);
-
 	char SFO_Path[PATH_MAX];
-	sprintf(SFO_Path, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
-	klog("%s\n", SFO_Path);
 
+	strcpy(TitleId, dent);
+	sprintf(Id_Name, "id_%s", TitleId);
+	sprintf(Icon_Path, "file://system/vsh/app/%s/sce_sys/icon0.png", TitleId);
+	sprintf(SFO_Path, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
+
+	//Adds a custom button to the current drawing stack with the name and desc. of the daemon from the param.sfo
 	UI::Utilities::AddMenuItem(UI::Utilities::ElementData(Id_Name, SysfileUtilWrapper::GetTitle(SFO_Path), SysfileUtilWrapper::GetDescription(SFO_Path), Icon_Path));
 
+	//Remove Menu Option if already Exists.
+	if (Menu::Has_Option(Id_Name))
+		Menu::Remove_Option(Id_Name);
+
+	//Add Menu Option with call back to load Daemon.
 	Menu::Add_Option(Id_Name, [TitleId, Id_Name]() -> void {
 
 		int AppId = LncUtil::GetAppId(TitleId);
@@ -115,6 +116,16 @@ void Add_Daemon(char* dent)
 
 	});
 
+	//Shows the current status of the daemon.
 	UI::Utilities::Set_Value(Id_Name, (LncUtil::GetAppId(TitleId) > 0) ? "Running" : "Stopped");
 	UI::Utilities::ResetMenuItem(Id_Name);
+}
+
+void Remove_Daemon(char* dent)
+{
+	char Id_Name[0x100];
+	sprintf(Id_Name, "id_%s", dent);
+
+	UI::Utilities::RemoveMenuItem(Id_Name);
+	Menu::Remove_Option(Id_Name);
 }
