@@ -3,14 +3,37 @@
 
 char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsigned int Size)
 {
-	MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
-
-	MonoString* str = Mono::Invoke<MonoString*>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetString", Mono::New_String(FilePath), Mono::New_String(Key), Size);
-
-	if (str)
-		return mono_string_to_utf8(str);
+	int fd = sceKernelOpen(FilePath, 0, 0511);
+	if (!fd)
+	{
+		klog("File doesnt exist %s\n", FilePath);
+		return "";
+	}
 	else
-		return NULL;
+	{
+		OrbisKernelStat stats;
+		sceKernelFstat(fd, &stats);
+
+		char* Buffer = (char*)malloc((size_t)stats.st_blksize);
+		sceKernelRead(fd, Buffer, (size_t)stats.st_blksize);
+
+		sceKernelClose(fd);
+
+		if (!strstr(Buffer, Key))
+		{
+			klog("File \"%s\" doesnt have the key \"%s\"", FilePath, Key);
+			return "";
+		}
+
+		MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
+
+		MonoString* str = Mono::Invoke<MonoString*>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetString", Mono::New_String(FilePath), Mono::New_String(Key), Size);
+
+		if (str)
+			return mono_string_to_utf8(str);
+		else
+			return "";
+	}
 }
 
 int SysfileUtilWrapper::GetAttribute(const char* FilePath)

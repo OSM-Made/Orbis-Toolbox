@@ -97,8 +97,8 @@ void Install_Daemon(const char* TitleId, char* Eboot_start, char* Eboot_end, cha
     Log("Writing Files...");
     char Eboot_Dir[PATH_MAX], Param_sfo_Dir[PATH_MAX], Icon_Dir[PATH_MAX];
     sprintf(Eboot_Dir, "/system/vsh/app/%s/eboot.bin", TitleId);
-    sprintf(Param_sfo_Dir, "/system/vsh/app/%s/sce_sys/icon0.png", TitleId);
-    sprintf(Icon_Dir, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
+    sprintf(Param_sfo_Dir, "/system/vsh/app/%s/sce_sys/param.sfo", TitleId);
+    sprintf(Icon_Dir, "/system/vsh/app/%s/sce_sys/icon0.png", TitleId);
 
     _Write_File(Eboot_Dir, Eboot_start, Eboot_end);
     _Write_File(Param_sfo_Dir, Param_sfo_start, Param_sfo_end);
@@ -136,8 +136,8 @@ void Install_Resources()
     Install_Daemon("PLDR00000", //Payload Loacer Daemon
     _binary_Resources_PLDR00000_eboot_bin_start, _binary_Resources_PLDR00000_eboot_bin_end,
     _binary_Resources_PLDR00000_param_bin_start, _binary_Resources_PLDR00000_param_bin_end,
-    _binary_Resources_PLDR00000_icon0_bin_start, _binary_Resources_PLDR00000_param_bin_end);
-    _Write_File("/system/vsh/app/PLDR00000/libjbc.sprx", _binary_Resources_PLDR00000_libjbc_bin_start, _binary_Resources_PLDR00000_libjbc_bin_end);
+    _binary_Resources_PLDR00000_icon0_bin_start, _binary_Resources_PLDR00000_icon0_bin_end);
+    _Write_File("/system/vsh/app/PLDR00000/sce_module/libjbc.sprx", _binary_Resources_PLDR00000_libjbc_bin_start, _binary_Resources_PLDR00000_libjbc_bin_end);
 
     Log("Install_Resources() -> Sucess!");
 }
