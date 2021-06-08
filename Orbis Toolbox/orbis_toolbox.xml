@@ -6,27 +6,27 @@
   <setting_list id="id_orbis_toolbox" title="★Orbis Toolbox" initial_focus_to="id_game_package_installer">
 
     <!-- Power Options -->
-    <setting_list id="power_options" title="Power Options" icon="file://data/Orbis Toolbox/Icons/icon_suspend.png" initial_focus_to="id_reboot">
+    <setting_list id="power_options" title="Power Options" icon="file://user/data/Orbis Toolbox/Icons/icon_suspend.png" initial_focus_to="id_reboot">
 
       <!-- Reload ShellUI -->
-      <button id="id_reload_shellui" title="Reload ShellUI" icon="file://data/Orbis Toolbox/Icons/icon_reload_ui.png" second_title="Soft reloads the Live Area."/>
+      <button id="id_reload_shellui" title="Reload ShellUI" icon="file://user/data/Orbis Toolbox/Icons/icon_reload_ui.png" second_title="Soft reloads the Live Area."/>
 
       <!-- Reboot -->
-      <button id="id_reboot" title="Reboot" icon="file://data/Orbis Toolbox/Icons/icon_reboot.png" second_title="Fully reboots the System."/>
+      <button id="id_reboot" title="Reboot" icon="file://user/data/Orbis Toolbox/Icons/icon_reboot.png" second_title="Fully reboots the System."/>
 
       <!-- Shutdown -->
-      <button id="id_shutdown" title="Shutdown" icon="file://data/Orbis Toolbox/Icons/icon_shutdown.png" second_title="Turns off the System."/>
+      <button id="id_shutdown" title="Shutdown" icon="file://user/data/Orbis Toolbox/Icons/icon_shutdown.png" second_title="Turns off the System."/>
 
       <!-- Suspend -->
-      <button id="id_suspend" title="Suspend" icon="file://data/Orbis Toolbox/Icons/icon_suspend.png" second_title="Suspends the system to the &quot;Rest Mode&quot; state."/>
+      <button id="id_suspend" title="Suspend" icon="file://user/data/Orbis Toolbox/Icons/icon_suspend.png" second_title="Suspends the system to the &quot;Rest Mode&quot; state."/>
 
     </setting_list>
     
     <!-- Package Installer -->
-    <link id="id_game_package_installer" title="Package Installer" icon="file://data/Orbis Toolbox/Icons/icon_pkg.png" file="PkgInstaller/data/pkginstaller.xml" />
+    <link id="id_game_package_installer" title="Package Installer" icon="file://user/data/Orbis Toolbox/Icons/icon_pkg.png" file="PkgInstaller/data/pkginstaller.xml" />
 
     <!-- Daemon Manager -->
-    <setting_list id="id_daemons" title="Daemon Manager" icon="file://data/Orbis Toolbox/Icons/icon_daemon.png" restorable="false">
+    <setting_list id="id_daemons" title="Daemon Manager" icon="file://user/data/Orbis Toolbox/Icons/icon_daemon.png" restorable="false">
       
       <!-- Options Menu -->
       <option id="_option" list_highlight="false">
@@ -54,7 +54,7 @@
     </setting_list>
 
     <!-- ShellUI Plugin Manager -->
-    <setting_list id="id_plugins" title="ShellUI Plugin Manager" icon="file://data/Orbis Toolbox/Icons/icon_plugin.png" restorable="false">
+    <setting_list id="id_plugins" title="ShellUI Plugin Manager" icon="file://user/data/Orbis Toolbox/Icons/icon_plugin.png" restorable="false">
 
       <!-- Options Menu -->
       <option id="_option" list_highlight="false">
@@ -78,7 +78,7 @@
     </setting_list>
 
     <!-- Payload Loader -->
-    <setting_list id="id_payloads" title="Payload Loader" icon="file://data/Orbis Toolbox/Icons/icon_payload.png" restorable="false">
+    <setting_list id="id_payloads" title="Payload Loader" icon="file://user/data/Orbis Toolbox/Icons/icon_payload.png" restorable="false">
 
       <!-- Options Menu -->
       <option id="_option" list_highlight="false">
@@ -104,7 +104,7 @@
     </setting_list>
 
     <!-- System Settings -->
-    <setting_list id="system_settings" title="System Settings" icon="file://data/Orbis Toolbox/Icons/icon_system_settings.png" initial_focus_to="id_licenseactivation">
+    <setting_list id="system_settings" title="System Settings" icon="file://user/data/Orbis Toolbox/Icons/icon_system_settings.png" initial_focus_to="id_licenseactivation">
 
       <!-- License Activation -->
       <setting_list id="id_licenseactivation" title="License Activation" second_title="Enable and disable codecs for consuming media.">
@@ -132,7 +132,7 @@
     </setting_list>
     
     <!-- Orbis Toolbox Settings -->
-    <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="file://data/Orbis Toolbox/Icons/icon_toolbox.png">
+    <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="file://user/data/Orbis Toolbox/Icons/icon_toolbox.png">
       
       <!-- Load Config on Startup -->
       <toggle_switch id="id_load_cfg_on_start" title="Load Config on Startup" second_title="Will attempt to load a config file from &quot;/data/Orbis Toolbox/Settings.cfg&quot;." value="0"/>
@@ -190,6 +190,9 @@
 
     </setting_list>
 
+
+    <button id="id_internal_debug_settings" title="Open Internal Debug Settings" second_title="Use at your own risk. I have included this at request some of these options may mess up your console."/>
+    
   </setting_list>
 
 </system_settings>

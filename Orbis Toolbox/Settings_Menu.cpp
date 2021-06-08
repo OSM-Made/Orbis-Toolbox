@@ -25,6 +25,7 @@ Detour* Settings_Menu::Detour_OnRender = nullptr;
 
 //Patches
 Patcher* Settings_Menu::Patch_IsDevkit;
+Patcher* Settings_Menu::Patch_IsDebugMenuEnable;
 Patcher* Settings_Menu::Patch_AllowDebugMenu;
 Patcher* Settings_Menu::Patch_MainThreadCheck;
 
@@ -243,11 +244,13 @@ void Settings_Menu::Init()
 
 	//Debug Settings Patch
 	Patch_IsDevkit = new Patcher();
+	Patch_IsDebugMenuEnable = new Patcher();
 	Patch_AllowDebugMenu = new Patcher();
 	Patch_MainThreadCheck = new Patcher();
 
 	Log("Install Patches");
 	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
+	//Patch_IsDebugMenuEnable->Install_Method_Patch(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "KeyMonitorTask", "IsDebugMenuEnable", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
 	Patch_AllowDebugMenu->Install_Method_Patch(Mono::platform_dll, "Sce.Vsh.ShellUI.Settings.Sbl", "SblWrapper", "SblRcMgrIsAllowDebugMenuForSettings", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
 	Patch_MainThreadCheck->Install_Method_Patch(Mono::PlayStation_Core, "Sce.PlayStation.Core.Runtime", "Diagnostics", "CheckRunningOnMainThread", 0, 0, "\xC3", 1);
 
@@ -291,6 +294,7 @@ void Settings_Menu::Term()
 
 	//Remove Denug Settings Patch
 	delete Patch_IsDevkit;
+	delete Patch_IsDebugMenuEnable;
 	delete Patch_AllowDebugMenu;
 	delete Patch_MainThreadCheck;
 

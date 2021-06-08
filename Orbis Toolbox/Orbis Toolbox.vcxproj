@@ -66,6 +66,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClCompile Include="Build_Overlay.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Daemons.cpp" />
+    <ClCompile Include="GamePad.cpp" />
     <ClCompile Include="SysfileUtilWrapper.cpp" />
     <ClCompile Include="System_Monitor.cpp" />
     <ClCompile Include="Custom_Content.cpp" />
@@ -91,6 +92,7 @@ del /s /q /f $(IntDir)\*.oelf</NMakeCleanCommandLine>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Daemons.h" />
+    <ClInclude Include="GamePad.h" />
     <ClInclude Include="SysfileUtilWrapper.h" />
     <ClInclude Include="System_Monitor.h" />
     <ClInclude Include="Debug_Features.h" />

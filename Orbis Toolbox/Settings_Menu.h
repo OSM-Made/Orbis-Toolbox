@@ -22,6 +22,7 @@ private:
 
 	//Patches
 	static Patcher* Patch_IsDevkit;
+	static Patcher* Patch_IsDebugMenuEnable;
 	static Patcher* Patch_AllowDebugMenu;
 	static Patcher* Patch_MainThreadCheck;
 

@@ -133,7 +133,7 @@ void Menu::Init()
 		
 
 
-	});
+	})->Visible = false;
 
 	Add_Option("id_Custom_Loader", []() -> void {
 
@@ -182,6 +182,10 @@ void Menu::Init()
 			UI::Utilities::ResetMenuItem("id_system_disp_app_home_panel");
 			UI::Utilities::ResetMenuItem("id_overlay_dbg");
 
+			Debug_Feature::DebugTitleIdLabel::Update();
+			Debug_Feature::DevkitPanel::Update();
+			UI::Utilities::ReloadItemList();
+			Build_Overlay::Update();
 			Game_Overlay::Update_Location();
 			Game_Overlay::Update();
 
@@ -192,6 +196,8 @@ void Menu::Init()
 	});
 	Add_Option("id_save_settings", []() -> void { Config::Write(SETTIN_DIR) ? Notify("Orbis Toolbox: Saved Settings Sucessfully!") : Notify("Orbis Toolbox: Failed to Save Settings..."); });
 
+
+	Add_Option("id_internal_debug_settings", []() -> void{ Mono::Invoke<void>(Mono::App_exe, Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "DebugMenu"), nullptr, "Show"); })->Visible = false;
 }
 
 void Menu::Term()

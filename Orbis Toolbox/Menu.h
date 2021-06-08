@@ -111,7 +111,7 @@ private:
 };
 
 #define DAEMON_DIR "/system/vsh/app/"
-#define PLUGIN_DIR "/data/Orbis Toolbox/Plugins"
-#define SETTIN_DIR "/data/Orbis Toolbox/Settings.cfg"
-#define PAYLOAD_DIR "/data/Orbis Toolbox/Payloads"
+#define PLUGIN_DIR "/user/data/Orbis Toolbox/Plugins"
+#define SETTIN_DIR "/user/data/Orbis Toolbox/Settings.cfg"
+#define PAYLOAD_DIR "/user/data/Orbis Toolbox/Payloads"
 #define PAYLOAD_DAEMON (char*)"PLDR00000"

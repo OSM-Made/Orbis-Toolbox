@@ -129,6 +129,9 @@
     <ClCompile Include="Daemons.cpp">
       <Filter>Source Files\Menu\Sub Menus</Filter>
     </ClCompile>
+    <ClCompile Include="GamePad.cpp">
+      <Filter>Source Files\Utilites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Daemons.h">
       <Filter>Header Files\Menu\Sub Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePad.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

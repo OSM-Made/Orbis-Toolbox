@@ -7,7 +7,7 @@ char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsig
 	if (!fd)
 	{
 		klog("File doesnt exist %s\n", FilePath);
-		return "";
+		return NULL;
 	}
 	else
 	{
@@ -22,7 +22,7 @@ char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsig
 		if (!strstr(Buffer, Key))
 		{
 			klog("File \"%s\" doesnt have the key \"%s\"", FilePath, Key);
-			return "";
+			return NULL;
 		}
 
 		MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
@@ -32,7 +32,7 @@ char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsig
 		if (str)
 			return mono_string_to_utf8(str);
 		else
-			return "";
+			return NULL;
 	}
 }
 
@@ -42,8 +42,6 @@ int SysfileUtilWrapper::GetAttribute(const char* FilePath)
 
 	return Mono::Invoke<int>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetAttribute", Mono::New_String(FilePath));
 }
-
-//TODO: Make sure Intput "FilePath" file exists before calling.
 
 char* SysfileUtilWrapper::GetTitleId(const char* FilePath)
 {
