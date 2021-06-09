@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Debug Log**
-Please Include a Debug Log with the bug to make debugging it easier if not replicatable.
+Please Include a Debug Log with the bug to make debugging it easier if not replicable.
 
 **System Info (please complete the following information):**
  - Firmware: [e.g. 5.05]
