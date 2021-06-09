@@ -5,10 +5,6 @@ void Install_505()
 {
 	uint8_t *kmem;
 
-    // Enable UART
-	kmem = (uint8_t *)&gKernelBase[0x019ECEB0];
-	kmem[0] = 0x00;
-
 	// Verbose Panics
 	kmem = (uint8_t *)&gKernelBase[0x00171627];
 	kmem[0] = 0x90;
@@ -19,37 +15,6 @@ void Install_505()
 	kmem[5] = 0x65;
 	kmem[6] = 0x8B;
 	kmem[7] = 0x34;
-
-	// sceSblACMgrIsAllowedSystemLevelDebugging
-	kmem = (uint8_t *)&gKernelBase[0x00010FC0];
-	kmem[0] = 0xB8;
-	kmem[1] = 0x01;
-	kmem[2] = 0x00;
-	kmem[3] = 0x00;
-	kmem[4] = 0x00;
-	kmem[5] = 0xC3;
-	kmem[6] = 0x90;
-	kmem[7] = 0x90;
-
-	kmem = (uint8_t *)&gKernelBase[0x00011730];
-	kmem[0] = 0xB8;
-	kmem[1] = 0x01;
-	kmem[2] = 0x00;
-	kmem[3] = 0x00;
-	kmem[4] = 0x00;
-	kmem[5] = 0xC3;
-	kmem[6] = 0x90;
-	kmem[7] = 0x90;
-
-	kmem = (uint8_t *)&gKernelBase[0x00011750];
-	kmem[0] = 0xB8;
-	kmem[1] = 0x01;
-	kmem[2] = 0x00;
-	kmem[3] = 0x00;
-	kmem[4] = 0x00;
-	kmem[5] = 0xC3;
-	kmem[6] = 0x90;
-	kmem[7] = 0x90;
 	
 	// Enable rwx mapping
 	kmem = (uint8_t *)&gKernelBase[0x000FCD48];
@@ -67,30 +32,6 @@ void Install_505()
 	kmem[0] = 0x90;
 	kmem[1] = 0x90;
 
-	// Enable MAP_SELF
-	kmem = (uint8_t*)&gKernelBase[0x000117b0];
-	kmem[0] = 0xB8;
-	kmem[1] = 0x01;
-	kmem[2] = 0x00;
-	kmem[3] = 0x00;
-	kmem[4] = 0x00;
-	kmem[5] = 0xC3;
-	
-	kmem = (uint8_t *)&gKernelBase[0x000117c0];
-	kmem[0] = 0xB8;
-	kmem[1] = 0x01;
-	kmem[2] = 0x00;
-	kmem[3] = 0x00;
-	kmem[4] = 0x00;
-	kmem[5] = 0xC3;
-	
-	kmem = (uint8_t *)&gKernelBase[0x0013F03F];
-	kmem[0] = 0x31;
-	kmem[1] = 0xC0;
-	kmem[2] = 0x90;
-	kmem[3] = 0x90;
-	kmem[4] = 0x90;
-
 	// Patch copyinstr
 	kmem = (uint8_t *)&gKernelBase[0x001EAB93];
 	kmem[0] = 0x90;
@@ -103,21 +44,4 @@ void Install_505()
 	// Patch memcpy stack
 	kmem = (uint8_t *)&gKernelBase[0x001EA53D];
 	kmem[0] = 0xEB;
-
-	// ptrace patches
-	kmem = (uint8_t *)&gKernelBase[0x0030D9C3];
-	kmem[0] = 0x90;
-	kmem[1] = 0x90;
-	kmem[2] = 0x90;
-	kmem[3] = 0x90;
-	kmem[4] = 0x90;
-	kmem[5] = 0x90;
-
-	// setlogin patch (for autolaunch check)
-	kmem = (uint8_t *)&gKernelBase[0x0005775C];
-	kmem[0] = 0x48;
-	kmem[1] = 0x31;
-	kmem[2] = 0xC0;
-	kmem[3] = 0x90;
-	kmem[4] = 0x90;
 }

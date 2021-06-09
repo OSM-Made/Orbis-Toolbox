@@ -39,7 +39,7 @@ public:
 	template<typename Value>
 	static MenuOption* Add_Option(const char* Option_Id, Value* Data, Data_Type Type, std::function<void()> OnPress = nullptr, std::function<void()> OnPreCreate = nullptr, std::function<void()> OnPageActivating = nullptr)
 	{
-		klog("Add_Option(): %s\n", Option_Id);
+		//klog("Add_Option(): %s\n", Option_Id);
 		MenuOption* Temp = new MenuOption();
 		strcpy(Temp->Id, Option_Id);
 		Temp->Data = (uint64_t*)Data;
@@ -56,7 +56,7 @@ public:
 
 	static MenuOption* Add_Option(const char* Option_Id, std::function<void()> OnPress = nullptr, std::function<void()> OnPreCreate = nullptr, std::function<void()> OnPageActivating = nullptr)
 	{
-		klog("Add_Option(): %s\n", Option_Id);
+		//klog("Add_Option(): %s\n", Option_Id);
 		MenuOption* Temp = new MenuOption();
 		strcpy(Temp->Id, Option_Id);
 		Temp->Type = Type_None;

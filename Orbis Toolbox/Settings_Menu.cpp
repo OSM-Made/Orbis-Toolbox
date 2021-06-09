@@ -250,7 +250,7 @@ void Settings_Menu::Init()
 
 	Log("Install Patches");
 	Patch_IsDevkit->Install_Method_Patch(Mono::KernelSysWrapper, "Sce.Vsh", "KernelSysWrapper", "IsDevKit", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
-	//Patch_IsDebugMenuEnable->Install_Method_Patch(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "KeyMonitorTask", "IsDebugMenuEnable", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
+	Patch_IsDebugMenuEnable->Install_Method_Patch(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "KeyMonitorTask", "IsDebugMenuEnable", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
 	Patch_AllowDebugMenu->Install_Method_Patch(Mono::platform_dll, "Sce.Vsh.ShellUI.Settings.Sbl", "SblWrapper", "SblRcMgrIsAllowDebugMenuForSettings", 0, 0, "\x48\xc7\xc0\x01\x00\x00\x00\xC3", 8);
 	Patch_MainThreadCheck->Install_Method_Patch(Mono::PlayStation_Core, "Sce.PlayStation.Core.Runtime", "Diagnostics", "CheckRunningOnMainThread", 0, 0, "\xC3", 1);
 
@@ -261,7 +261,6 @@ void Settings_Menu::Init()
 	Log("Init Menu");
 	Menu::Init();
 
-	//Detours
 	Log("Init Detours");
 	Detour_GetManifestResourceStream = new Detour();
 	Detour_OnCheckVisible = new Detour();

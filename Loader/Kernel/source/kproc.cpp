@@ -130,10 +130,9 @@ void test2_thread(void* arg)
     #endif
 
         klog("Registering Events...");
-        //Register Events
-        SystemSuspendEvent = EVENTHANDLER_REGISTER(system_suspend_phase1, (void*)OnSystemSuspend, nullptr, EVENTHANDLER_PRI_FIRST);
-        SystemResumeEvent = EVENTHANDLER_REGISTER(system_resume_phase1, (void*)OnSystemResume, nullptr, EVENTHANDLER_PRI_FIRST);
-        ProcessStartEvent = EVENTHANDLER_REGISTER(process_exec_end, (void*)OnProcessStart, nullptr, EVENTHANDLER_PRI_LAST);
+        //SystemSuspendEvent = EVENTHANDLER_REGISTER(system_suspend_phase1, (void*)OnSystemSuspend, nullptr, EVENTHANDLER_PRI_FIRST);
+        //SystemResumeEvent = EVENTHANDLER_REGISTER(system_resume_phase1, (void*)OnSystemResume, nullptr, EVENTHANDLER_PRI_FIRST);
+        ProcessStartEvent = EVENTHANDLER_REGISTER(process_exec_end, (void*)OnProcessStart, nullptr, EVENTHANDLER_PRI_ANY);
         ProcessExitEvent = EVENTHANDLER_REGISTER(process_exit, (void*)OnProcessExit, nullptr, EVENTHANDLER_PRI_ANY);
         klog("Events Registered Sucessfully.");
 
@@ -152,6 +151,7 @@ void test2_thread(void* arg)
 void kproc_Init()
 {
     klog("kproc_Init()"); 
+
     proc* kernel = proc_find_by_name("kernel");
     if(kernel)
     {
