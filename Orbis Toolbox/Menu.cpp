@@ -197,7 +197,7 @@ void Menu::Init()
 	Add_Option("id_save_settings", []() -> void { Config::Write(SETTIN_DIR) ? Notify("Orbis Toolbox: Saved Settings Sucessfully!") : Notify("Orbis Toolbox: Failed to Save Settings..."); });
 
 
-	Add_Option("id_internal_debug_settings", []() -> void{ Mono::Invoke<void>(Mono::App_exe, Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "DebugMenu"), nullptr, "Show"); })->Visible = false;
+	Add_Option("id_internal_debug_settings", []() -> void{ Mono::Invoke<void>(Mono::App_exe, Mono::Get_Class(Mono::App_exe, "Sce.Vsh.ShellUI.DebugSystem", "DebugMenu"), nullptr, "Show"); });
 }
 
 void Menu::Term()
