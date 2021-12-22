@@ -262,7 +262,7 @@ int klog(char* fmt, ...)
 
     #endif
 
-    #if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755)
+    #if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755)  || defined(SOFTWARE_VERSION_900)
 
     kprintf(buffer2);
 
