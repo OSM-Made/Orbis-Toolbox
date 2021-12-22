@@ -13,7 +13,7 @@ A modification of the playstation UI to help with launching and developing homeb
   - Right now it requires HEN or homebrew enabler to load it.
   - So far from my testing Mira & GoldHEN work but others do not.
 - What firmware does this work with?
-  - Currently it supports 5.05, 6.72, 7.02 & 7.55
+  - Currently it supports 5.05, 6.72, 7.02, 7.55 & 9.00
 - How can I help with bugs?
   - Please submit a bug Issue on this repo. Please Insure to use the Bug Template.
   - For any bugs I will need a crash log in order to figure out the issue. The playstation error codes do not generally help.
