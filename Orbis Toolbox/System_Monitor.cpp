@@ -16,11 +16,13 @@ System_Monitor::thread_usages System_Monitor::gThread_Data[2];
 
 void System_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, thread_usages* prev, float usage_out[8])
 {
-	if (cur->Thread_Count <= 0 || prev->Thread_Count <= 0)
+	if (cur->Thread_Count <= 0 || prev->Thread_Count <= 0) //Make sure our banks have threads
 		return;
 
+	//Calculate the Current time difference from the last bank to the current bank.
 	float Current_Time_Total = ((prev->current_time.tv_sec + (prev->current_time.tv_nsec / 1000000000.0f)) - (cur->current_time.tv_sec + (cur->current_time.tv_nsec / 1000000000.0f)));
 
+	//Here this could use to be improved but essetially what its doing is finding the thread information for the idle threads using their thread Index stored from before.
 	struct Data_s
 	{
 		Proc_Stats* Cur;
@@ -45,6 +47,7 @@ void System_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, th
 		}
 	}
 
+	//Here we loop through each core to calculate the total usage time as its split into user/sustem
 	for (int i = 0; i < 8; i++)
 	{
 		float Prev_Usage_Time = (Data[i].Prev->system_cpu_usage_time.tv_sec + (Data[i].Prev->system_cpu_usage_time.tv_nsec / 1000000.0f));
@@ -53,6 +56,7 @@ void System_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, th
 		float Cur_Usage_Time = (Data[i].Cur->system_cpu_usage_time.tv_sec + (Data[i].Cur->system_cpu_usage_time.tv_nsec / 1000000.0f));
 		Cur_Usage_Time += (Data[i].Cur->user_cpu_usage_time.tv_sec + (Data[i].Cur->user_cpu_usage_time.tv_nsec / 1000000.0f));
 
+		//We calculate the usage using usage time difference between the two samples divided by the current time difference.
 		float Idle_Usage = ((Prev_Usage_Time - Cur_Usage_Time) / Current_Time_Total);
 
 		if (Idle_Usage > 1.0f)
@@ -68,7 +72,7 @@ void System_Monitor::calc_usage(unsigned int idle_tid[8], thread_usages* cur, th
 
 void* System_Monitor::Monitor_Thread(void* args)
 {
-	klog("[System Monitor] Thread Started\n");
+	//klog("[System Monitor] Thread Started\n");
 
 	unsigned int Idle_Thread_ID[8];
 
@@ -81,16 +85,14 @@ void* System_Monitor::Monitor_Thread(void* args)
 		{
 			if (!sceKernelGetThreadName(Stat_Data[i].td_tid, Thread_Name) && sscanf(Thread_Name, "SceIdleCpu%d", &Core_Count) == 1 && Core_Count <= 7)
 			{
-				klog("[System Monitor][SceIdleCpu%d] -> %i\n", Core_Count, Stat_Data[i].td_tid);
+				//klog("[System Monitor][SceIdleCpu%d] -> %i\n", Core_Count, Stat_Data[i].td_tid);
 
 				Idle_Thread_ID[Core_Count] = Stat_Data[i].td_tid;
 			}
 		}
 	}
 
-	klog("[System Monitor] Got Idle Threads...\n");
-
-	klog("[System Monitor] Starting Monitor...\n");
+	//klog("[System Monitor] Starting Monitor...\n");
 	int Current_Bank = 0;
 	while (Should_Run_Thread)
 	{
@@ -168,7 +170,7 @@ void System_Monitor::Init()
 
 	scePthreadAttrSetstacksize(&attr, 0x80000);
 
-	void* id;
+	OrbisPthread* id;
 	scePthreadCreate(&id, &attr, Monitor_Thread, NULL, "System Monitor Thread");
 }
 

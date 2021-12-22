@@ -30,11 +30,15 @@ build:
 755:
 	+$(MAKE) build VERSION=755
 
+900:
+	+$(MAKE) build VERSION=900
+
 all:
 	+$(MAKE) build VERSION=505
 	+$(MAKE) build VERSION=672
 	+$(MAKE) build VERSION=702
 	+$(MAKE) build VERSION=755
+	+$(MAKE) build VERSION=900
 
 	@/bin/echo -e "\e[1m\e[32m[All Build Sucess!]\033[37m"
 

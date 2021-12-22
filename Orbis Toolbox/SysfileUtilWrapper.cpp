@@ -1,30 +1,34 @@
 #include "Common.h"
 #include "SysfileUtilWrapper.h"
 
+void Print_Bytes(char* Bytes, size_t len)
+{
+	int Counter = 0;
+	for (size_t n = 0; n < len; n++)
+	{
+		printf("%02X ", Bytes[n]);
+
+		if (Counter >= 20)	
+		{
+			printf("\n");
+			Counter = 0;
+		}
+
+		Counter++;
+	}
+	printf("\n");
+}
+
 char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsigned int Size)
 {
 	int fd = sceKernelOpen(FilePath, 0, 0511);
 	if (!fd)
 	{
 		klog("File doesnt exist %s\n", FilePath);
-		return NULL;
+		return (char*)"";
 	}
 	else
 	{
-		OrbisKernelStat stats;
-		sceKernelFstat(fd, &stats);
-
-		char* Buffer = (char*)malloc((size_t)stats.st_blksize);
-		sceKernelRead(fd, Buffer, (size_t)stats.st_blksize);
-
-		sceKernelClose(fd);
-
-		if (!strstr(Buffer, Key))
-		{
-			klog("File \"%s\" doesnt have the key \"%s\"", FilePath, Key);
-			return NULL;
-		}
-
 		MonoClass* SysfileUtilWrapper_Util = Mono::Get_Class(Mono::SysfileUtilWrapper, "Sce.Vsh", "SysfileUtilWrapper/Util");
 
 		MonoString* str = Mono::Invoke<MonoString*>(Mono::SysfileUtilWrapper, SysfileUtilWrapper_Util, nullptr, "GetString", Mono::New_String(FilePath), Mono::New_String(Key), Size);
@@ -32,7 +36,7 @@ char* SysfileUtilWrapper::GetString(const char* FilePath, const char* Key, unsig
 		if (str)
 			return mono_string_to_utf8(str);
 		else
-			return NULL;
+			return (char*)"";
 	}
 }
 

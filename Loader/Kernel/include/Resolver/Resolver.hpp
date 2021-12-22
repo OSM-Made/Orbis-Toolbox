@@ -5,6 +5,7 @@
 #include "Resolver-672.hpp"
 #include "Resolver-702.hpp"
 #include "Resolver-755.hpp"
+#include "Resolver-900.hpp"
 
 /* Util */
 extern struct sysentvec* sysvec;
@@ -45,7 +46,7 @@ extern struct mntarg*(*mount_argf)(struct mntarg *ma, const char *name, const ch
 #ifdef SOFTWARE_VERSION_505 || SOFTWARE_VERSION_NA
 extern eventhandler_tag (*eventhandler_register)(eventhandler_list *list, const char *name, void *func, void *arg, int priority);
 #endif
-#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755) 
+#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755) || defined(SOFTWARE_VERSION_900)
 extern eventhandler_tag (*eventhandler_register)(eventhandler_list *list, const char *name, void *func, const char* unk, void *arg, int priority);
 #endif
 extern void (*eventhandler_deregister)(eventhandler_list* a, eventhandler_entry* b);
@@ -64,7 +65,7 @@ extern eventhandler_list* (*eventhandler_find_list)(const char *name);
 #define EVENTHANDLER_REGISTER(name, func, arg, priority)		\
 	eventhandler_register(NULL, #name, func, arg, priority)
 #endif
-#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755) 
+#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755)  || defined(SOFTWARE_VERSION_900)
 #define EVENTHANDLER_REGISTER(name, func, arg, priority)		\
 	eventhandler_register(NULL, #name, func, "", arg, priority)
 #endif

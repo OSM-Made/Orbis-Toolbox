@@ -14,3 +14,4 @@ LoaderShellCodeEnd:
 
 LoaderShellCodeSize:
     .int    LoaderShellCodeEnd - LoaderShellCode
+    

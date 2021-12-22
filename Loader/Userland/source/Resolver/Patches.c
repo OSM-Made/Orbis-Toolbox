@@ -22,6 +22,8 @@ void Install_Patches()
     Install_702();
     #elif defined(SOFTWARE_VERSION_755)
     Install_755();
+    #elif defined(SOFTWARE_VERSION_900)
+    Install_900();
     #endif
 
     __writecr0(CR0);

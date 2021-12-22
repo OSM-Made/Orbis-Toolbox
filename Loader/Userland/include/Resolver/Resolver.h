@@ -4,6 +4,7 @@
 #include "Resolver-672.h"
 #include "Resolver-702.h"
 #include "Resolver-755.h"
+#include "Resolver-900.h"
 
 /* Util */
 extern struct sysentvec* ksysvec;

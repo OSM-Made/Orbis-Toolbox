@@ -72,6 +72,7 @@ bool Mono::Init()
 	case 672:
 	case 702:
 	case 755:
+	case 900:
 		PUI = "Sce.PlayStation.PUI";
 		PUI_UI2 = "Sce.PlayStation.PUI.UI2";
 		PUI_UI3 = "Sce.PlayStation.PUI.UI3";

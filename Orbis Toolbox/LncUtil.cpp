@@ -44,8 +44,6 @@ int LncUtil::LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppP
 
 	MonoObject* LaunchAppParam_Instance = Mono::New_Object(LaunchAppParam_class);
 	MonoObject* LaunchAppParam_Instance_real = (MonoObject*)mono_object_unbox(LaunchAppParam_Instance);
-	//mono_runtime_object_init(LaunchAppParam_Instance_real);
-	//Mono::Invoke<void>(Mono::platform_dll, LaunchAppParam_class, LaunchAppParam_Instance_real, ".ctor");
 
 	Mono::Set_Field(LaunchAppParam_Instance, "size", param->size);
 	Mono::Set_Field(LaunchAppParam_Instance, "userId", param->userId);
@@ -66,7 +64,7 @@ int LncUtil::LaunchApp(const char* titleId, char* args, int argsSize, LaunchAppP
 		memcpy(Array_addr, args, argsSize);
 
 	klog("Calling Launch...\n");
-	//return 0;
+
 	return Mono::Invoke<int>(Mono::platform_dll, LncUtil_Class, nullptr, "LaunchApp", Mono::New_String(titleId), Array, argsSize, LaunchAppParam_Instance_real);
 }
 
