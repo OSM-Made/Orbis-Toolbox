@@ -177,7 +177,7 @@ bool Config::Read(const char* File)
 		//Could be a good idea to take a digest here to see if things have changed and compare with the digest at 0x4.
 
 
-		klog("[Config] Read Config Sucessfully.\n");
+		klog("[Config] Read Config Successfully.\n");
 
 		return true;
 	}
