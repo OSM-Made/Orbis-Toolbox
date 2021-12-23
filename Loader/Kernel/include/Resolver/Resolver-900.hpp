@@ -1,5 +1,5 @@
 #pragma once
-#define SOFTWARE_VERSION_900
+
 #if defined(SOFTWARE_VERSION_900)
 
 /* Util */
