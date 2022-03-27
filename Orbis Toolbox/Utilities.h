@@ -30,7 +30,7 @@ enum NotifyType
 
 struct NotifyBuffer
 { //Naming may be incorrect.
-	NotifyType Type;		//0x00 
+	NotifyType Type;		//0x00
 	int ReqId;				//0x04
 	int Priority;			//0x08
 	int MsgId;				//0x0C

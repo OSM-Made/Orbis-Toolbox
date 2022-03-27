@@ -17,15 +17,15 @@ extern "C"
 			return 0;
 		}
 
-		//Sce.PlayStation.Core.Runtime DiagnosticsNative GetGraphicsMemoryStatistics 
+		//Sce.PlayStation.Core.Runtime DiagnosticsNative GetGraphicsMemoryStatistics
 		//TODO: Get Address and offset take a look in IDA see if it calls imports.
 
 		System_Monitor::Init();
 		Settings_Menu::Init();
-		//Title_Menu::Init();	
+		//Title_Menu::Init();
 
 		Notify(ORBIS_TOOLBOX_NOTIFY);
-		
+
 		return 0;
 	}
 

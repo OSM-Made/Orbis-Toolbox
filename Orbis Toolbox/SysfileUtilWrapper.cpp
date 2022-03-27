@@ -8,7 +8,7 @@ void Print_Bytes(char* Bytes, size_t len)
 	{
 		printf("%02X ", Bytes[n]);
 
-		if (Counter >= 20)	
+		if (Counter >= 20)
 		{
 			printf("\n");
 			Counter = 0;

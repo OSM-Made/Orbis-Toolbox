@@ -31,8 +31,8 @@ Patcher* Settings_Menu::Patch_MainThreadCheck;
 
 /*
 	GetManifestResourceStream:
-		This is the method I hook that loads internal packed resources 
-		from the mono UI. I intercept the uri and force it to return a 
+		This is the method I hook that loads internal packed resources
+		from the mono UI. I intercept the uri and force it to return a
 		new memory stream of the bytes for our custom xml.
 */
 
@@ -162,7 +162,7 @@ void Settings_Menu::OnPress_Hook(MonoObject* Instance, MonoObject* element, Mono
 			Id = Value;
 
 		MenuOption* Cur = Menu::Get_Option(Id);
-		
+
 		if (Cur)
 		{
 			//Update the local value of the option.
@@ -195,7 +195,7 @@ void Settings_Menu::OnRender_Hook(MonoObject* Instance)
 		Log("Init Build Overlay");
 		Build_Overlay::Init();
 
-		if (Config::Read(SETTIN_DIR) && Config::Data->Auto_Load_Settings) 
+		if (Config::Read(SETTIN_DIR) && Config::Data->Auto_Load_Settings)
 		{
 			Config::Parse(SETTIN_DIR);
 
@@ -206,7 +206,7 @@ void Settings_Menu::OnRender_Hook(MonoObject* Instance)
 			Build_Overlay::Update();
 			Game_Overlay::Update_Location();
 			Game_Overlay::Update();
-		}	
+		}
 		else
 		{
 			Build_Overlay::Draw = true;

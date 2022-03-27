@@ -42,7 +42,7 @@ void Game_Overlay::Init_Overlay(const char* Name, CALL_BACK_TYPE_D)
 
 void Game_Overlay::Update_Location()
 {
-	if (!strcmp(Location, "Left")) 
+	if (!strcmp(Location, "Left"))
 	{
 		X = 10.0f, Y = 5.0f;
 		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
@@ -50,8 +50,8 @@ void Game_Overlay::Update_Location()
 			Label* Instance = (Label*)Game_Widget->Get_Child(it->first);
 			Instance->hAlign = Label::hLeft;
 		}
-	}	
-	else if (!strcmp(Location, "Right")) 
+	}
+	else if (!strcmp(Location, "Right"))
 	{
 		X = UI::Utilities::ScreenWidth() - 10.0f, Y = 5.0f;
 		for (std::map<const char*, CALL_BACK_TYPE>::iterator it = Updater->begin(); it != Updater->end(); it++)
@@ -76,11 +76,11 @@ void Game_Overlay::Update_Location()
 /*
 	OnRender()
 		Anything called in this function will be called in the main mono render
-		loop. 
+		loop.
 
 		Checks for Game_Widget pointer and boolean Shutdown for safety.
 
-		Here we will iterate through all of the overlays supported and decide 
+		Here we will iterate through all of the overlays supported and decide
 		which to draw and their location.
 */
 
@@ -182,7 +182,7 @@ void Game_Overlay::Init()
 		if (Show_Thread_Count)
 		{
 			Instance->Set_Text("Thread Count: %i", System_Monitor::Thread_Count);
-		
+
 			return true;
 		}
 		else
@@ -194,7 +194,7 @@ void Game_Overlay::Init()
 
 		if (Show_CPU_Usage)
 		{
-			Instance->Set_Text("CPU Usage: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%", 
+			Instance->Set_Text("CPU Usage: %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%% %2.0f%%",
 				System_Monitor::Usage[0], System_Monitor::Usage[1], System_Monitor::Usage[2], System_Monitor::Usage[3],
 				System_Monitor::Usage[4], System_Monitor::Usage[5], System_Monitor::Usage[6], System_Monitor::Usage[7]);
 
@@ -216,7 +216,7 @@ void Game_Overlay::Init()
 			return false;
 	});
 
-	
+
 
 	Init_Overlay("RAMUSAGE", [](Label* Instance) -> bool {
 

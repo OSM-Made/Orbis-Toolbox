@@ -22,13 +22,13 @@ bool Load_SPRX(proc* proc, const char* File)
     uint8_t ShellCodeComplete = 0;
     uint64_t ModuleHandle = 0;
 
-    if(!proc) 
+    if(!proc)
 	{
         klog("Load_SPRX(): proc pointer was null.");
         return false;
     }
 
-    if(proc->p_dynlibptr == NULL) 
+    if(proc->p_dynlibptr == NULL)
     {
         klog("Load_SPRX(): p_dynlibptr is NULL.");
         return false;
@@ -59,7 +59,7 @@ bool Load_SPRX(proc* proc, const char* File)
         m_library = m_library->dynlib_next;
     }
 
-    if(thr_initial == 0) 
+    if(thr_initial == 0)
     {
 		klog("Load_SPRX(): Failed to resolve thr_initial.");
 
@@ -89,7 +89,7 @@ bool Load_SPRX(proc* proc, const char* File)
     */
     gShellCodeSize = LoaderShellCodeSize;
 	gShellCodeSize += (PAGE_SIZE - (gShellCodeSize % PAGE_SIZE));
-	if(proc_allocate(proc, &gShellCodePtr, gShellCodeSize)) 
+	if(proc_allocate(proc, &gShellCodePtr, gShellCodeSize))
     {
         klog("Load_SPRX(): Failed to allocate ShellCode Memory.");
 
@@ -150,7 +150,7 @@ bool Load_SPRX(proc* proc, const char* File)
     /*
         Wait for the shellcode to complete by reading the byte that will be set to 1 on completion.
     */
-    while (!ShellCodeComplete) 
+    while (!ShellCodeComplete)
 	{
         err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisLoader_header, ShellCodeComplete), sizeof(ShellCodeComplete), (void *)&ShellCodeComplete, &n, 0);
         if(err)

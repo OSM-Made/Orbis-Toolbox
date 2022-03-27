@@ -18,7 +18,7 @@ proc* GetCurrentGame()
     return allproc;
 }
 
-int get_proc_count() 
+int get_proc_count()
 {
 	int count = 0;
 	proc *p = *(proc**)allproc;
@@ -30,7 +30,7 @@ int get_proc_count()
 	return count;
 }
 
-proc *proc_find_by_name(const char *name) 
+proc *proc_find_by_name(const char *name)
 {
 	if (!name) {
 		return NULL;
@@ -48,7 +48,7 @@ proc *proc_find_by_name(const char *name)
 	return NULL;
 }
 
-proc *proc_find_by_pid(int pid) 
+proc *proc_find_by_pid(int pid)
 {
 	proc *p = *(proc**)allproc;
 
@@ -61,7 +61,7 @@ proc *proc_find_by_pid(int pid)
 	return NULL;
 }
 
-int proc_rw_mem(proc *p, void *ptr, size_t size, void *data, size_t *n, int write) 
+int proc_rw_mem(proc *p, void *ptr, size_t size, void *data, size_t *n, int write)
 {
 	thread *td = curthread();
 	iovec iov;
@@ -99,15 +99,15 @@ int proc_rw_mem(proc *p, void *ptr, size_t size, void *data, size_t *n, int writ
 		*n = (size_t)((uint64_t)size - uio.uio_resid);
 	}
 
-	return r; 
+	return r;
 }
 
-int proc_read_mem(struct proc *p, void *ptr, size_t size, void *data, size_t *n) 
+int proc_read_mem(struct proc *p, void *ptr, size_t size, void *data, size_t *n)
 {
 	return proc_rw_mem(p, ptr, size, data, n, 0);
 }
 
-int proc_write_mem(struct proc *p, void *ptr, size_t size, void *data, size_t *n) 
+int proc_write_mem(struct proc *p, void *ptr, size_t size, void *data, size_t *n)
 {
 	return proc_rw_mem(p, ptr, size, data, n, 1);
 }
@@ -116,7 +116,7 @@ int proc_allocate(struct proc *p, void **address, size_t size) {
 	uint64_t addr = NULL;
 	int r = 0;
 
-	if (!address) 
+	if (!address)
         return 1;
 
 	vmspace *vm = p->p_vmspace;
@@ -170,7 +170,7 @@ int proc_mprotect(proc *p, void *address, void *end, int new_prot) {
 
 	r = vm_map_protect(map, addr, addrend, new_prot, 1);
 	r = vm_map_protect(map, addr, addrend, new_prot, 0);
-	
+
 	return r;
 }
 

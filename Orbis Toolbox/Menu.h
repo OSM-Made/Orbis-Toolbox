@@ -21,8 +21,8 @@ public:
 	std::function<void()> OnPageActivating;
 	std::function<void()> OnPress;
 
-	MenuOption() { } 
-	~MenuOption() { } 
+	MenuOption() { }
+	~MenuOption() { }
 
 private:
 
@@ -66,7 +66,7 @@ public:
 		Temp->OnPress = OnPress;
 
 		Options->insert(std::pair<char*, MenuOption*>(Temp->Id, Temp));
-		
+
 		return Temp;
 	}
 
@@ -80,7 +80,7 @@ public:
 		std::map<char*, MenuOption*>::iterator it = std::find_if(Options->begin(), Options->end(), [Option_Id](auto a1) -> bool { return !strcmp(a1.first, Option_Id); });
 		if (it != Options->end())
 			return it->second;
-		else 
+		else
 		{
 			klog("[Menu] Get_Option(): Option \"%s\" Does not exist.\n", Option_Id);
 			return nullptr;

@@ -18,10 +18,10 @@ SECTIONS
   .rodata : {
 		*(.rodata)
 		*(.rodata.*)
-		*(.data) 
+		*(.data)
 	  	*(.data.*)
 	} :text
-  .data : { 
+  .data : {
 	  *(.data)
 	  } :data
   .bss : { *(.bss) }

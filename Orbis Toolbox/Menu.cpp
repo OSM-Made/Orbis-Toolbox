@@ -25,13 +25,13 @@ void Menu::Init()
 	Add_Option("id_reboot", []() -> void { LncUtil::SystemReboot(); });
 	Add_Option("id_shutdown", []() -> void { LncUtil::SystemShutdown(LncUtil::None); });
 	Add_Option("id_suspend", []() -> void { LncUtil::SystemShutdown(LncUtil::Eap); });
-	 
+
 	// Note: Package Installer does not need to be done here
 	//		 because of the fact its managed by the system.
 
 	// Daemon Manager
 	Add_Option("id_daemons", nullptr, nullptr, []() -> void {
-		
+
 		int fd;
 		OrbisKernelStat stats;
 		char* Dent_Buffer;
@@ -46,14 +46,14 @@ void Menu::Init()
 			sceKernelFstat(fd, &stats);
 			Dent_Buffer = (char*)malloc((size_t)stats.st_blksize);
 
-			
+
 			//Read the directory contents and if the number of byte sread returned less than or equal to zero return.
 			int nread = sceKernelGetdents(fd, Dent_Buffer, (size_t)stats.st_blksize);
 			if (nread <= 0)
 				goto End;
 
 			//Loop through all the directory contents by position in the buffer insuring we dont go over the number of read bytes.
-			for (bpos = 0; bpos < nread;) 
+			for (bpos = 0; bpos < nread;)
 			{
 				//dent is our curent directory.
 				dent = (OrbisKernelDirents*) (Dent_Buffer + bpos);
@@ -61,7 +61,7 @@ void Menu::Init()
 				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
 				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") && !strstr(dent->d_name, PAYLOAD_DAEMON))
 					Add_Daemon(dent->d_name);
-					
+
 				//Increase the position we are going to read by the size of the current directory entry.
 				bpos += dent->d_reclen;
 			}
@@ -106,7 +106,7 @@ void Menu::Init()
 				dent = (OrbisKernelDirents*)(Dent_Buffer + bpos);
 
 				//Find any daemons that arent system. Making sure the type is directory and its name doesnt contain NPXS.
-				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") && !strstr(dent->d_name, PAYLOAD_DAEMON)) 
+				if (dent->d_type == DT_DIR && !strstr(dent->d_name, "NPXS") && !strstr(dent->d_name, ".") && !strstr(dent->d_name, PAYLOAD_DAEMON))
 				{
 					Remove_Daemon(dent->d_name);
 					Add_Daemon(dent->d_name);
@@ -130,7 +130,7 @@ void Menu::Init()
 
 	// Payload Loader
 	Add_Option("id_payloads", nullptr, nullptr, []() -> void {
-		
+
 
 
 	})->Visible = false;
@@ -171,7 +171,7 @@ void Menu::Init()
 	Add_Option("id_overlay_vram", &Game_Overlay::Show_vram, Type_Boolean, Game_Overlay::Update);
 	Add_Option("id_overlay_cpu", &Game_Overlay::Show_CPU_Temp, Type_Boolean, Game_Overlay::Update);
 	Add_Option("id_overlay_soc", &Game_Overlay::Show_SOC_Temp, Type_Boolean, Game_Overlay::Update);
-	Add_Option("id_load_settings", []() -> void { 
+	Add_Option("id_load_settings", []() -> void {
 
 		if (Config::Parse(SETTIN_DIR))
 		{

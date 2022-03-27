@@ -9,7 +9,7 @@ ShellCodeComplete: db 0
 
 ;sceKernelLoadStartModule Variables
 ModulePath: db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-ModuleHandle: dq 0 
+ModuleHandle: dq 0
 
 ;Addresses
 sceKernelUsleep: dq 0
@@ -96,7 +96,7 @@ resolve:
 	lea rsi, [str_scePthreadAttrInit]
 	mov rdi, qword [libkernel]
 	call sys_dynlib_dlsym
-	
+
 	call sceKernelLoadStartModule
 
 	; Check if the module loaded and if it did call the entry.
@@ -117,7 +117,7 @@ module_start:
 	lea rsi, [str_module_start]
 	mov rdi, qword [ModuleHandle]
 	call sys_dynlib_dlsym
-	
+
 	cmp dword[amodule_start], 0
 	ja found_start
 	xor eax, eax
@@ -143,7 +143,7 @@ found_start:
 	lea rdi, [hthread]
 	mov r12, qword [scePthreadCreate]
 	call r12
-	
+
 	xor eax, eax
 	retn
 

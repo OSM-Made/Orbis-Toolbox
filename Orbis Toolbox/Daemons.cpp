@@ -46,7 +46,7 @@ bool Is_Daemon_Running(char* TitleId)
 bool Start_Stop_Daemon(char* TitleId, bool Restart)
 {
 	int AppId = LncUtil::GetAppId(TitleId);
-	if (AppId > 0) 
+	if (AppId > 0)
 	{
 		LncUtil::KillApp(AppId);
 

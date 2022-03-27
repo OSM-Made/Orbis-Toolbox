@@ -40,7 +40,7 @@ struct mntarg*(*mount_argf)(struct mntarg *ma, const char *name, const char *fmt
 #ifdef SOFTWARE_VERSION_505 || SOFTWARE_VERSION_NA
 eventhandler_tag (*eventhandler_register)(eventhandler_list *list, const char *name, void *func, void *arg, int priority);
 #endif
-#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755) || defined(SOFTWARE_VERSION_900) 
+#if defined(SOFTWARE_VERSION_672) || defined(SOFTWARE_VERSION_702) || defined(SOFTWARE_VERSION_755) || defined(SOFTWARE_VERSION_900)
 eventhandler_tag (*eventhandler_register)(eventhandler_list *list, const char *name, void *func, const char* unk, void *arg, int priority);
 #endif
 void (*eventhandler_deregister)(eventhandler_list* a, eventhandler_entry* b);
@@ -103,7 +103,7 @@ void Resolve(uint64_t Kernel_Base)
     NATIVE_RESOLVE(Kernel_Base, strdup);
     NATIVE_RESOLVE(Kernel_Base, realloc);
     NATIVE_RESOLVE(Kernel_Base, kprintf);
-    
+
     /* FileIO */
     NATIVE_RESOLVE(Kernel_Base, vn_fullpath);
     NATIVE_RESOLVE(Kernel_Base, kern_rmdir);

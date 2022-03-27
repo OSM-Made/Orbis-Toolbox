@@ -114,7 +114,7 @@ void test2_thread(void* arg)
         kthread_exit();
         return;
     }
-    
+
     //Jailbreak the process.
     Backup_Jail bkJail;
     Jailbreak(p, &bkJail);
@@ -136,8 +136,8 @@ void test2_thread(void* arg)
         ProcessExitEvent = EVENTHANDLER_REGISTER(process_exit, (void*)OnProcessExit, nullptr, EVENTHANDLER_PRI_ANY);
         klog("Events Registered Sucessfully.");
 
-    #if defined(SHOULD_LOAD)  
-    }    
+    #if defined(SHOULD_LOAD)
+    }
     else
         klog("Failed to Launch Toolbox... Maybe you forgot to load HEN??");
     #endif
@@ -150,7 +150,7 @@ void test2_thread(void* arg)
 
 void kproc_Init()
 {
-    klog("kproc_Init()"); 
+    klog("kproc_Init()");
 
     proc* kernel = proc_find_by_name("kernel");
     if(kernel)
@@ -158,8 +158,8 @@ void kproc_Init()
         klog("Found Kernel Process...\n");
         kproc_kthread_add(test2_thread, nullptr, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
     }
-    
-    klog("kproc_Init() -> Sucess!"); 
+
+    klog("kproc_Init() -> Sucess!");
 }
 
 void kproc_Term()

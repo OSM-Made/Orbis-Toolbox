@@ -16,7 +16,7 @@ argv: dq 0
 pflags: dd 0
 pOpt: dd 0
 pRes: dd 0
-ModuleHandle: dq 0 
+ModuleHandle: dq 0
 
 ;sceKernelStopUnloadModule Variables
 args: dq 0
@@ -127,11 +127,11 @@ resolve:
 LoopStart:
 	cmp byte[ShouldExit], 1
 	je LoopExit
-	
+
 FirstCall:
 	cmp byte[CommandIndex], 1
 	jne SecondCall
-	
+
 	call sceKernelLoadStartModule
 
 	; Check if the module loaded and if it did call the entry.
@@ -149,7 +149,7 @@ didntload:
 SecondCall:
 	cmp byte[CommandIndex], 2
 	jne EndofCase
-	
+
 	;safety make sure the handle is correct before calling the unload.
 	cmp dword[handle], 0
 	je notloaded
@@ -209,7 +209,7 @@ module_start:
 	lea rdi, [hthread]
 	mov r12, qword [scePthreadCreate]
 	call r12
-	
+
 	xor eax, eax
 	retn
 
