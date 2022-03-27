@@ -126,7 +126,7 @@ void test2_thread(void* arg)
     klog("****Launching Toolbox...****");
     if(Load_SPRX(p, SPRX_PATH))
     {
-        klog("Launched Toolbox Sucessfully.");
+        klog("Launched Toolbox Successfully.");
     #endif
 
         klog("Registering Events...");
@@ -134,7 +134,7 @@ void test2_thread(void* arg)
         //SystemResumeEvent = EVENTHANDLER_REGISTER(system_resume_phase1, (void*)OnSystemResume, nullptr, EVENTHANDLER_PRI_FIRST);
         ProcessStartEvent = EVENTHANDLER_REGISTER(process_exec_end, (void*)OnProcessStart, nullptr, EVENTHANDLER_PRI_ANY);
         ProcessExitEvent = EVENTHANDLER_REGISTER(process_exit, (void*)OnProcessExit, nullptr, EVENTHANDLER_PRI_ANY);
-        klog("Events Registered Sucessfully.");
+        klog("Events Registered Successfully.");
 
     #if defined(SHOULD_LOAD)
     }
@@ -159,7 +159,7 @@ void kproc_Init()
         kproc_kthread_add(test2_thread, nullptr, &kernel, NULL, NULL, 0, "kernel", "Loader Thread");
     }
 
-    klog("kproc_Init() -> Sucess!");
+    klog("kproc_Init() -> Success!");
 }
 
 void kproc_Term()

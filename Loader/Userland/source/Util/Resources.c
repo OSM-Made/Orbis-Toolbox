@@ -139,5 +139,5 @@ void Install_Resources()
     _binary_Resources_PLDR00000_icon0_bin_start, _binary_Resources_PLDR00000_icon0_bin_end);
     _Write_File("/system/vsh/app/PLDR00000/sce_module/libjbc.sprx", _binary_Resources_PLDR00000_libjbc_bin_start, _binary_Resources_PLDR00000_libjbc_bin_end);
 
-    Log("Install_Resources() -> Sucess!");
+    Log("Install_Resources() -> Success!");
 }

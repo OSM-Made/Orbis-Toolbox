@@ -28,5 +28,5 @@ void Install_Patches()
 
     __writecr0(CR0);
 
-    klog("Install_Patches() -> Sucess!");
+    klog("Install_Patches() -> Success!");
 }

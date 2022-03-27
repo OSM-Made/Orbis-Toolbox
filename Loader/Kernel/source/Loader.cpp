@@ -164,7 +164,7 @@ bool Load_SPRX(proc* proc, const char* File)
 	}
 
     /*
-        Grab the Module handle from the shellcode to see if the loading was a sucess or not.
+        Grab the Module handle from the shellcode to see if the loading was a success or not.
     */
     err = proc_rw_mem(proc, gShellCodePtr + offsetof(OrbisLoader_header, ModuleHandle), sizeof(ModuleHandle), (void *)&ModuleHandle, &n, 0);
     if(err)

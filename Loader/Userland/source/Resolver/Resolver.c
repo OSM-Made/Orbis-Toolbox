@@ -31,7 +31,7 @@ void Kern_Resolve()
     NATIVE_RESOLVE(kvsprintf);
     NATIVE_RESOLVE(kprintf);
 
-    //klog("Kern_Resolve() -> Sucess!");
+    //klog("Kern_Resolve() -> Success!");
 }
 
 int sys_dynlib_dlsym(int loadedModuleID, const char *name, void *destination) {
@@ -123,5 +123,5 @@ void Userland_Resolve()
 	sys_dynlib_dlsym(Libc_Library, "sqrt", &sqrt);
 	sys_dynlib_dlsym(Libc_Library, "strdup", &strdup);
 
-    Log("Userland_Resolve() -> Sucess!");
+    Log("Userland_Resolve() -> Success!");
 }
