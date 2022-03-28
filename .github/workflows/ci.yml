@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '.gitattributes'
+      - '.github/*'
+      - '.github/*_TEMPLATE/**'
+      - '.gitignore'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '.gitattributes'
+      - '.github/*'
+      - '.github/*_TEMPLATE/**'
+      - '.gitignore'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Orbis Toolchain variables
+        id: oo_vars
+        run: |
+          $OO_TOOLCHAIN_VER='v0.5.2'
+          echo "::set-output name=ver::$OO_TOOLCHAIN_VER"
+          $OO_TOOLCHAIN_TAR="${OO_TOOLCHAIN_VER}.tar"
+          echo "::set-output name=tar::$OO_TOOLCHAIN_TAR"
+          echo "::set-output name=tar_gz::${OO_TOOLCHAIN_TAR}.gz"
+          echo "::set-output name=path::C:\OpenOrbis\PS4Toolchain"
+      - name: Setup Orbis Toolchain
+        run: |
+          curl -fLO "https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/releases/download/${{ steps.oo_vars.outputs.ver }}/${{ steps.oo_vars.outputs.tar_gz }}"
+          7z e ${{ steps.oo_vars.outputs.tar_gz }}
+          7z x ${{ steps.oo_vars.outputs.tar }} -oC:\
+          echo "OO_PS4_TOOLCHAIN=${{ steps.oo_vars.outputs.path }}" >> $env:GITHUB_ENV
+      - uses: microsoft/setup-msbuild@v1.1
+      - name: Build
+        run: msbuild -nologo -p:Configuration=${{ matrix.configuration }} 'Orbis Toolbox.sln' #-m
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Orbis-Toolbox
+          path: ${{ github.workspace }}
+          if-no-files-found: error
