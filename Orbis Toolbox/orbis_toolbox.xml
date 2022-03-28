@@ -21,13 +21,13 @@
       <button id="id_suspend" title="Suspend" icon="file://user/data/Orbis Toolbox/Icons/icon_suspend.png" second_title="Suspends the system to the &quot;Rest Mode&quot; state."/>
 
     </setting_list>
-    
+
     <!-- Package Installer -->
     <link id="id_game_package_installer" title="Package Installer" icon="file://user/data/Orbis Toolbox/Icons/icon_pkg.png" file="PkgInstaller/data/pkginstaller.xml" />
 
     <!-- Daemon Manager -->
     <setting_list id="id_daemons" title="Daemon Manager" icon="file://user/data/Orbis Toolbox/Icons/icon_daemon.png" restorable="false">
-      
+
       <!-- Options Menu -->
       <option id="_option" list_highlight="false">
         <option_item id="id_option_daemon_refresh" title="Refresh"/>
@@ -35,22 +35,22 @@
 
       <!-- Help message -->
       <label id="daemon_info" title="Daemons are background applications that can be run on your system. Here you can see the status of your Daemons and Manage them.&#xa;Daemons are loaded from &quot;/system/vsh/app/&quot;." style="left" border="true"/>
-      
+
       <!-- Creates blank space -->
       <spacer id="daemon_spacer" height="30"/>
 
-      <!-- 
+      <!--
         Here is where the Daemons will be shown.
-        
+
             Deamon Icon | Name from .sfo | Status ? Running : Stopped or when clicked Stopping/Starting
-            
+
             Icons and a description are be loaded from the /system/vsh/app/{TitleId}/sce_sys/ folder
               - icon0.png is the name of the Icon that is searched for.
-              - param.sfo is the name of the file where the title and desc is parsed from. 
+              - param.sfo is the name of the file where the title and desc is parsed from.
                 - TITLE is the element that holds the name of the Daemon.
                 - PROVIDER is the element that holds the description of the daemon.
       -->
-      
+
     </setting_list>
 
     <!-- ShellUI Plugin Manager -->
@@ -67,14 +67,14 @@
       <!-- Creates blank space -->
       <spacer id="plugin_spacer" height="30"/>
 
-      <!-- 
-          Here is where the plugins will be shown. 
-          
+      <!--
+          Here is where the plugins will be shown.
+
           Default Icon | File Name | Status ? Loaded : Not Loaded
-          
+
           Just like payloads in the future an icon, names and descriptions may be parsed from here.
       -->
-      
+
     </setting_list>
 
     <!-- Payload Loader -->
@@ -84,7 +84,7 @@
       <option id="_option" list_highlight="false">
         <option_item id="id_option_payloads_refresh" title="Refresh"/>
       </option>
-      
+
       <!-- Help message -->
       <label id="payloads_info" title="Load payloads from the internal HDD of your console or over your network using the &quot;★Custom Payload&quot; Option.&#xa;Payloads are loaded from &quot;/data/Orbis Toolbox/Payloads/&quot;." style="left" border="true"/>
 
@@ -93,11 +93,11 @@
 
       <button id="id_Custom_Loader" title="★Custom Payload" second_title="Click here to start listening for payload on port 9020." />
 
-      <!-- 
+      <!--
           Here is where the payloads found on the HDD will be shown.
-          
+
           Default Icon | Name of the File
-          
+
           In the future Icons, Names and descriptions may be parsed from this folder.
        -->
 
@@ -130,13 +130,13 @@
       <toggle_switch id="id_np_debug" title="NP Debug" second_title="Shows NP debugging popups." key="/NP/debug"/>
 
     </setting_list>
-    
+
     <!-- Orbis Toolbox Settings -->
     <setting_list id="orbis_toolbox_settings" title="Orbis Toolbox Settings" icon="file://user/data/Orbis Toolbox/Icons/icon_toolbox.png">
-      
+
       <!-- Load Config on Startup -->
       <toggle_switch id="id_load_cfg_on_start" title="Load Config on Startup" second_title="Will attempt to load a config file from &quot;/data/Orbis Toolbox/Settings.cfg&quot;." value="0"/>
-      
+
       <!-- Show TitleID Labels -->
       <toggle_switch id="id_system_disp_titleid" title="Show TitleID Labels" value="0"/>
 
@@ -173,13 +173,13 @@
 
         <!-- Video RAM Usage -->
         <toggle_switch id="id_overlay_vram" title="Video RAM Usage" value="0"/>
-        
+
         <!-- CPU Temperature -->
         <toggle_switch id="id_overlay_cpu" title="CPU Temperature" value="0"/>
 
         <!-- SOC Temperature -->
         <toggle_switch id="id_overlay_soc" title="SOC Temperature" value="0"/>
-        
+
       </setting_list>
 
       <!-- Load Settings -->
@@ -192,7 +192,7 @@
 
 
     <button id="id_internal_debug_settings" title="Open Internal Debug Settings" second_title="Use at your own risk. I have included this at request some of these options may mess up your console."/>
-    
+
   </setting_list>
 
 </system_settings>

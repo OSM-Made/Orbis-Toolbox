@@ -5,7 +5,7 @@
 /* Util */
 #define addr_Xfast_syscall		                0x000001C0
 #define addr_sysvec                             0x01528E30
-#define addr_prison0                            0x0111F870 
+#define addr_prison0                            0x0111F870
 #define addr_rootvnode                          0x021EFF20
 
 /* STD Lib */
@@ -69,7 +69,7 @@
 #define addr_vm_map_unlock_read					0x0007BBD0
 #define addr_vm_map_lookup_entry				0x0007C1C0
 #define addr_vm_map_findspace					0x0007EC40
-#define addr_vm_map_insert						0x0007CD80 
+#define addr_vm_map_insert						0x0007CD80
 #define addr_vm_map_lock						0x0007BA30
 #define addr_vm_map_unlock 						0x0007BAA0
 #define addr_vm_map_delete						0x0007E680

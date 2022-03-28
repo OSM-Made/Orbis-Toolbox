@@ -16,7 +16,7 @@ build:
 
 	objcopy -O binary Userland/Userland.elf ../Build/Orbis-Toolbox-$(VERSION).bin
 
-	printf "\e[1m\e[32m[%0.2f Build Sucess!]\033[37m\n" "$$(($(VERSION) * 1))e-2"
+	printf "\e[1m\e[32m[%0.2f Build Success!]\033[37m\n" "$$(($(VERSION) * 1))e-2"
 
 505:
 	+$(MAKE) build VERSION=505
@@ -40,7 +40,7 @@ all:
 	+$(MAKE) build VERSION=755
 	+$(MAKE) build VERSION=900
 
-	@/bin/echo -e "\e[1m\e[32m[All Build Sucess!]\033[37m"
+	@/bin/echo -e "\e[1m\e[32m[All Build Success!]\033[37m"
 
 clean:
 	+$(MAKE) -C ShellCode clean

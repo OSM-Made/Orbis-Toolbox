@@ -112,7 +112,7 @@ void Debug_Feature::DebugTitleIdLabel::Init()
 	uint64_t CreateDebugTitleIdLabel_addr = Mono::Get_Address_of_Method(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "ContentDecoratorBase", "CreateDebugTitleIdLabel", 0);
 	CreateDebugTitleIdLabel = decltype(CreateDebugTitleIdLabel)(CreateDebugTitleIdLabel_addr);
 
-	//Patch RegMgr Check 
+	//Patch RegMgr Check
 	Patch_createDevKitPanel = new Patcher();
 	Patch_createDevKitPanel->Install_Method_Patch(Mono::App_exe, "Sce.Vsh.ShellUI.Library", "ContentDecoratorBase", "CreateDebugTitleIdLabel", 0, 0x2C, "\x90\x90\x90\x90\x90\x90", 6);
 

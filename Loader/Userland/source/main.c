@@ -40,14 +40,14 @@ int install_elf(struct thread *td)
 		return 1;
 	}
 
-	klog("Loaded Kernel ELF Sucess!");
+	klog("Loaded Kernel ELF Success!");
 
 	//Restore the original jail for the current Process.
 	RestoreJail(td->td_proc, bkJail);
 
-	klog("RestoreJail() -> Sucess!");
+	klog("RestoreJail() -> Success!");
 
-	return 0;    
+	return 0;
 }
 
 int jailbreak_proc(struct thread *td)
@@ -67,12 +67,12 @@ int jailbreak_proc(struct thread *td)
 	//Jailbreak current Process.
 	Jailbreak(td->td_proc, &bkJail);
 
-	klog("Jailbreak() -> Sucess!");
+	klog("Jailbreak() -> Success!");
 
 	return 0;
 }
 
-int _main(void) 
+int _main(void)
 {
 	syscall(601, 7, "Hello World.\n", 0);
 

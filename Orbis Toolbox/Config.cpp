@@ -62,7 +62,7 @@
 			//clear the temporary stored data.
 			Current_Members.clear();
 
-			//Get the index of the open and close delimiter and set the string between them as our current section. 
+			//Get the index of the open and close delimiter and set the string between them as our current section.
 			unsigned first = Current_Line.find('[') + 1;
 			unsigned last = Current_Line.find(']');
 			Current_Section = Current_Line.substr(first, last - first);
@@ -223,15 +223,15 @@ bool Config::Write(const char* File)
 	{
 		//Build new cfg file.
 		Data->Version = CFG_VERSION;
-			
+
 		Data->Auto_Load_Settings = Menu::Auto_Load_Settings;
 		Data->Show_DebugTitleIdLabel = Debug_Feature::DebugTitleIdLabel::ShowLabels;
 		Data->Show_DevkitPanel = Debug_Feature::DevkitPanel::ShowPanel;
 		Data->Show_Debug_Settings = Debug_Feature::Custom_Content::Show_Debug_Settings;
 		Data->Show_App_Home = Debug_Feature::Custom_Content::Show_App_Home;
-			
+
 		Data->Show_Build_Overlay = Build_Overlay::Draw;
-			
+
 		strcpy(Data->Game_Overlay_Location, Game_Overlay::Location);
 		Data->Show_CPU_Usage = Game_Overlay::Show_CPU_Usage;
 		Data->Show_Thread_Count = Game_Overlay::Show_Thread_Count;
